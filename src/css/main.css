@@ -558,6 +558,26 @@
   background-color: hsl(210, 20%, 99%);
 }
 
+/* Header */
+.header {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-card);
+}
+.slogan-pc {
+  display: inline;
+}
+.slogan-mo {
+  display: none;
+}
+@media (max-width: 600px) {
+  .slogan-pc {
+    display: none;
+  }
+  .slogan-mo {
+    display: inline;
+  }
+}
+
 .faq-item.active .faq-a {
   display: block;
 }
