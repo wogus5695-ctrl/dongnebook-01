@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지역 시공/수리 업체 매칭 | 동네책자</title>
+  <meta name="description" content="우리 동네 전문 시공 수리 업체의 상세 광고 카드 프로필을 확인하고 직접 연락을 진행해 보세요.">
+  <link rel="stylesheet" href="/src/css/main.css">
+  
+  <!-- Open Graph (SNS 및 포털 공유 최적화) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="지역 시공/수리 업체 찾기 | 동네책자">
+  <meta property="og:description" content="우리 동네 전문 시공 수리 업체의 상세 광고 카드 프로필을 확인하고 직접 연락을 진행해 보세요.">
+  <meta property="og:site_name" content="동네책자">
+  
+  <style>
+    .ad-top-banner {
+      background-color: var(--ad-badge-bg);
+      border: 1px solid var(--ad-card-border);
+      border-radius: var(--border-radius);
+      padding: 16px;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: center;
+    }
+    @media(min-width: 600px) {
+      .ad-top-banner {
+        flex-direction: row;
+        text-align: left;
+      }
+    }
+    .fallback-box {
+      border: 1.5px dashed var(--border-color);
+      background-color: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 32px 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .related-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body class="has-sticky-bottom">
+
+  <!-- 공통 헤더 컨테이너 -->
+  <div id="header-container"></div>
+
+  <main class="container">
+    
+    <!-- 1. Hero 섹션 -->
+    <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
+      <nav style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+        홈 > <span id="bread-region">지역</span> > <span id="bread-category">카테고리</span> > <span id="bread-task" style="color: var(--text-dark); font-weight: bold;">작업</span>
+      </nav>
+      <!-- H1 1회 사용 준수 -->
+      <h1 class="section-title" id="landing-h1" style="font-size: 1.6rem; color: var(--secondary);">
+        [지역명] [작업명] 업체 찾기
+      </h1>
+      <p class="section-subtitle" id="landing-subtitle" style="margin-bottom: 16px;">
+        [지역명] 인근에서 [작업명] 상담 가능한 업체 정보를 확인하세요.
+      </p>
+      
+      <div style="display: flex; gap: 8px; max-width: 320px;">
+        <a href="#listings-section" class="btn btn-primary" style="font-size: 0.85rem; padding: 10px;">상담 가능 업체 보기</a>
+        <a href="/apply.html" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px; background-color: white;">이 지역 광고 신청</a>
+      </div>
+    </section>
+
+    <!-- 2. 상단 광고 구좌 안내 배너 -->
+    <section class="container" style="padding: 0;">
+      <div class="ad-top-banner">
+        <div>
+          <h4 style="font-size: 0.95rem; color: var(--ad-badge-text); font-weight: 800;">이 지역+작업명 페이지에 내 업체를 노출하고 싶으신가요?</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">월 5만 원으로 해당 키워드 검색 시 상단에 전화를 걸 수 있는 명함 카드를 게재하세요.</p>
+        </div>
+        <a href="/apply.html" class="btn btn-accent" style="width: auto; font-size: 0.8rem; padding: 8px 16px; white-space: nowrap;">광고 신청하기</a>
+      </div>
+    </section>
+
+    <!-- 3. 입점 업체 리스트 -->
+    <section class="section" id="listings-section" style="padding: 12px 0;">
+      <h2 style="font-size: 1.15rem; margin-bottom: 12px;">입점 광고 파트너 리스트</h2>
+      
+      <!-- 업체 카드 그리드 -->
+      <div class="card-grid" id="landing-listings-grid">
+        <!-- JS 렌더링 -->
+      </div>
+
+      <!-- 업체가 없는 경우의 대체 UI (Fallback) -->
+      <div class="fallback-box" id="landing-fallback" style="display: none;">
+        <span class="ad-badge" style="background-color: hsl(0, 80%, 95%); color: hsl(0, 80%, 35%); border-color: hsl(0, 80%, 90%);">입점 모집 중</span>
+        <h3 style="font-size: 1.15rem; color: var(--text-dark); margin: 12px 0 6px;">현재 이 지역의 광고 등록 업체를 모집 중입니다</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
+          등록된 업체가 없을 시 인근 인접 행정 구역의 연계 파트너 정보가 최우선 정렬됩니다.<br>
+          이 지면에 첫 번째 광고주로 선점 입점을 신청해 보세요!
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 8px; max-width: 280px; margin: 0 auto;">
+          <a href="/apply.html" class="btn btn-primary" id="fallback-apply-btn" style="font-size: 0.85rem; padding: 10px;">첫 광고 입점 문의하기</a>
+          <button class="btn btn-outline" id="fallback-nearby-btn" style="font-size: 0.85rem; padding: 10px; background-color: white;">인근 지역 상담 가능 업체 확인</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 작업 정보 섹션 & 5. 예상 비용 안내 섹션 -->
+    <section class="section" style="padding: 12px 0;">
+      <div class="guide-box" style="margin-top: 0;">
+        <h2 style="font-size: 1.25rem; color: var(--secondary); margin-bottom: 16px;" id="info-section-title">[작업명] 시공 핵심 상식</h2>
+        
+        <!-- 시공 정보 설명 -->
+        <div style="margin-bottom: 20px;">
+          <h3 style="font-size: 1.05rem; color: var(--primary);">📋 전문 작업 내용 개요</h3>
+          <p style="font-size: 0.85rem; color: var(--text-dark); line-height: 1.6; margin-top: 6px;" id="task-info-desc">
+            설명 로딩 중...
+          </p>
+        </div>
+
+        <!-- 예상 비용 안내 -->
+        <div style="margin-bottom: 20px;">
+          <h3>💰 예상 비용 및 견적 산정 기준</h3>
+          <p style="font-size: 0.85rem; color: var(--text-dark); line-height: 1.6; background-color: var(--bg-main); padding: 14px; border-radius: 8px; margin-top: 6px;">
+            기본 기준 단가: <strong id="task-price-standard" style="color: var(--primary);">로딩 중...</strong><br>
+            <span id="task-price-note" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 4px;"></span>
+          </p>
+          
+          <h4 style="font-size: 0.85rem; font-weight: 700; margin-top: 12px; color: var(--secondary);">상세 견적에 큰 영향을 미치는 5대 결정 요인:</h4>
+          <ul class="guide-list" style="margin-top: 6px;" id="price-factors-list">
+            <li>🏷️ <strong>시공 면적</strong>: 아파트 평형대, 옥상 헤베 수, 창호 가로 길이 등에 비례</li>
+            <li>🧗 <strong>현장 접근성</strong>: 엘리베이터 여부, 특수 고층 로프 장비 탑승 필요 층수</li>
+            <li>⚙️ <strong>전문 장비 동원</strong>: 내시경 카메라, 초고압 차량, 사다리차 배치</li>
+            <li>🚨 <strong>긴급 출동 여부</strong>: 당일 야간 긴급 뚫음 작업 또는 주말 시공 예약 여부</li>
+            <li>🛠️ <strong>오염 및 균열 노후화 수준</strong>: 실리콘 기존 코킹 제거 시간, 누수 보수 크랙 깊이</li>
+          </ul>
+          <p style="font-size: 0.75rem; color: hsl(0, 70%, 45%); margin-top: 8px; font-weight: 700;">
+            ※ 가격은 현장 상황 및 난이도에 따라 유동적이므로, 단정적 수치 대신 반드시 통화/카톡 상담을 통하여 가견적 조율을 받으시길 바랍니다.
+          </p>
+        </div>
+
+        <!-- 6. 업체 선택 기준 섹션 -->
+        <div>
+          <h3>🧐 올바른 업체 선택 가이드</h3>
+          <ul class="guide-list" style="margin-top: 6px;">
+            <li>1. 사장님의 실제 주소지가 시공 가능 영역 인근인지 확인하여 불필요한 출장료를 예방하세요.</li>
+            <li>2. 현장 상황 파악을 위해 견적 상담 시 스마트폰 사진(누수 흔적, 막힌 배관 등) 송부가 가능한지 검토해 보세요.</li>
+            <li>3. 철거비, 사다리차 등 계약 당시 고지되지 않은 현장 추가 비용 발생 여부를 사전에 협상해야 합니다.</li>
+            <li>4. 작업 후 공종 성격에 맞게 1년 이상 하자이행 보증(AS) 가이드가 확실한 제휴 업체를 고르는 것이 중요합니다.</li>
+            <li>5. 정식 사업자 등록 여부 및 해당 키워드 공사 시공 포트폴리오(홈페이지 링크 등)를 직접 검증해 보세요.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. 관련 지역 및 관련 작업 링크 (내부 링크 구조화) -->
+    <section class="section" style="padding: 12px 0;">
+      <div class="related-box">
+        <h3 style="font-size: 1rem; color: var(--secondary); margin-bottom: 12px;">연관 추천 지역 바로가기</h3>
+        <div class="region-links-wrapper" id="nearby-links-wrapper" style="margin-bottom: 20px;">
+          <!-- JS 동적 생성 -->
+        </div>
+
+        <h3 style="font-size: 1rem; color: var(--secondary); margin-bottom: 12px;">이 지역의 다른 전문 작업</h3>
+        <div class="region-links-wrapper" id="related-tasks-wrapper">
+          <!-- JS 동적 생성 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 광고주 전환 섹션 -->
+    <section class="section text-center" style="background-color: var(--secondary); color: white; border-radius: var(--border-radius); padding: 32px; margin-top: 20px;">
+      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">이 페이지는 지역 기반 광고 지면입니다</h2>
+      <p style="font-size: 0.85rem; color: hsl(215, 20%, 80%); line-height: 1.6; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto;">
+        선택하신 해당 지역과 전문 수리 작업명 페이지에 유일한 사장님 광고 카드를 등록하고, 중개 수수료 없이 전화 콜을 직접 수신하세요.
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto;">
+        <a href="/apply.html" class="btn btn-accent" id="convert-apply-btn">이 지역 광고 신청하기</a>
+        <a href="/guide.html" class="btn btn-outline" style="color: white; border-color: hsl(215, 20%, 40%);">입점 안내서 다운로드</a>
+      </div>
+    </section>
+
+    <!-- 9. FAQ 섹션 (지역명 및 작업명 자동 결합 구조) -->
+    <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 24px;">
+      <h2 class="section-title" style="font-size: 1.2rem;" id="landing-faq-title">[지역] [작업] 자주 묻는 질문</h2>
+      <div class="faq-list" id="landing-faq-list">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 맥락 인지형 모바일 하단 고정 CTA 바 (landing.html 전용: 다이렉트 통화 연결망 바인딩) -->
+  <div class="sticky-cta-bar" id="landing-sticky-bar">
+    <div class="sticky-cta-container">
+      <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-accent sticky-cta-btn" style="flex: 2;">📞 다이렉트 신속 전화 연결</a>
+      <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn" style="flex: 1; background-color: white;">광고 신청</a>
+    </div>
+  </div>
+
+  <!-- 공통 푸터 컨테이너 -->
+  <div id="footer-container"></div>
+
+  <script type="module">
+    import { renderHeader } from '/src/components/Header.js';
+    import { renderFooter } from '/src/components/Footer.js';
+    import { categories } from '/src/data/categories.js';
+    import { tasks } from '/src/data/tasks.js';
+    import { regions } from '/src/data/regions.js';
+    import { businesses } from '/src/data/businesses.js';
+    import { CompanyCard } from '/src/components/CompanyCard.js';
+    import { updateSeoMeta } from '/src/components/SeoMeta.js';
+
+    renderHeader();
+    renderFooter();
+
+    // 1. URL 쿼리 파라미터 획득
+    const urlParams = new URLSearchParams(window.location.search);
+    const regParam = urlParams.get('reg') || '서울 강남구';
+    const catParam = urlParams.get('cat') || 'window-caulking';
+    const taskParam = urlParams.get('task') || 'window-caulking-task';
+
+    const currentCat = categories.find(c => c.id === catParam) || categories[0];
+    const currentTask = tasks.find(t => t.id === taskParam) || tasks.find(t => t.categoryId === currentCat.id) || tasks[0];
+    const currentRegion = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || regions[0];
+
+    // 2. 동적 콘텐츠 치환 및 SEO 주입
+    function initLandingPage() {
+      const regionName = regParam;
+      const taskName = currentTask.name;
+      const catName = currentCat.name;
+
+      // H1 및 보조 문구
+      document.getElementById('landing-h1').textContent = `${regionName} ${taskName} 업체 찾기`;
+      document.getElementById('landing-subtitle').textContent = `${regionName} 인근에서 ${taskName} 상담 가능한 업체 정보를 확인해 보세요.`;
+      document.getElementById('info-section-title').textContent = `${regionName} ${taskName} 시공 핵심 정보`;
+      document.getElementById('landing-faq-title').textContent = `${regionName} ${taskName} 자주 묻는 질문 (FAQ)`;
+
+      // 브레드크럼
+      document.getElementById('bread-region').textContent = regionName.split(' ')[0];
+      document.getElementById('bread-category').textContent = catName;
+      document.getElementById('bread-task').textContent = taskName;
+
+      // SEO 최적화 적용
+      updateSeoMeta({
+        title: `${regionName} ${taskName} 업체 찾기 | 동네책자`,
+        description: `${regionName}에서 ${taskName} 상담 가능한 업체 정보를 확인하고, 지역 키워드 광고 입점도 신청할 수 있습니다.`
+      });
+
+      // Canonical 및 Open Graph 설정
+      const pageUrl = `https://dongnae-booklet.co.kr/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      
+      let canonLink = document.querySelector("link[rel='canonical']");
+      if (!canonLink) {
+        canonLink = document.createElement('link');
+        canonLink.rel = 'canonical';
+        document.head.appendChild(canonLink);
+      }
+      canonLink.href = pageUrl;
+
+      // Open Graph 주입
+      document.querySelector("meta[property='og:title']").setAttribute('content', `${regionName} ${taskName} 업체 찾기 | 동네책자`);
+      document.querySelector("meta[property='og:description']").setAttribute('content', `${regionName}에서 ${taskName} 해결을 위해 입점된 전문 광고 업체의 전화/카톡 정보를 바로 안내받으세요.`);
+
+      // 3. 작업 설명 및 가격 정보 바인딩
+      let taskDesc = "";
+      if (currentCat.id === 'general-cleaning') {
+        taskDesc = `유리창청소, 외벽청소, 이사/입주 전 준공청소 등 전문 가구 시방을 준수하여 미세 공사 가루와 찌든 유기 오염을 완전히 지워내는 청결 도급 공정입니다. 고층 빌딩이나 창틀 외부 시공의 경우 사다리차나 스카이차 배치가 수반될 수 있습니다.`;
+      } else if (currentCat.id === 'waterproof-leak') {
+        taskDesc = `건물 외벽 균열 보수, 옥상 우레탄 크랙 필링 및 누수 배관 탐지 해결 공정입니다. 빗물이 누수되는 미세 위치를 파악하기 위해 가스 탐지기와 열화상 진단 카메라가 동원될 수 있습니다.`;
+      } else if (currentCat.id === 'window-caulking') {
+        taskDesc = `아파트/빌라 베란다 외부 유리창틀의 실리콘 코킹 탈락으로 인한 내부 빗물 누수를 복구하는 외벽 코킹 로프 공정입니다. 낡은 기존 코킹을 오려내고 외벽용 비초산 실란트를 충전해야만 견고함이 유지됩니다.`;
+      } else {
+        taskDesc = `싱크대 기름 응고 역류 차단, 화장실 배구구 막힘 파쇄 및 공용 오수관 배관 내시경 촬영/고압세척 뚫음 공정입니다. 자주 재발하는 막힘이라면 배관 경사 굴곡 상태를 카메라로 정밀 확인하는 스케일링 세척이 필수적입니다.`;
+      }
+
+      document.getElementById('task-info-desc').textContent = taskDesc;
+      document.getElementById('task-price-standard').textContent = currentCat.priceGuide.standard;
+      document.getElementById('task-price-note').textContent = currentCat.priceGuide.note;
+
+      // CTA 링크 정보 수정
+      document.getElementById('convert-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      document.getElementById('fallback-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      document.getElementById('sticky-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+
+      // 4. 업체 매칭 필터링
+      const matched = businesses.filter(biz => {
+        if (!biz.visible || biz.adStatus !== 'active') return false;
+        
+        const start = new Date(biz.adStartDate);
+        const end = new Date(biz.adEndDate);
+        const now = new Date("2026-06-30");
+        if (now < start || now > end) return false;
+
+        if (!biz.categoryIds.includes(catParam) || !biz.taskIds.includes(taskParam)) return false;
+
+        const matchedRegion = biz.serviceRegions.some(regSlug => {
+          return currentRegion.slug === regSlug || currentRegion.slug.startsWith(regSlug + "/");
+        });
+        return matchedRegion;
+      }).sort((a, b) => b.priority - a.priority);
+
+      const grid = document.getElementById('landing-listings-grid');
+      const fallback = document.getElementById('landing-fallback');
+      const stickyCallBtn = document.getElementById('sticky-call-btn');
+
+      if (matched.length > 0) {
+        grid.style.display = 'grid';
+        fallback.style.display = 'none';
+
+        grid.innerHTML = matched.map(biz => {
+          const listObj = {
+            id: biz.id,
+            name: biz.brandName,
+            category: biz.categoryIds[0],
+            regions: biz.serviceRegions.map(slug => {
+              const found = regions.find(r => r.slug === slug);
+              return found ? found.displayName : slug;
+            }),
+            tags: biz.taskIds.map(tId => {
+              const foundT = tasks.find(t => t.id === tId);
+              return foundT ? foundT.name : tId;
+            }).slice(0, 3),
+            phone: biz.phone,
+            kakaoLink: biz.kakaoUrl,
+            siteLink: biz.websiteUrl,
+            description: biz.description,
+            isAd: true,
+            badgeText: biz.badge
+          };
+          return CompanyCard(listObj);
+        }).join('');
+
+        // 하단 고정 전화걸기 타겟 번호 설정 (우선순위 1위인 업체의 번호 부여)
+        const primaryPhone = matched[0].phone;
+        if (primaryPhone && primaryPhone !== "추후 입력") {
+          stickyCallBtn.href = `tel:${primaryPhone}`;
+          stickyCallBtn.textContent = `📞 ${matched[0].brandName} 다이렉트 통화`;
+        } else {
+          stickyCallBtn.href = `tel:010-0000-0000`; // placeholder
+          stickyCallBtn.textContent = `📞 상담 파트너 연결`;
+        }
+      } else {
+        grid.style.display = 'none';
+        fallback.style.display = 'block';
+
+        // 매칭된 업체가 아예 없는 경우 고정 CTA 바를 [광고 신청서] 플랜으로 전면 수정
+        stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+        stickyCallBtn.textContent = `📢 이 지역 첫 광고주 입점 신청하기`;
+        document.getElementById('sticky-apply-btn').style.display = 'none'; // 신청 1개 버튼만 가로 꽉 채움
+
+        document.getElementById('fallback-nearby-btn').onclick = () => {
+          const nearbySlug = currentRegion.nearbyRegions[0] || regions[0].slug;
+          const targetReg = regions.find(r => r.slug === nearbySlug) || regions[0];
+          window.location.href = `/landing.html?reg=${encodeURIComponent(targetReg.displayName)}&cat=${catParam}&task=${taskParam}`;
+        };
+      }
+
+      // 5. 관련 지역 및 관련 작업 내부 링크 동적 빌딩
+      const nearbyWrapper = document.getElementById('nearby-links-wrapper');
+      if (nearbyWrapper) {
+        nearbyWrapper.innerHTML = currentRegion.nearbyRegions.map(regSlug => {
+          const foundR = regions.find(r => r.slug === regSlug);
+          const nameText = foundR ? foundR.displayName : regSlug;
+          return `
+            <a href="/landing.html?reg=${encodeURIComponent(nameText)}&cat=${catParam}&task=${taskParam}" class="region-bubble">
+              ${nameText} ${taskName}
+            </a>
+          `;
+        }).join('');
+      }
+
+      const tasksWrapper = document.getElementById('related-tasks-wrapper');
+      if (tasksWrapper) {
+        const related = tasks.filter(t => t.categoryId === catParam && t.id !== taskParam).slice(0, 4);
+        tasksWrapper.innerHTML = related.map(t => `
+          <a href="/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${t.id}" class="region-bubble" style="border-color: var(--primary);">
+            ${regionName} ${t.name}
+          </a>
+        `).join('');
+      }
+
+      // 6. 지역명+작업명 맞춤 FAQ 생성
+      const faqList = document.getElementById('landing-faq-list');
+      if (faqList) {
+        faqList.innerHTML = `
+          <div class="faq-item">
+            <div class="faq-q">Q. ${regionName}에서 ${taskName} 견적 상담을 신청하면 어떻게 진행되나요?</div>
+            <div class="faq-a">A. 소개 리스트의 입점 파트너 카드를 확인하신 후, 전화 걸기 또는 카카오톡 문의 단추를 클릭해 보세요. 직접 중개 수수료가 없는 직거래 형태이므로 현장 주소와 사진을 보내주시면 빠르게 가견적을 받으실 수 있습니다.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Q. ${regionName} ${taskName}의 평균 비용은 어떻게 결정되나요?</div>
+            <div class="faq-a">A. 작업면적, 현장 장비(스카이차, 고압 세척기) 투입 여부, 현장 오염 정도에 따라 차이가 납니다. 상세 단가는 단정지을 수 없으므로 파트너와 사전 협의를 권장합니다.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Q. 누수로 인한 당일 긴급 출동이나 야간 긴급 상담도 접수가 되나요?</div>
+            <div class="faq-a">A. 하수구 역류나 긴급 누수 현상에 대비해 일부 입점 파트너들은 24시간 긴급 유선 상담을 개방하고 있습니다. 업체 목록의 직접 전화 걸기를 활용해 보시기 바랍니다.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Q. 등록된 광고 업체들의 표시는 어떻게 신뢰할 수 있나요?</div>
+            <div class="faq-a">A. 동네책자는 무분별한 1위 추천 딱지나 검증 완료 표현을 지양하며, 유료 광고 구좌를 획득한 업체에게만 "상담 연결 가능 업체" 배지를 정직하게 표기하고 있습니다.</div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-q">Q. ${regionName} 지역 내에서 여러 광고 업체를 비교해 볼 수 있나요?</div>
+            <div class="faq-a">A. 네, 제공되는 리스트에 입점된 여러 업체의 홈페이지를 각각 방문하셔서 시공 포트폴리오를 둘러보시고 안전하게 직접 거래를 맺으실 수 있습니다.</div>
+          </div>
+        `;
+      }
+
+      // FAQ 아코디언 핸들링 바인딩
+      document.querySelectorAll('#landing-faq-list .faq-q').forEach(question => {
+        question.addEventListener('click', () => {
+          const item = question.parentNode;
+          item.classList.toggle('active');
+        });
+      });
+    }
+
+    initLandingPage();
+  </script>
+</body>
+</html>

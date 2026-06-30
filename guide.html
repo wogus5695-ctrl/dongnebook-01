@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시공·수리 로컬 구좌 광고 입점 안내 | 동네책자</title>
+  <meta name="description" content="동네책자에 사장님 업체를 노출해 보세요. 월 5만 원으로 해당 시공/수리 지역 키워드 검색 고객 전화를 직접 확보하는 직거래 배너 대여 상품을 소개합니다.">
+  <link rel="stylesheet" href="/src/css/main.css">
+  <style>
+    /* B2B 지면 특화 장치 */
+    .placement-display-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-top: 16px;
+    }
+    .placement-item {
+      padding: 12px 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .placement-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body class="has-sticky-bottom">
+
+  <!-- 공통 헤더 마운트 -->
+  <div id="header-container"></div>
+
+  <main class="container">
+    
+    <!-- 1. Hero 섹션 -->
+    <section class="hero" style="background: radial-gradient(circle at top left, var(--accent-cta-light), transparent);">
+      <span class="ad-badge" style="background-color: var(--accent-cta); color: white; border: none;">B2B 광고 파트너 모집</span>
+      <h1 class="hero-title-pc" style="margin-top: 10px;">
+        지역 키워드 광고를<br>월 5만 원부터 가볍게 테스트하세요
+      </h1>
+      <h1 class="hero-title-mo" style="margin-top: 10px;">
+        지역 키워드 광고<br>월 5만원부터 시작
+      </h1>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; line-height: 1.5; max-width: 480px; margin-left: auto; margin-right: auto;">
+        고객이 직접 검색하는 '{특정 지역} + {시공 작업명}' 랜딩 페이지 상단에 사장님의 전화번호와 카톡 채널이 포함된 프로필 카드를 대여해 드립니다.
+      </p>
+      
+      <div class="hero-cta">
+        <a href="/apply.html" class="btn btn-accent">지금 광고 신청하기</a>
+        <a href="#products-section" class="btn btn-outline" style="background-color: white;">광고 상품 단가 보기</a>
+      </div>
+    </section>
+
+    <!-- 2. 광고 상품 설명 섹션 (독립 데이터 adProducts.js 기반 동적 렌더링) -->
+    <section class="section" id="products-section">
+      <h2 class="section-title" style="font-size: 1.25rem;">유연한 광고 입점 요금제</h2>
+      <p class="section-subtitle">사업장 출장 범위 및 타겟 범위에 맞춰 필요한 만큼 구좌 플랜을 골라보세요.</p>
+      
+      <div class="pricing-grid" id="guide-products-grid">
+        <!-- JS 동적 로딩 -->
+      </div>
+    </section>
+
+    <!-- 3. 광고 노출 위치 안내 -->
+    <section class="section" style="border-top: 1px solid var(--border-color);">
+      <h2 class="section-title" style="font-size: 1.25rem;">내 광고는 어디에 노출되나요?</h2>
+      <p class="section-subtitle">동네책자는 아래 4가지 지면에 사장님의 다이렉트 상담 카드를 노출시킵니다.</p>
+      
+      <div class="placement-display-box">
+        <div class="placement-item">
+          <h4 style="color: var(--primary); font-size: 0.95rem;">📍 1. 지역명+작업명 랜딩 페이지 최상단 업체 카드</h4>
+          <p style="font-size: 0.85rem; color: var(--text-dark); margin-top: 2px;">
+            예: '서울 강남구 창틀코킹' 검색 유입 시, 상세 페이지 상단에 사장님의 대표 명함 카드가 정식 게재됩니다.
+          </p>
+        </div>
+        <div class="placement-item">
+          <h4 style="color: var(--primary); font-size: 0.95rem;">📂 2. 업종 카테고리 허브 페이지 파트너 리스트</h4>
+          <p style="font-size: 0.85rem; color: var(--text-dark); margin-top: 2px;">
+            '하수구막힘', '방수공사' 카테고리 센터 목록에 소속 파트너사로 묶여 리스팅됩니다.
+          </p>
+        </div>
+        <div class="placement-item">
+          <h4 style="color: var(--primary); font-size: 0.95rem;">🔗 3. 인근 연관 작업/연관 지역 내부 앵커 링크 연동</h4>
+          <p style="font-size: 0.85rem; color: var(--text-dark); margin-top: 2px;">
+            연결된 인근 동/읍/면 검색 페이지 하단 브레드크럼 밑 내부 링크 박스에 포함되어 검색 크롤러 점유율을 넓힙니다.
+          </p>
+        </div>
+        <div class="placement-item">
+          <h4 style="color: var(--primary); font-size: 0.95rem;">🖥️ 4. 카테고리 최상단 대형 와이드 배너 (별도 옵션)</h4>
+          <p style="font-size: 0.85rem; color: var(--text-dark); margin-top: 2px;">
+            허브 페이지 첫 스크롤 시 시선을 집중시키는 단독 와이드 홍보 이미지 지면을 단독 점유할 수 있습니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 광고 등록 절차 -->
+    <section class="section" style="border-top: 1px solid var(--border-color);">
+      <h2 class="section-title" style="font-size: 1.25rem;">입점 진행 절차</h2>
+      <p class="section-subtitle">동네책자는 투명한 광고 집행을 위해 철저한 수동 정밀 검수를 실시합니다.</p>
+      
+      <div class="process-timeline">
+        <div class="process-step">
+          <div class="process-step-title">STEP 1. 온라인 신청서 접수</div>
+          <div class="process-step-desc">원하는 노출 희망 행정구역 및 키워드를 골라 양식을 송부합니다.</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-title">STEP 2. 키워드 적절성 및 사업자 수동 확인 심사</div>
+          <div class="process-step-desc">지역 담당 매니저가 기재된 사업장 정보 및 서비스 가용 영역의 유효성을 실시간 판독합니다.</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-title">STEP 3. 입점 단가 안내 및 결제 조율</div>
+          <div class="process-step-desc">확정된 최종 구좌 예산 입금 대기 및 정산 수단을 배정합니다.</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-title">STEP 4. 업체 카드 세팅 및 정식 노출 개시</div>
+          <div class="process-step-desc">전용 뱃지 정보와 다이렉트 통화망을 탑재한 카드를 활성화합니다.</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-title">STEP 5. 게재 완료 공식 단독 URL 안내</div>
+          <div class="process-step-desc">사장님의 등록 페이지 링크를 문자/카톡으로 확인 가능하도록 발송해 드립니다.</div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-title">STEP 6. 월간 성과 리포트 송부 (수동 지원)</div>
+          <div class="process-step-desc">구글 애널리틱스 기준 집계된 조회수 및 통화 통계를 월 단위로 발송해 드립니다.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 리포트 제공 항목 안내 -->
+    <section class="section" style="background-color: var(--bg-card); padding: 24px; border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+      <h2 class="section-title" style="font-size: 1.2rem;">투명한 성과 추적 리포트 (제공 예정)</h2>
+      <p class="section-subtitle" style="margin-bottom: 16px;">사장님이 납부하신 월 광고료 대비 통계 효율을 명확히 점검해 보실 수 있습니다.</p>
+      
+      <ul class="guide-list" style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+        <li>📈 <strong>등록 페이지 노출 지면 조회수</strong>: 실제 내 광고 카드가 로드된 페이지 PV량</li>
+        <li>🖱️ <strong>업체 카드 상세 클릭수</strong>: 사장님의 프로필 카드 및 부가 설명에 고객이 접촉한 클릭 로그</li>
+        <li>📞 <strong>전화 버튼 연결 클릭수</strong>: 모바일 크롬 브라우저에서 '전화 문의' 단추를 누른 통화 시도 로그</li>
+        <li>💬 <strong>카카오톡 상담 연결 클릭수</strong>: 카카오 오픈프로필/상담 채널로 진입한 클릭수 로그</li>
+        <li>🗺️ <strong>지역별 타겟 효율 데이터</strong>: 광고 노출이 활발히 터진 세부 행정 동 정보 분석</li>
+        <li>💡 <strong>다음 달 고효율 키워드 추천</strong>: 현재 공석 중인 주변 인근 우수 지역 가이던스</li>
+      </ul>
+    </section>
+
+    <!-- 6. 광고 등록 기준 -->
+    <section class="section" style="border-top: 1px solid var(--border-color);">
+      <h2 class="section-title" style="font-size: 1.2rem; color: hsl(0, 80%, 30%);">광고 입점 및 심사 기준 고지</h2>
+      <p class="section-subtitle">건전한 로컬 상생 마케팅 시장 형성을 위해 다음 기준을 반드시 충족해야만 승인됩니다.</p>
+      
+      <div style="background-color: hsl(0, 80%, 98%); border: 1.5px solid hsl(0, 50%, 90%); border-radius: var(--border-radius); padding: 20px; font-size: 0.85rem; line-height: 1.6; color: hsl(0, 80%, 20%);">
+        <ul>
+          <li>📞 <strong>실시간 유선 상담망 필수</strong>: 실제 기재하신 핸드폰 번호 및 고객 연락 수단이 유효해야 합니다.</li>
+          <li>🙅 <strong>허위/과장 거짓 광고 불가</strong>: 국가 공인 면허 미보유 상태에서의 사설 보증성 표현(추천 1위, 검증 완료, 최저가 전면 보장 등)은 카드 설명에 적용 불가합니다.</li>
+          <li>🚫 <strong>무등록 사설 대리 업종 차단</strong>: 브로커형 중개 단순 대행업이나 타인 명의 도용 등 부당 업종은 제외됩니다.</li>
+          <li>🎯 <strong>영업 구역의 실질 일치성</strong>: 실제 활동하지 않는 무분별한 전국 등록은 금지되며, 사장님의 주 거점 시/군/구 위주로만 입점을 승인합니다.</li>
+          <li>🏷️ <strong>광고 명시 규정 준수</strong>: 모든 노출 지면에는 공정거래위원회 지침에 의거 "상담 연결 가능 업체" 등의 표식이 강제 게재됩니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. FAQ 섹션 (아코디언 바인딩 완료) -->
+    <section class="section" style="border-top: 1px solid var(--border-color);">
+      <h2 class="section-title" style="font-size: 1.2rem;">입점 관련 FAQ</h2>
+      
+      <div class="faq-list" id="guide-faq-list">
+        <div class="faq-item">
+          <div class="faq-q">Q. 광고 효과(전화 콜수, 예약수)를 사전에 약속 또는 보장해 주시나요?</div>
+          <div class="faq-a">
+            A. 동네책자는 <strong>"전화 콜수 보장", "상위노출 보장", "계약 확약"과 같은 보장성 허위 마케팅을 일체 하지 않습니다.</strong> 본 상품은 특정 검색 키워드 지면을 임대하는 구좌형 디렉토리 광고로서, 사장님의 신뢰도 높은 프로필 정보와 다이렉트 통화 통로를 소비자에게 투명하게 보여주는 매칭 연결 통로를 제공할 뿐입니다.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Q. 원하는 지역과 시공 작업 키워드를 언제든 변경할 수 있나요?</div>
+          <div class="faq-a">
+            A. 네 가능합니다. 계약 기간 중 노출 지역이나 세부 작업 키워드 변경을 원하실 경우 담당 지역 매니저에게 영업일 기준 최소 2일 전 통보해 주시면 수동 검토를 거쳐 무상으로 세팅을 업데이트해 드립니다.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Q. 월 중간에 광고를 해지하게 되면 환불은 어떻게 받나요?</div>
+          <div class="faq-a">
+            A. 본 서비스는 매월 선불 정기 청구되는 상품입니다. 광고 개시일로부터 7일 이내 해지 신청 시 지면 개설 수수료 10% 공제 후 일할 잔액 환불이 가능하며, 7일이 경과한 경우에는 당월 해지가 불가하고 차월 결제 중단(해지 예약) 처리만 가능합니다.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Q. 여러 업종의 구좌를 여러 개 동시에 가동할 수도 있나요?</div>
+          <div class="faq-a">
+            A. 네 가능합니다. 한 사장님이 종합청소와 하수구막힘을 동시에 출장 시공하시는 경우, 트리플 플랜 또는 프리미엄 파이브 패키지를 결합하여 여러 지면에 사장님의 카드를 동시 게재하실 수 있도록 패키지 할인을 지원합니다.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. 하단 CTA -->
+    <section class="section text-center" style="border-top: 1px solid var(--border-color); padding-top: 40px;">
+      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">내 업체가 노출될 선점 키워드를 선점해 보세요</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">인기 지역의 주요 작업 구좌는 먼저 등록하신 사장님이 계실 시 대기 접수로 전환될 수 있습니다.</p>
+      <a href="/apply.html" class="btn btn-accent" style="max-width: 320px; margin: 0 auto; display: block;">입점 신청 상담서 작성하기</a>
+    </section>
+
+  </main>
+
+  <!-- 광고주 타겟 전용 모바일 하단 고정 B2B 입점 신청 CTA 바 -->
+  <div class="sticky-cta-bar" id="guide-sticky-bar">
+    <div class="sticky-cta-container">
+      <a href="/apply.html" class="btn btn-accent sticky-cta-btn" style="flex: 1;">📢 30초 간편 광고 입점 신청하기</a>
+    </div>
+  </div>
+
+  <!-- 공통 푸터 마운트 -->
+  <div id="footer-container"></div>
+
+  <script type="module">
+    import { renderHeader } from '/src/components/Header.js';
+    import { renderFooter } from '/src/components/Footer.js';
+    import { adProducts } from '/src/data/adProducts.js';
+
+    renderHeader();
+    renderFooter();
+
+    // 상품 단가 동적 렌더링
+    const grid = document.getElementById('guide-products-grid');
+    if (grid) {
+      grid.innerHTML = adProducts.map(prod => {
+        const isRecommend = prod.id === 'product-five';
+        const featuresHTML = prod.features.map(f => `<li>${f}</li>`).join('');
+        
+        return `
+          <div class="pricing-card ${isRecommend ? 'recommend' : ''}">
+            <div class="pricing-header">
+              <span class="ad-badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.7rem; padding: 2px 6px;">${prod.badge}</span>
+              <h3 style="margin-top: 6px;">${prod.name}</h3>
+              <div class="pricing-amount">${prod.priceText}</div>
+            </div>
+            
+            <ul class="pricing-features">
+              ${featuresHTML}
+            </ul>
+
+            <a href="/apply.html?prod=${prod.id}" class="btn ${isRecommend ? 'btn-primary' : 'btn-outline'}" style="font-size: 0.85rem; padding: 10px; margin-top: auto;">
+              ${prod.actionText}
+            </a>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // FAQ 아코디언 스크립트 바인딩
+    document.querySelectorAll('#guide-faq-list .faq-q').forEach(question => {
+      question.addEventListener('click', () => {
+        const item = question.parentNode;
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>

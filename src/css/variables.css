@@ -1,0 +1,105 @@
+:root {
+  /* Color Palette - Modern HSL Colors */
+  --primary-rgb: 37, 99, 235; /* Blue 600 */
+  --primary: hsl(221, 83%, 53%);
+  --primary-hover: hsl(221, 83%, 45%);
+  --primary-light: hsl(221, 83%, 96%);
+
+  --secondary: hsl(215, 28%, 17%);
+  --secondary-hover: hsl(215, 28%, 12%);
+
+  --accent-cta: hsl(142, 72%, 29%); /* Emerald 700 for Consumer CTA */
+  --accent-cta-hover: hsl(142, 72%, 23%);
+  --accent-cta-light: hsl(142, 72%, 95%);
+
+  --ad-badge-bg: hsl(35, 100%, 96%); /* Very soft orange for Ad label */
+  --ad-badge-text: hsl(35, 90%, 35%);
+  --ad-card-border: hsl(35, 80%, 85%);
+
+  /* Neutral Colors */
+  --bg-main: hsl(210, 20%, 98%);
+  --bg-card: hsl(0, 0%, 100%);
+  --text-dark: hsl(215, 28%, 17%);
+  --text-muted: hsl(215, 16%, 47%);
+  --border-color: hsl(215, 20%, 90%);
+
+  /* Typography */
+  --font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Layout constraints */
+  --max-width: 768px; /* Mobile-first container max-width */
+  --border-radius: 12px;
+  --transition-smooth: 0.2s ease-in-out;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Button & Link UI */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-smooth), transform 0.1s ease;
+  text-align: center;
+  width: 100%;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-accent {
+  background-color: var(--accent-cta);
+  color: white;
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-cta-hover);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1.5px solid var(--border-color);
+  color: var(--text-dark);
+}
+
+.btn-outline:hover {
+  background-color: var(--bg-main);
+}

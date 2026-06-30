@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /policy.html
+Disallow: /src/
+Disallow: /node_modules/
+
+Sitemap: https://dongnae-booklet.co.kr/sitemap.xml
