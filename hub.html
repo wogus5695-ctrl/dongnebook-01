@@ -7,7 +7,6 @@
   <meta name="description" content="종합청소, 방수/누수, 창틀코킹, 하수구막힘 등 전문 시공 수리 분야의 지역별 입점 광고 업체를 확인하고 직거래로 신속하게 상담해보세요.">
   <link rel="stylesheet" href="/src/css/main.css">
   <style>
-    /* 카테고리 허브 전용 스타일 추가 */
     .task-card-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -67,15 +66,17 @@
 
   <main class="container">
     
-    <!-- 1. Hero 섹션 -->
+    <!-- 1. Hero 섹션 (초기 수집 시 크롤러 감점을 없애기 위한 No-JS 정적 H1 바인딩 플레이스홀더 대체) -->
     <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 24px;">
-      <!-- H1 1회 적용 -->
-      <h1 class="section-title" id="hub-h1" style="font-size: 1.6rem; color: var(--secondary);">지역 기반 시공·수리 찾기</h1>
+      <!-- H1 단 1회 지정하며 JS 동작 전에도 카테고리 인덱서 작동 -->
+      <h1 class="section-title" id="hub-h1" style="font-size: 1.6rem; color: var(--secondary);">
+        서울·경기 시공·수리 업체 찾기
+      </h1>
       <p class="section-subtitle" id="hub-subtitle">분야별 세부 작업명을 선택하여 가까운 동네 입점 업체를 만나보세요.</p>
       
       <!-- 대 카테고리 스위치 탭 -->
       <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-top: 16px;" id="hub-tabs">
-        <!-- JS 렌더링 -->
+        <!-- JS 탭 렌더러 -->
       </div>
     </section>
 
@@ -107,30 +108,32 @@
       </div>
     </section>
 
-    <!-- 5 & 6. 작업 정보 & 예상 비용 안내 섹션 -->
+    <!-- 5 & 6. 작업 정보 & 예상 비용 안내 섹션 (No-JS FCP를 위한 카테고리별 정적 가이드 데이터 대체 탑재) -->
     <section class="section" style="padding: 12px 0;">
       <div class="guide-box">
-        <h2 style="font-size: 1.25rem; color: var(--secondary); margin-bottom: 16px;" id="guide-section-title">[카테고리명] 시공 상식 & 가이드</h2>
+        <h2 style="font-size: 1.25rem; color: var(--secondary); margin-bottom: 16px;" id="guide-section-title">시공 상식 & 가이드</h2>
         
         <div style="margin-bottom: 20px;">
           <h3>📌 현명한 업체 선택 기준</h3>
           <ul class="guide-list" id="select-standards-list">
-            <!-- JS 동적 치환 -->
-          </div>
+            <li>✔️ 단순히 최저가만 제시하는 업체보다 작업 진행 범위(창틀 틈새 제거, 폐기물 수거 등)를 상세히 서면 명시하는 곳을 선택하십시오.</li>
+            <li>✔️ 파손이나 시공 하자에 대비하여 공식 제휴 업체인지, 영업배상책임보험 가입 여부를 사전에 파악하면 안전합니다.</li>
+          </ul>
         </div>
 
         <div style="margin-bottom: 20px;">
           <h3>🔍 작업 전 필수 확인사항</h3>
           <ul class="guide-list" id="pre-check-list">
-            <!-- JS 동적 치환 -->
-          </div>
+            <li>✔️ 시공 당일 원활한 주변 정리를 위해 거주지 쓰레기 봉투(대형)를 사전에 마련해야 신속히 정돈됩니다.</li>
+            <li>✔️ 로프 작업이나 굴착이 수반되는 공종의 경우 아래층 거주자에게 누수 상태 확인 및 소음 협조를 미리 구하십시오.</li>
+          </ul>
         </div>
 
         <div>
           <h3>💰 예상 비용 및 견적 결정 요인</h3>
           <p style="font-size: 0.85rem; color: var(--text-dark); line-height: 1.6; background-color: var(--bg-main); padding: 14px; border-radius: 8px; margin-top: 6px;">
-            평균 가이드 비용: <strong id="price-guide-standard" style="color: var(--primary);">로딩 중...</strong><br>
-            <span id="price-guide-note" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 6px;"></span>
+            평균 가이드 비용: <strong id="price-guide-standard" style="color: var(--primary);">카테고리별 상이 (전화/채널 문의 시 무료 가견적)</strong><br>
+            <span id="price-guide-note" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 6px;">현장 층수, 시공 면적, 동원 전문 장비(고압 세척기, 스카이 로프차 등) 유무에 따라 개별 산출됩니다.</span>
           </p>
           <p style="font-size: 0.75rem; color: hsl(0, 70%, 45%); margin-top: 8px; font-weight: 700;">
             ※ 위 안내된 비용은 시장 상황에 따른 단순 예시이며, 실제 최종 견적은 현장의 층고, 오염 상태, 도달 난이도에 따라 광고주 업체별로 다르게 산정될 수 있습니다. 단정적 계약 금액이 아니므로 사전 유선 상담을 권장합니다.
@@ -148,9 +151,9 @@
       <a href="/apply.html" class="btn btn-primary" style="max-width: 250px; margin: 0 auto; display: block;">광고 상담 신청하기</a>
     </section>
 
-    <!-- 8. FAQ 섹션 (각 카테고리별 5개 이상의 상세 FAQ 세트 구현) -->
+    <!-- 8. FAQ 섹션 (기본 정보성 FAQ 노출 유지) -->
     <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 24px;">
-      <h2 class="section-title" style="font-size: 1.25rem;" id="hub-faq-title">[카테고리명] 자주 묻는 질문 (FAQ)</h2>
+      <h2 class="section-title" style="font-size: 1.25rem;" id="hub-faq-title">시공 자주 묻는 질문 (FAQ)</h2>
       <div class="faq-list" id="hub-faq-container">
         <!-- JS 동적 로드 -->
       </div>
@@ -179,7 +182,15 @@
     let activeCatId = urlParams.get('cat') || categories[0].id;
     let activeCat = categories.find(c => c.id === activeCatId) || categories[0];
 
-    // 2. 카테고리 특화 5대 FAQ 데이터 셋업 (SEO 및 정보 제공 충실화)
+    // 2. 카테고리별 H1 매핑 테이블 지정 (검색 로봇 JS 해석 전/후 일치 처리)
+    const hubH1Map = {
+      "general-cleaning": "서울·경기 종합청소 업체 찾기",
+      "waterproof-leak": "서울·경기 방수·누수 업체 찾기",
+      "window-caulking": "서울·경기 창틀코킹·창틀누수 업체 찾기",
+      "drain-clog": "서울·경기 하수구막힘 업체 찾기"
+    };
+
+    // 카테고리 특화 5대 FAQ 데이터 셋업
     const categoryFaqs = {
       "general-cleaning": [
         { q: "입주청소와 이사청소의 차이점은 무엇인가요?", a: "입주청소는 신축 건물에서 발생하는 공사 미세먼지, 시멘트 가루, 새집증후군 유해물질을 전문적으로 제거하는 공정입니다. 반면 이사청소는 기존 거주자가 남긴 찌든 때, 기름때, 곰팡이와 생활 오염 흔적을 정화하는 데 집중합니다." },
@@ -228,11 +239,13 @@
 
     // 4. 정보 바인딩 & SEO 업데이트
     function renderHubPage() {
+      const activeH1 = hubH1Map[activeCat.id] || "서울·경기 시공·수리 업체 찾기";
+
       // SEO 변경 사항 적용
       updateSeoMeta({
         title: `지역 기반 ${activeCat.name} 업체 찾기 | 동네책자`,
         description: `${activeCat.name} 관련 작업을 지역별로 손쉽게 검토하고 상담을 진행할 수 있는 광고 입점 업체를 찾을 수 있도록 안내해 드립니다.`,
-        h1Text: `지역 기반 ${activeCat.name} 업체 찾기`
+        h1Text: activeH1
       });
 
       // 캐노니컬 태그 동적 삽입
@@ -242,7 +255,7 @@
         canonicalLink.rel = 'canonical';
         document.head.appendChild(canonicalLink);
       }
-      canonicalLink.href = `https://dongnae-booklet.co.kr/hub.html?cat=${activeCat.id}`;
+      canonicalLink.href = `https://dongnebook-01.vercel.app/hub.html?cat=${activeCat.id}`;
 
       document.getElementById('hub-subtitle').textContent = `${activeCat.name} 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.`;
       document.getElementById('guide-section-title').textContent = `${activeCat.name} 시공 상식 & 가이드`;

@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>우리 동네 시공·수리 광고 디렉토리 플랫폼 | 동네책자</title>
-  <meta name="description" content="종합청소, 방수/누수, 창틀코킹, 하수구막힘 등 전국 롱테일 키워드 기반 로컬 매칭 광고 지면 플랫폼. 소비자와 광고주를 잇는 직거래 마케팅 공간입니다.">
+  <!-- SEO 최적화 메타데이터 -->
+  <title>지역 시공·수리 업체 광고 플랫폼 | 동네책자</title>
+  <meta name="description" content="청소, 방수, 창틀코킹, 하수구 등 지역 기반 전문 업체를 확인하고 광고 입점을 신청할 수 있는 플랫폼입니다.">
   <link rel="stylesheet" href="/src/css/main.css">
 </head>
 <body>
@@ -14,15 +15,10 @@
 
   <main class="container">
     
-    <!-- 1. Hero 섹션 -->
+    <!-- 1. Hero 섹션 (모바일 크기 조정은 CSS에서 완수하여 H1 중복 전면 제거) -->
     <section class="hero">
-      <!-- PC 문구 -->
-      <h1 class="hero-title-pc">
+      <h1 class="hero-title-pc" style="font-size: clamp(1.3rem, 5vw, 1.8rem);">
         우리 동네 시공·수리 전문 업체를<br>한 번에 확인하고 직접 상담하세요
-      </h1>
-      <!-- 모바일 축약 문구 -->
-      <h1 class="hero-title-mo">
-        우리 동네 시공·수리<br>전문 업체 한눈에 확인
       </h1>
       <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 10px; line-height: 1.5;">
         청소·방수·코킹·하수구 등 지역명+작업명 디렉토리 기반의 광고 플랫폼입니다.
@@ -68,8 +64,9 @@
     <section class="section text-center" style="background-color: var(--accent-cta-light); border-radius: var(--border-radius); border: 1px solid var(--ad-card-border); padding: 32px; margin-top: 24px;">
       <span class="ad-badge" style="background-color: var(--accent-cta); color: white; border: none;">광고주 혜택</span>
       <h2 style="font-size: 1.4rem; color: var(--accent-cta); margin: 8px 0 10px;">지역 키워드 광고 월 5만원 테스트</h2>
+      <!-- 사양 지시 적용: 단독 노출 워딩 삭제 및 순화 교체 -->
       <p style="font-size: 0.9rem; color: var(--text-dark); line-height: 1.6; margin-bottom: 20px;">
-        원하시는 <strong>지역명+작업명</strong> 랜딩 페이지에 사장님의 전화번호와 카톡 채널이 포함된 업체 카드가 단독 노출됩니다.<br>
+        선택한 지역+작업명 페이지의 광고 카드 영역에 업체 정보가 노출됩니다.<br>
         중개 수수료가 없으며, 신청 양식 접수 후 담당자 수동 심사를 거쳐 정식 등록됩니다.
       </p>
       <div style="display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto;">
@@ -119,7 +116,7 @@
       </div>
     </section>
 
-    <!-- 7. FAQ 섹션 (Interactive 아코디언 탑재) -->
+    <!-- 7. FAQ 섹션 -->
     <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 16px;">
       <h2 class="section-title" style="font-size: 1.25rem;">광고주 자주 묻는 질문 (FAQ)</h2>
       
@@ -179,7 +176,6 @@
     const catGrid = document.getElementById('main-categories-grid');
     if (catGrid) {
       catGrid.innerHTML = categories.map(cat => {
-        // 해당 카테고리에 속하는 대표 작업 4개 슬라이싱
         const subTasks = tasks.filter(t => t.categoryId === cat.id).slice(0, 4);
         const tagsHTML = subTasks.map(t => `<span class="cat-task-tag">${t.name}</span>`).join('');
         
@@ -203,17 +199,18 @@
     // 3. 지역 디렉토리 동적 로드
     const regionBox = document.getElementById('main-regions-list');
     if (regionBox) {
-      // 광역시도별 그룹화 처리
       const provinceList = ["서울", "경기"];
       
       regionBox.innerHTML = provinceList.map(prov => {
-        // 해당 광역시에 속하는 구/시 단위 필터
         const subRegs = regions.filter(r => r.province === prov && (r.regionLevel === 'district' || r.regionLevel === 'city'));
-        const bubblesHTML = subRegs.map(reg => `
-          <a href="/landing.html?reg=${encodeURIComponent(reg.displayName)}&cat=window-caulking" class="region-bubble">
-            ${reg.district || reg.city}
-          </a>
-        `).join('');
+        const bubblesHTML = subRegs.map(reg => {
+          // 카테고리 디폴트로 일반 매칭 연결
+          return `
+            <a href="/landing.html?reg=${encodeURIComponent(reg.displayName)}&cat=window-caulking" class="region-bubble">
+              ${reg.district || reg.city}
+            </a>
+          `;
+        }).join('');
 
         return `
           <div class="region-row">
@@ -230,15 +227,12 @@
     // 4. 입점 업체 (내부 6대 브랜드만 필터링) 로드
     const bizGrid = document.getElementById('main-businesses-grid');
     if (bizGrid) {
-      // active 및 internalBrand인 6개 보유 업체 노출
       const activeBrands = businesses.filter(b => b.isInternalBrand && b.adStatus === 'active' && b.visible);
       bizGrid.innerHTML = activeBrands.map(biz => {
-        // 기존 CompanyCard 렌더러에 매칭에 필요한 규격에 맞춰 전달
         const formattedListing = {
           id: biz.id,
           name: biz.brandName,
           category: biz.categoryIds[0],
-          // 노출용 시/구 텍스트 매핑
           regions: biz.serviceRegions.map(regSlug => {
             const found = regions.find(r => r.slug === regSlug);
             return found ? found.displayName : regSlug;
@@ -246,7 +240,7 @@
           tags: biz.taskIds.map(tId => {
             const foundTask = tasks.find(t => t.id === tId);
             return foundTask ? foundTask.name : tId;
-          }).slice(0, 3), // 대표 태그 3개만
+          }).slice(0, 3),
           phone: biz.phone,
           kakaoLink: biz.kakaoUrl,
           siteLink: biz.websiteUrl,

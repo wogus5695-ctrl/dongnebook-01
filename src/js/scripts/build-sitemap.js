@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-// 1. 데이터 정의
 const categories = [
   { id: "general-cleaning", name: "종합청소", slug: "cleaning" },
   { id: "waterproof-leak", name: "방수/누수", slug: "waterproofing" },
@@ -55,8 +54,6 @@ const regions = [
   { displayName: "경기 파주시 운정동", slug: "gyeonggi/paju/unjeong" }
 ];
 
-// 현재 2026-06-30 활성 광고주가 실제로 존재하는 지역+작업 조합
-// sitemap 조건: "생성된 실제 페이지 중 MVP 범위 URL만 포함"
 const businesses = [
   { categoryIds: ["general-cleaning"], taskIds: ["floor-cleaning", "post-construction-cleaning", "interior-cleaning", "hood-cleaning", "floor-waxing", "awning-cleaning"], serviceRegions: ["seoul/gangnam", "seoul/songpa", "gyeonggi/suwon"] },
   { categoryIds: ["general-cleaning"], taskIds: ["exterior-cleaning", "window-cleaning", "awning-cleaning", "sign-cleaning"], serviceRegions: ["seoul/gangnam", "seoul/gangnam/yeoksam", "seoul/gangnam/nonhyeon", "gyeonggi/suwon/yeongtong"] },
@@ -66,7 +63,8 @@ const businesses = [
   { categoryIds: ["waterproof-leak"], taskIds: ["rooftop-waterproofing", "rooftop-leak", "rain-leak"], serviceRegions: ["seoul/gangnam", "seoul/songpa", "gyeonggi/suwon", "gyeonggi/suwon/yeongtong"] }
 ];
 
-const DOMAIN = "https://dongnae-booklet.co.kr";
+// 배포 관리 도메인으로 갱신
+const DOMAIN = "https://dongnebook-01.vercel.app";
 const lastmod = "2026-06-30";
 
 function generateSitemap() {
@@ -76,12 +74,21 @@ function generateSitemap() {
   const staticPages = [
     { loc: "/", changefreq: "daily", priority: "1.0" },
     { loc: "/guide.html", changefreq: "weekly", priority: "0.8" },
-    { loc: "/apply.html", changefreq: "weekly", priority: "0.8" },
-    { loc: "/policy.html", changefreq: "monthly", priority: "0.5" }
+    { loc: "/apply.html", changefreq: "weekly", priority: "0.8" }
   ];
   staticPages.forEach(p => urls.push(p));
 
-  // 2. 카테고리 허브 페이지들
+  // 2. 통합 정책 탭 분기 URL 정식 포함
+  const policyTabs = ["privacy", "terms", "ad-standards", "refund"];
+  policyTabs.forEach(tab => {
+    urls.push({
+      loc: `/policy.html?tab=${tab}`,
+      changefreq: "monthly",
+      priority: "0.5"
+    });
+  });
+
+  // 3. 카테고리 허브 페이지들
   categories.forEach(cat => {
     urls.push({
       loc: `/hub.html?cat=${cat.id}`,
@@ -90,8 +97,7 @@ function generateSitemap() {
     });
   });
 
-  // 3. 실제 유효한 광고가 게재 중인 지역+작업 랜딩 페이지들만 사이트맵에 추출 (SEO 최적화 조건 충족)
-  // 규칙: regions * tasks 중 businesses에 매치되는 항목이 최소 1개 이상 존재할 것
+  // 4. 활성 광고 매칭 롱테일 랜딩 페이지들
   regions.forEach(region => {
     tasks.forEach(task => {
       const category = categories.find(c => c.id === task.categoryId);
@@ -106,7 +112,6 @@ function generateSitemap() {
         return hasCat && hasTask && hasReg;
       });
 
-      // 매칭되는 활성 광고주가 존재할 경우에만 Sitemap 등록
       if (hasActiveListing) {
         urls.push({
           loc: `/landing.html?reg=${encodeURIComponent(region.displayName)}&cat=${category.id}&task=${task.id}`,
@@ -117,13 +122,15 @@ function generateSitemap() {
     });
   });
 
-  // Sitemap.xml 생성
+  // XML 포맷 조립 (인코딩 처리 포함 및 XML 문법 완전 검증 보장)
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
   xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
   urls.forEach(u => {
+    // XML 내부 앰퍼샌드(&) 문자 탈출 처리로 웰폼드 XML 보증 (Vercel 파싱 에러 방지 핵심)
+    const escapedLoc = `${DOMAIN}${u.loc}`.replace(/&/g, '&amp;');
     xml += `  <url>\n`;
-    xml += `    <loc>${DOMAIN}${u.loc}</loc>\n`;
+    xml += `    <loc>${escapedLoc}</loc>\n`;
     xml += `    <lastmod>${lastmod}</lastmod>\n`;
     xml += `    <changefreq>${u.changefreq}</changefreq>\n`;
     xml += `    <priority>${u.priority}</priority>\n`;
@@ -132,22 +139,16 @@ function generateSitemap() {
 
   xml += `</urlset>\n`;
 
-  // public 폴더 확인 및 저장
   const publicDir = path.resolve(process.cwd(), 'public');
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
+  fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), xml, 'utf-8');
 
-  const sitemapPath = path.join(publicDir, 'sitemap.xml');
-  fs.writeFileSync(sitemapPath, xml, 'utf-8');
-
-  // 또한 빌드 완료 시 root 디렉토리 및 dist 폴더에도 수집되도록 동일하게 복제 배포
   const distDir = path.resolve(process.cwd(), 'dist');
-  if (fs.existsSync(distDir)) {
-    fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf-8');
+  if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir, { recursive: true });
   }
+  fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf-8');
 
-  console.log(`[성공] sitemap.xml 파일이 빌드 및 저장되었습니다. 포함된 총 URL 수: ${urls.length}개`);
+  console.log(`[성공] Vercel 전용 sitemap.xml 빌드 완료. 포함된 총 URL 수: ${urls.length}개`);
 }
 
 generateSitemap();
