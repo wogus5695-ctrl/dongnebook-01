@@ -50,36 +50,6 @@
         padding: 14px 20px;
       }
     }
-    /* B2C 중립 정보 카드 스타일 */
-    .info-card-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-top: 12px;
-    }
-    @media(min-width: 768px) {
-      .info-card-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    .info-mini-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 20px;
-    }
-    .info-mini-card h3 {
-      font-size: 1rem;
-      color: var(--secondary);
-      margin-bottom: 8px;
-      border-bottom: 1.5px solid var(--primary-light);
-      padding-bottom: 4px;
-    }
-    .info-mini-card p {
-      font-size: 0.8rem;
-      color: var(--text-dark);
-      line-height: 1.5;
-    }
   </style>
 </head>
 <body class="has-sticky-bottom">
@@ -117,7 +87,7 @@
         <!-- JS 렌더링 -->
       </div>
 
-      <!-- 4. 소형 광고주 CTA (업체 카드 리스트 바로 하단 배치 완료) -->
+      <!-- 4. 소형 광고주 CTA -->
       <div class="mini-ad-banner" id="listings-mini-ad-banner">
         <div>
           <h4 style="font-size: 0.9rem; color: var(--secondary); font-weight: 800;" id="mini-ad-title">이 지역에서 [작업명] 업체를 운영 중이신가요?</h4>
@@ -141,32 +111,43 @@
       </div>
     </section>
 
-    <!-- 5. 정보성 콘텐츠 -->
-    <section class="section" style="padding: 12px 0;">
+    <!-- 5. 정보성 콘텐츠 (HTML5 표준 details/summary 리스트 구조로 전면 개편 완료) -->
+    <section class="section" id="guide-info-section" style="padding: 12px 0; max-width: 800px;">
       <h2 style="font-size: 1.2rem; margin-bottom: 4px;">시공·수리 핵심 가이드</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">현장 상담 전 참고할 수 있는 중립 정보를 제공합니다.</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">상담 전 참고하면 좋은 정보를 간단히 정리했습니다.</p>
       
-      <div class="info-card-grid">
-        <div class="info-mini-card">
-          <h3 id="info-section1-title">[지역명] [작업명]이 필요한 경우</h3>
-          <p id="info-section1-desc">
-            상가, 사무실, 건물 외부, 주거 공간 등에서 시공 작업이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. 가까운 상담 가능 업체를 통해 현재 상황에 맞는 조언을 받아보는 것이 좋습니다.
-          </p>
-        </div>
+      <div class="guide-accordion-container" style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <!-- 아코디언 1: {지역명} {작업명}이 필요한 경우 (초기 HTML 텍스트 원문 엄격 유지) -->
+        <details class="guide-accordion">
+          <summary id="info-section1-title">[지역명] [작업명]이 필요한 경우</summary>
+          <div class="guide-content">
+            <p id="info-section1-desc">
+              상가, 사무실, 건물 외부, 주거 공간 등에서 시공 작업이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. 가까운 상담 가능 업체를 통해 현재 상황에 맞는 조언을 받아보는 것이 좋습니다.
+            </p>
+          </div>
+        </details>
 
-        <div class="info-mini-card">
-          <h3>상담 전 확인하면 좋은 내용</h3>
-          <p>
-            상담 전에는 현장 사진, 건물의 대략적인 층수, 구체적인 작업 위치, 오염 정도, 누수 또는 막힘 증상, 그리고 접근 가능 여부를 미리 메모해 두시면 업체 상담이 훨씬 신속하게 진행될 수 있습니다.
-          </p>
-        </div>
+        <!-- 아코디언 2: 상담 전 확인하면 좋은 내용 -->
+        <details class="guide-accordion">
+          <summary>상담 전 확인하면 좋은 내용</summary>
+          <div class="guide-content">
+            <p>
+              상담 전에는 현장 사진, 건물 층수, 작업 위치, 오염 정도, 누수 또는 막힘 증상, 접근 가능 여부를 미리 정리해두면 업체 상담이 더 빠르게 진행될 수 있습니다.
+            </p>
+          </div>
+        </details>
 
-        <div class="info-mini-card">
-          <h3>비용 변동 및 견적 유의사항</h3>
-          <p id="info-section3-desc">
-            [작업명] 시공 비용은 현장 규모, 세부 작업 범위, 동원되는 전문 장비 필요 여부, 현장 접근성, 긴급 출동 필요성에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.
-          </p>
-        </div>
+        <!-- 아코디언 3: 비용 변동 및 견적 유의사항 (중립 가격 유지) -->
+        <details class="guide-accordion">
+          <summary>비용 변동 및 견적 유의사항</summary>
+          <div class="guide-content">
+            <p id="info-section3-desc">
+              [작업명] 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.
+            </p>
+          </div>
+        </details>
+
       </div>
     </section>
 
@@ -210,14 +191,12 @@
   <!-- 9. Footer -->
   <div id="footer-container"></div>
 
-  <!-- 10. 모바일 하단 고정 CTA (소비자용 flex:2 강조 적용 완료) -->
+  <!-- 10. 모바일 하단 고정 CTA -->
   <div class="sticky-cta-bar" id="landing-sticky-bar">
     <div class="sticky-cta-container">
-      <!-- 소비자용 {작업명} 문의 강조 버튼 (메인 컬러) -->
       <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-primary sticky-cta-btn" style="flex: 2; font-size: 0.85rem; padding: 12px;">
         📞 [작업명] 문의 전화 연결
       </a>
-      <!-- 광고주용 광고 입점 보조 버튼 (아웃라인) -->
       <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn" style="flex: 1; font-size: 0.85rem; padding: 12px; background-color: white; border-color: var(--border-color);">
         광고 입점
       </a>
@@ -260,7 +239,7 @@
       // 섹션명 변경
       document.getElementById('listings-main-title').textContent = `${regionName} 인근 상담 가능 업체`;
 
-      // B2C 중립 정보 카드 헤더 및 텍스트 갱신
+      // B2C 중립 정보 아코디언 헤더 및 텍스트 갱신 (details/summary 대응)
       document.getElementById('info-section1-title').textContent = `${regionName} ${taskName}이 필요한 경우`;
       document.getElementById('info-section3-desc').textContent = `${taskName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
 
@@ -363,7 +342,7 @@
         grid.style.display = 'grid';
         fallback.style.display = 'none';
         miniAdBanner.style.display = 'flex';
-        stickyApplyBtn.style.display = 'inline-flex'; // 10번 모바일 고정 바 세팅
+        stickyApplyBtn.style.display = 'inline-flex';
 
         grid.innerHTML = matched.map(biz => {
           const tagDisplayNames = biz.taskIds.map(tId => {
@@ -404,7 +383,6 @@
         miniAdBanner.style.display = 'none';
         fallback.style.display = 'block';
 
-        // 매칭되는 파트너가 없을 시 스티키 바는 첫 광고주 선점으로 단독 확장
         stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
         stickyCallBtn.textContent = `📢 이 지역 첫 광고 입점 신청`;
         stickyApplyBtn.style.display = 'none';

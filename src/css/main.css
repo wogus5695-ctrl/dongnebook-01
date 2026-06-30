@@ -608,9 +608,58 @@
 }
 
 
-.faq-item.active .faq-a {
-  display: block;
+/* Guide Accordion (details / summary) styling */
+.guide-accordion {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 8px;
+  overflow: hidden;
+  transition: border-color var(--transition-smooth);
 }
+.guide-accordion[open] {
+  border-color: var(--primary);
+}
+.guide-accordion summary {
+  padding: 16px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--secondary);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.guide-accordion summary::-webkit-details-marker {
+  display: none; /* 크롬 디폴트 마커 제거 */
+}
+.guide-accordion summary::after {
+  content: "+";
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  transition: transform var(--transition-smooth);
+}
+.guide-accordion[open] summary::after {
+  content: "-";
+  transform: rotate(90deg);
+  color: var(--primary);
+}
+.guide-content {
+  padding: 0 16px 16px 16px;
+  border-top: 1px solid var(--border-light);
+  background-color: hsl(210, 20%, 99%);
+}
+.guide-content p {
+  font-size: 0.82rem;
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin: 0;
+  padding-top: 12px;
+}
+
 
 /* --- Contextual Sticky Bottom CTA Bar --- */
 .sticky-cta-bar {
