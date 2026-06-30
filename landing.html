@@ -29,6 +29,27 @@
       padding: 20px;
       margin-top: 20px;
     }
+    /* 소형 B2B 띠 배너 양식 추가 */
+    .mini-ad-banner {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: center;
+    }
+    @media(min-width: 600px) {
+      .mini-ad-banner {
+        flex-direction: row;
+        text-align: left;
+        padding: 14px 20px;
+      }
+    }
   </style>
 </head>
 <body class="has-sticky-bottom">
@@ -38,7 +59,7 @@
 
   <main class="container">
     
-    <!-- 1. Hero 섹션 -->
+    <!-- 1. Hero 섹션 (광고주용 CTA 완전 배제 및 소비자 중심 2개 버튼 안착) -->
     <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
       <nav style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
         홈 > <span id="bread-region">지역</span> > <span id="bread-category">카테고리</span> > <span id="bread-task" style="color: var(--text-dark); font-weight: bold;">작업</span>
@@ -52,14 +73,14 @@
         [지역명] 인근에서 [작업명] 상담 가능한 업체 정보를 확인하세요.
       </p>
       
-      <!-- 광고 신청 버튼 배제하고 순수 소비자용 CTA 2개 배치 -->
+      <!-- 광고 신청 버튼 배제하고 순수 소비자용 CTA 2개 배치 (광고 신청 버튼 미배치) -->
       <div style="display: flex; gap: 8px; max-width: 380px;">
         <a href="#listings-section" class="btn btn-primary" style="font-size: 0.85rem; padding: 10px 14px; flex: 1;">상담 가능 업체 보기</a>
         <a href="/apply.html" id="landing-hero-apply-btn" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px 14px; flex: 1; background-color: white;">[작업명] 문의하기</a>
       </div>
     </section>
 
-    <!-- 3. 입점 업체 리스트 (소비자 친화적 섹션 명칭 변경 완료) -->
+    <!-- 3. 입점 업체 리스트 -->
     <section class="section" id="listings-section" style="padding: 12px 0;">
       <h2 style="font-size: 1.15rem; margin-bottom: 4px;" id="listings-main-title">[지역명] 인근 상담 가능 업체</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">광고/제휴 등록 업체가 포함되어 있습니다.</p>
@@ -67,6 +88,15 @@
       <!-- 업체 카드 그리드 -->
       <div class="card-grid" id="landing-listings-grid">
         <!-- JS 렌더링 -->
+      </div>
+
+      <!-- [소형 B2B 입점 배너] 업체 리스트 바로 하부 추가 완료 -->
+      <div class="mini-ad-banner" id="listings-mini-ad-banner">
+        <div>
+          <h4 style="font-size: 0.9rem; color: var(--secondary); font-weight: 800;" id="mini-ad-title">이 지역에서 [작업명] 업체를 운영 중이신가요?</h4>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">지역 키워드 페이지에 업체 정보를 등록할 수 있습니다.</p>
+        </div>
+        <a href="/apply.html" id="mini-ad-apply-link" class="btn btn-outline" style="width: auto; font-size: 0.8rem; padding: 8px 16px; white-space: nowrap; border-color: var(--primary); color: var(--primary); background-color: var(--primary-light);">광고 입점 문의</a>
       </div>
 
       <!-- 업체가 없는 경우의 대체 UI (Fallback) -->
@@ -147,15 +177,15 @@
       </div>
     </section>
 
-    <!-- 8. 광고주 전환 섹션 (B2B 하단 고정 유지) -->
+    <!-- 8. 광고주 전환 섹션 (순화 적용 완료) -->
     <section class="section text-center" style="background-color: var(--secondary); color: white; border-radius: var(--border-radius); padding: 32px; margin-top: 20px;">
-      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">이 페이지는 지역 기반 광고 지면입니다</h2>
+      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">이 지역에서 업체를 운영 중이신가요?</h2>
       <p style="font-size: 0.85rem; color: hsl(215, 20%, 80%); line-height: 1.6; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto;">
-        선택하신 해당 지역과 전문 수리 작업명 페이지에 유일한 사장님 광고 카드를 등록하고, 중개 수수료 없이 전화 콜을 직접 수신하세요.
+        선택한 지역과 작업명 페이지에 업체 정보를 등록하고 상담 유입을 테스트할 수 있습니다.
       </p>
       <div style="display: flex; flex-direction: column; gap: 8px; max-width: 320px; margin: 0 auto;">
-        <a href="/apply.html" class="btn btn-accent" id="convert-apply-btn">이 지역 광고 신청하기</a>
-        <a href="/guide.html" class="btn btn-outline" style="color: white; border-color: hsl(215, 20%, 40%);">입점 안내서 다운로드</a>
+        <a href="/apply.html" class="btn btn-accent" id="convert-apply-btn">광고 입점 문의</a>
+        <a href="/guide.html" class="btn btn-outline" style="color: white; border-color: hsl(215, 20%, 40%);">입점 안내 보기</a>
       </div>
     </section>
 
@@ -169,7 +199,7 @@
 
   </main>
 
-  <!-- 맥락 인지형 모바일 하단 고정 CTA 바 -->
+  <!-- 맥락 인지형 모바일 하단 고정 CTA 바 (여기서도 광고 대신 전화 상담 및 문의하기로 교정 유지) -->
   <div class="sticky-cta-bar" id="landing-sticky-bar">
     <div class="sticky-cta-container">
       <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-accent sticky-cta-btn" style="flex: 2;">📞 다이렉트 신속 전화 연결</a>
@@ -214,8 +244,12 @@
       document.getElementById('info-section-title').textContent = `${regionName} ${taskName} 시공 핵심 정보`;
       document.getElementById('landing-faq-title').textContent = `${regionName} ${taskName} 자주 묻는 질문 (FAQ)`;
 
-      // 섹션명 변경: {지역명} 인근 상담 가능 업체
+      // 섹션명 변경
       document.getElementById('listings-main-title').textContent = `${regionName} 인근 상담 가능 업체`;
+
+      // 소형 B2B 띠 배너 제목 동적 치환
+      document.getElementById('mini-ad-title').textContent = `이 지역에서 ${taskName} 업체를 운영 중이신가요?`;
+      document.getElementById('mini-ad-apply-link').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
 
       // H1 바로 아래 소비자 중심 맞춤형 보조 문구
       let helperSubtitle = "";
@@ -306,13 +340,14 @@
       const grid = document.getElementById('landing-listings-grid');
       const fallback = document.getElementById('landing-fallback');
       const stickyCallBtn = document.getElementById('sticky-call-btn');
+      const miniAdBanner = document.getElementById('listings-mini-ad-banner');
 
       if (matched.length > 0) {
         grid.style.display = 'grid';
         fallback.style.display = 'none';
+        miniAdBanner.style.display = 'flex'; // 소형 배너 활성화
 
         grid.innerHTML = matched.map(biz => {
-          // 태스크 한글 이름 목록화하여 전달
           const tagDisplayNames = biz.taskIds.map(tId => {
             const foundT = tasks.find(t => t.id === tId);
             return foundT ? foundT.name : tId;
@@ -335,8 +370,6 @@
             badgeText: biz.badge,
             thumbnail: biz.thumbnail
           };
-          
-          // 호출부에서 { regionName, taskName } 컨텍스트를 인수로 전달하여 썸네일 이미지 alt 작성을 유기적으로 완료
           return CompanyCard(listObj, { regionName, taskName });
         }).join('');
 
@@ -350,6 +383,7 @@
         }
       } else {
         grid.style.display = 'none';
+        miniAdBanner.style.display = 'none'; // 매칭 업체 없을 땐 중복 방지 위해 띰
         fallback.style.display = 'block';
 
         stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
