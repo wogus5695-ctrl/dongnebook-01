@@ -170,7 +170,7 @@
       </div>
     </section>
 
-    <!-- 7. 관련 지역 및 관련 작업 링크 (한글 레이블 보강 완료) -->
+    <!-- 7. 관련 지역 및 관련 작업 링크 -->
     <section class="section" style="padding: 12px 0;">
       <div class="related-box">
         <h3 style="font-size: 1rem; color: var(--secondary); margin-bottom: 12px;">연관 추천 지역 바로가기</h3>
@@ -197,7 +197,7 @@
       </div>
     </section>
 
-    <!-- 9. FAQ 섹션 -->
+    <!-- 9. FAQ 섹션 (소비자 중심 5대 FAQ로 교체 완료) -->
     <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 24px;">
       <h2 class="section-title" style="font-size: 1.2rem;" id="landing-faq-title">[지역] [작업] 자주 묻는 질문</h2>
       <div class="faq-list" id="landing-faq-list">
@@ -355,7 +355,7 @@
       if (matched.length > 0) {
         grid.style.display = 'grid';
         fallback.style.display = 'none';
-        miniAdBanner.style.display = 'flex'; // 소형 배너 활성화
+        miniAdBanner.style.display = 'flex';
 
         grid.innerHTML = matched.map(biz => {
           const tagDisplayNames = biz.taskIds.map(tId => {
@@ -393,7 +393,7 @@
         }
       } else {
         grid.style.display = 'none';
-        miniAdBanner.style.display = 'none'; // 매칭 업체 없을 땐 띰
+        miniAdBanner.style.display = 'none';
         fallback.style.display = 'block';
 
         stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
@@ -407,14 +407,13 @@
         };
       }
 
-      // 5. 관련 지역 및 관련 작업 내부 링크 동적 빌딩 (한글 레이블 변환 구현)
+      // 5. 관련 지역 및 관련 작업 내부 링크 동적 빌딩
       const nearbyWrapper = document.getElementById('nearby-links-wrapper');
       if (nearbyWrapper) {
         nearbyWrapper.innerHTML = currentRegion.nearbyRegions.map(regSlug => {
           const foundR = regions.find(r => r.slug === regSlug);
           let labelText = regSlug;
           if (foundR) {
-            // 동 단위인 경우 구명 등을 생략하고 '역삼동', '논현동' 등으로 컴팩트하게 노출
             labelText = foundR.district || foundR.city || foundR.displayName;
           }
           return `
@@ -422,7 +421,7 @@
               ${labelText} ${taskName}
             </a>
           `;
-        }).slice(0, 6).join(''); // 3~6개 표출 유지
+        }).slice(0, 6).join('');
       }
 
       const tasksWrapper = document.getElementById('related-tasks-wrapper');
@@ -435,29 +434,39 @@
         `).join('');
       }
 
-      // 6. FAQ 생성
+      // 6. FAQ 생성 (소비자 중심 5대 FAQ로 치환 적용 및 변수 유기적 바인딩)
       const faqList = document.getElementById('landing-faq-list');
       if (faqList) {
         faqList.innerHTML = `
           <div class="faq-item">
-            <div class="faq-q">Q. ${regionName}에서 ${taskName} 견적 상담을 신청하면 어떻게 진행되나요?</div>
-            <div class="faq-a">A. 소개 리스트의 입점 파트너 카드를 확인하신 후, 전화 걸기 또는 카카오톡 문의 단추를 클릭해 보세요. 직접 중개 수수료가 없는 직거래 형태이므로 현장 주소와 사진을 보내주시면 빠르게 가견적을 받으실 수 있습니다.</div>
+            <div class="faq-q">Q. ${regionName}에서 ${taskName} 상담은 어떻게 진행되나요?</div>
+            <div class="faq-a">
+              A. 이 페이지에 등록된 상담 가능 업체의 상세 카드 영역에 기재된 직접 전화 통화, 카카오톡 채널 상담 및 제공되는 개별 홈페이지 링크를 클릭하여 부담 없이 직거래로 문의하실 수 있습니다. 상세 공사 환경이나 문제 상태를 사전 구두 전달하시면 사장님들과의 실시간 상담 진행이 원활해집니다.
+            </div>
           </div>
           <div class="faq-item">
-            <div class="faq-q">Q. ${regionName} ${taskName}의 평균 비용은 어떻게 결정되나요?</div>
-            <div class="faq-a">A. 작업면적, 현장 장비(스카이차, 고압 세척기) 투입 여부, 현장 오염 정도에 따라 차이가 납니다. 상세 단가는 단정지을 수 없으므로 파트너와 사전 협의를 권장합니다.</div>
+            <div class="faq-q">Q. ${taskName} 상담 전 어떤 사진을 준비하면 좋나요?</div>
+            <div class="faq-a">
+              A. 수리가 필요한 현장 전체 전경 사진, 문제 오염이나 크랙/누수 균열, 배수관 막힘 등이 발생한 상세 부위 접사 사진, 그리고 고소 작업 필요 여부를 알 수 있는 건물 외부 층수 조감 사진을 찍어두고 상담 시 전송해 주시면 보다 빠른 가견적을 획득하시는 데 매우 유리합니다.
+            </div>
           </div>
           <div class="faq-item">
-            <div class="faq-q">Q. 누수로 인한 당일 긴급 출동이나 야간 긴급 상담도 접수가 되나요?</div>
-            <div class="faq-a">A. 하수구 역류나 긴급 누수 현상에 대비해 일부 입점 파트너들은 24시간 긴급 유선 상담을 개방하고 있습니다. 업체 목록의 직접 전화 걸기를 활용해 보시기 바랍니다.</div>
+            <div class="faq-q">Q. 고층 건물이나 외부 작업도 상담이 가능한가요?</div>
+            <div class="faq-a">
+              A. 네, 가능합니다. 다만 층수 도달 난이도에 따른 고소 스카이차/로프 장비 탑승 필요성, 현장 주변 주정차 차량 대피 구역 등 접근 편의성에 따라 실제 시공 여부가 다르게 판독될 수 있으므로, 입점 파트너에게 무상 유선 상담을 시도하여 안전 규격을 반드시 사전 체크해 보셔야 합니다.
+            </div>
           </div>
           <div class="faq-item">
-            <div class="faq-q">Q. 등록된 광고 업체들의 표시는 어떻게 신뢰할 수 있나요?</div>
-            <div class="faq-a">A. 동네책자는 무분별한 1위 추천 딱지나 검증 완료 표현을 지양하며, 유료 광고 구좌를 획득한 업체에게만 "상담 연결 가능 업체" 배지를 정직하게 표기하고 있습니다.</div>
+            <div class="faq-q">Q. 업체 정보는 어떤 기준으로 표시되나요?</div>
+            <div class="faq-a">
+              A. 동네책자에는 광고/제휴 등록 절차를 정식 수동 승인 통과한 입점 업체 정보가 포함될 수 있습니다. 소비자와 입점 등록 업체 간에 발생하는 실질적인 모든 상담, 도급 계약 및 사후 무상 AS 보증 책임은 해당 입금 당사자 간에 직접 이루어지므로 투명한 비교 검토를 권장합니다.
+            </div>
           </div>
           <div class="faq-item">
-            <div class="faq-q">Q. ${regionName} 지역 내에서 여러 광고 업체를 비교해 볼 수 있나요?</div>
-            <div class="faq-a">A. 네, 제공되는 리스트에 입점된 여러 업체의 홈페이지를 각각 방문하셔서 시공 포트폴리오를 둘러보시고 안전하게 직접 거래를 맺으실 수 있습니다.</div>
+            <div class="faq-q">Q. 여러 업체를 비교해서 문의할 수 있나요?</div>
+            <div class="faq-a">
+              A. 그렇습니다. 본 페이지에 정렬되는 여러 등록 파트너들의 주 시공 카테고리, 포트폴리오 특징, 전화 상담 대응력 및 기재된 링크를 통해 신뢰도를 개별적으로 꼼꼼하게 대조해 본 뒤 원하는 곳들을 고르셔서 동시에 대안 견적을 비교 문의하실 수 있습니다.
+            </div>
           </div>
         `;
       }
