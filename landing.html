@@ -84,12 +84,12 @@
 </head>
 <body class="has-sticky-bottom">
 
-  <!-- 공통 헤더 컨테이너 -->
+  <!-- 1. Header -->
   <div id="header-container"></div>
 
   <main class="container">
     
-    <!-- 1. Hero 섹션 -->
+    <!-- 2. Hero -->
     <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 20px;">
       <nav style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
         홈 > <span id="bread-region">지역</span> > <span id="bread-category">카테고리</span> > <span id="bread-task" style="color: var(--text-dark); font-weight: bold;">작업</span>
@@ -107,7 +107,7 @@
       </div>
     </section>
 
-    <!-- 3. 입점 업체 리스트 -->
+    <!-- 3. 상담 가능 업체 섹션 -->
     <section class="section" id="listings-section" style="padding: 12px 0;">
       <h2 style="font-size: 1.15rem; margin-bottom: 4px;" id="listings-main-title">[지역명] 인근 상담 가능 업체</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">광고/제휴 등록 업체가 포함되어 있습니다.</p>
@@ -117,7 +117,7 @@
         <!-- JS 렌더링 -->
       </div>
 
-      <!-- 소형 B2B 입점 배너 -->
+      <!-- 4. 소형 광고주 CTA (업체 카드 리스트 바로 하단 배치 완료) -->
       <div class="mini-ad-banner" id="listings-mini-ad-banner">
         <div>
           <h4 style="font-size: 0.9rem; color: var(--secondary); font-weight: 800;" id="mini-ad-title">이 지역에서 [작업명] 업체를 운영 중이신가요?</h4>
@@ -141,7 +141,7 @@
       </div>
     </section>
 
-    <!-- 4. 정보성 가이드 섹션 -->
+    <!-- 5. 정보성 콘텐츠 -->
     <section class="section" style="padding: 12px 0;">
       <h2 style="font-size: 1.2rem; margin-bottom: 4px;">시공·수리 핵심 가이드</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">현장 상담 전 참고할 수 있는 중립 정보를 제공합니다.</p>
@@ -170,7 +170,7 @@
       </div>
     </section>
 
-    <!-- 7. 관련 지역 및 관련 작업 링크 -->
+    <!-- 6. 관련 지역 / 관련 작업 -->
     <section class="section" style="padding: 12px 0;">
       <div class="related-box">
         <h3 style="font-size: 1rem; color: var(--secondary); margin-bottom: 12px;">연관 추천 지역 바로가기</h3>
@@ -185,7 +185,7 @@
       </div>
     </section>
 
-    <!-- 8. 광고주 전환 섹션 -->
+    <!-- 7. 하단 광고주 CTA -->
     <section class="section text-center" style="background-color: var(--secondary); color: white; border-radius: var(--border-radius); padding: 32px; margin-top: 20px;">
       <h2 style="font-size: 1.3rem; margin-bottom: 8px;">이 지역에서 업체를 운영 중이신가요?</h2>
       <p style="font-size: 0.85rem; color: hsl(215, 20%, 80%); line-height: 1.6; margin-bottom: 20px; max-width: 480px; margin-left: auto; margin-right: auto;">
@@ -197,7 +197,7 @@
       </div>
     </section>
 
-    <!-- 9. FAQ 섹션 (소비자 중심 5대 FAQ로 교체 완료) -->
+    <!-- 8. FAQ -->
     <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 24px;">
       <h2 class="section-title" style="font-size: 1.2rem;" id="landing-faq-title">[지역] [작업] 자주 묻는 질문</h2>
       <div class="faq-list" id="landing-faq-list">
@@ -207,16 +207,22 @@
 
   </main>
 
-  <!-- 맥락 인지형 모바일 하단 고정 CTA 바 -->
+  <!-- 9. Footer -->
+  <div id="footer-container"></div>
+
+  <!-- 10. 모바일 하단 고정 CTA (소비자용 flex:2 강조 적용 완료) -->
   <div class="sticky-cta-bar" id="landing-sticky-bar">
     <div class="sticky-cta-container">
-      <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-accent sticky-cta-btn" style="flex: 2;">📞 다이렉트 신속 전화 연결</a>
-      <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn" style="flex: 1; background-color: white;">광고 신청</a>
+      <!-- 소비자용 {작업명} 문의 강조 버튼 (메인 컬러) -->
+      <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-primary sticky-cta-btn" style="flex: 2; font-size: 0.85rem; padding: 12px;">
+        📞 [작업명] 문의 전화 연결
+      </a>
+      <!-- 광고주용 광고 입점 보조 버튼 (아웃라인) -->
+      <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn" style="flex: 1; font-size: 0.85rem; padding: 12px; background-color: white; border-color: var(--border-color);">
+        광고 입점
+      </a>
     </div>
   </div>
-
-  <!-- 공통 푸터 컨테이너 -->
-  <div id="footer-container"></div>
 
   <script type="module">
     import { renderHeader } from '/src/components/Header.js';
@@ -351,11 +357,13 @@
       const fallback = document.getElementById('landing-fallback');
       const stickyCallBtn = document.getElementById('sticky-call-btn');
       const miniAdBanner = document.getElementById('listings-mini-ad-banner');
+      const stickyApplyBtn = document.getElementById('sticky-apply-btn');
 
       if (matched.length > 0) {
         grid.style.display = 'grid';
         fallback.style.display = 'none';
         miniAdBanner.style.display = 'flex';
+        stickyApplyBtn.style.display = 'inline-flex'; // 10번 모바일 고정 바 세팅
 
         grid.innerHTML = matched.map(biz => {
           const tagDisplayNames = biz.taskIds.map(tId => {
@@ -386,19 +394,20 @@
         const primaryPhone = matched[0].phone;
         if (primaryPhone && primaryPhone !== "추후 입력") {
           stickyCallBtn.href = `tel:${primaryPhone}`;
-          stickyCallBtn.textContent = `📞 ${matched[0].brandName} 다이렉트 통화`;
+          stickyCallBtn.textContent = `📞 ${taskName} 문의 전화 연결`;
         } else {
           stickyCallBtn.href = `tel:010-0000-0000`;
-          stickyCallBtn.textContent = `📞 상담 파트너 연결`;
+          stickyCallBtn.textContent = `📞 ${taskName} 문의 전화 연결`;
         }
       } else {
         grid.style.display = 'none';
         miniAdBanner.style.display = 'none';
         fallback.style.display = 'block';
 
+        // 매칭되는 파트너가 없을 시 스티키 바는 첫 광고주 선점으로 단독 확장
         stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
-        stickyCallBtn.textContent = `📢 이 지역 첫 광고주 입점 신청하기`;
-        document.getElementById('sticky-apply-btn').style.display = 'none';
+        stickyCallBtn.textContent = `📢 이 지역 첫 광고 입점 신청`;
+        stickyApplyBtn.style.display = 'none';
 
         document.getElementById('fallback-nearby-btn').onclick = () => {
           const nearbySlug = currentRegion.nearbyRegions[0] || regions[0].slug;
@@ -434,7 +443,7 @@
         `).join('');
       }
 
-      // 6. FAQ 생성 (소비자 중심 5대 FAQ로 치환 적용 및 변수 유기적 바인딩)
+      // 6. FAQ 생성
       const faqList = document.getElementById('landing-faq-list');
       if (faqList) {
         faqList.innerHTML = `
