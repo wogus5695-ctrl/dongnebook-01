@@ -88,9 +88,9 @@
           <label class="form-label" for="adProduct">광고 희망 상품 플랜 <span style="color: red;">*</span></label>
           <select id="adProduct" class="form-select" required>
             <option value="">원하시는 광고 예산 상품을 선택하세요</option>
-            <option value="product-single">지역 1개 + 작업명 1개 광고 카드 노출 / 월 5만원</option>
-            <option value="product-triple">지역 3개 패키지 / 월 12만원</option>
-            <option value="product-five">지역 5개 패키지 / 월 20만원</option>
+            <option value="product-single">구 단위 지역 1개 + 작업명 1개 광고 카드 노출 / 월 5만원</option>
+            <option value="product-triple">구 단위 지역 3개 패키지 / 월 12만원</option>
+            <option value="product-five">구 단위 지역 5개 패키지 / 월 20만원</option>
             <option value="product-banner">카테고리 상단 배너 / 별도 문의</option>
             <option value="decision-after-consult">상담 후 결정</option>
           </select>
@@ -134,6 +134,18 @@
 
         <!-- 파트 C. 약관 동의 -->
         <div class="form-group" style="margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+          
+          <!-- 광고 운영 기준 및 유의사항 고지 -->
+          <div style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; font-size: 0.8rem; line-height: 1.6; color: var(--text-dark); margin-bottom: 16px;">
+            <h4 style="font-size: 0.85rem; font-weight: bold; color: var(--secondary); margin-bottom: 6px;">📢 광고 구좌 운영 기준 및 유의사항 고지</h4>
+            <ul style="padding-left: 18px; list-style-type: disc; display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+              <li>광고 구좌 1개는 구 단위 지역 1개와 작업명 키워드 1개 조합으로 운영됩니다.</li>
+              <li>구 단위 지역을 선택하면 해당 구 페이지와 구 안의 동단위 페이지에 함께 노출됩니다.</li>
+              <li>노출 위치와 기간은 운영자 검토 및 광고 등록 상태에 따라 적용됩니다.</li>
+              <li style="font-weight: 700; color: hsl(0, 70%, 40%);">노출 수, 문의 수, 상위노출은 보장하지 않습니다.</li>
+            </ul>
+          </div>
+
           <label class="form-checkbox">
             <input type="checkbox" id="privacyConsent" required>
             <span style="line-height: 1.4;">
