@@ -55,6 +55,16 @@
       <div class="pricing-grid" id="guide-products-grid">
         <!-- JS 동적 로딩 -->
       </div>
+
+      <!-- 광고 상품 주의 유의사항 고지 문구 추가 -->
+      <div style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 18px; font-size: 0.8rem; line-height: 1.65; color: var(--text-dark); margin-top: 24px;">
+        <h4 style="font-size: 0.85rem; font-weight: bold; color: var(--secondary); margin-bottom: 6px;">📢 상품 이용 유의사항</h4>
+        <ul style="padding-left: 18px; list-style-type: disc; display: flex; flex-direction: column; gap: 4px;">
+          <li>광고 노출 위치와 범위는 선택한 구좌, 운영 상태, 등록 승인 여부에 따라 적용됩니다.</li>
+          <li style="font-weight: 700; color: hsl(0, 70%, 45%);">검색 노출 순위, 문의 수, 매출 증가를 보장하지 않습니다.</li>
+          <li>광고 등록 전 운영자가 업종, 지역, 작업명 적합성을 검토합니다.</li>
+        </ul>
+      </div>
     </section>
 
     <!-- 3. 광고 노출 위치 안내 -->
@@ -88,6 +98,39 @@
             허브 페이지 첫 스크롤 시 시선을 집중시키는 단독 와이드 홍보 이미지 지면을 단독 점유할 수 있습니다.
           </p>
         </div>
+      </div>
+    </section>
+
+    <!-- 광고 구좌 선택 원칙 및 노출 범위 표 -->
+    <section class="section" style="border-top: 1px solid var(--border-color);">
+      <h2 class="section-title" style="font-size: 1.25rem;">광고 구좌는 어떻게 선택하나요?</h2>
+      <p class="section-subtitle" style="margin-bottom: 24px;">
+        동네책자의 기본 광고 구좌는 <strong>“구 단위 지역명 + 작업명 키워드”</strong> 조합으로 운영됩니다. 예를 들어 “서울 강남구 + 유리창청소” 구좌를 신청하면, 강남구 유리창청소 페이지와 강남구 내 동단위 유리창청소 페이지에 업체 카드가 함께 노출됩니다.
+      </p>
+
+      <div style="overflow-x: auto; margin-top: 16px; border: 1.5px solid var(--border-color); border-radius: var(--border-radius);">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; line-height: 1.6;">
+          <thead>
+            <tr style="background-color: var(--primary-light); color: var(--secondary); font-weight: bold; border-bottom: 2px solid var(--border-color);">
+              <th style="padding: 12px 16px; width: 40%;">선택 구좌</th>
+              <th style="padding: 12px 16px; width: 60%;">노출 예시</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 12px 16px; font-weight: 700; color: var(--text-dark);">1. 서울 강남구 + 유리창청소</td>
+              <td style="padding: 12px 16px; color: var(--text-muted);">강남구, 역삼동, 논현동, 삼성동 유리창청소 페이지</td>
+            </tr>
+            <tr style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 12px 16px; font-weight: 700; color: var(--text-dark);">2. 서울 송파구 + 외벽청소</td>
+              <td style="padding: 12px 16px; color: var(--text-muted);">송파구, 잠실동, 문정동, 가락동 외벽청소 페이지</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 16px; font-weight: 700; color: var(--text-dark);">3. 경기 수원시 영통구 + 창틀누수</td>
+              <td style="padding: 12px 16px; color: var(--text-muted);">영통구, 매탄동, 원천동, 광교동 창틀누수 페이지</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
@@ -200,9 +243,9 @@
 
     <!-- 8. 하단 CTA -->
     <section class="section text-center" style="border-top: 1px solid var(--border-color); padding-top: 40px;">
-      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">내 업체가 노출될 선점 키워드를 선점해 보세요</h2>
+      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">내 업체가 노출될 지역과 작업명을 선택해보세요.</h2>
       <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">인기 지역의 주요 작업 구좌는 먼저 등록하신 사장님이 계실 시 대기 접수로 전환될 수 있습니다.</p>
-      <a href="/apply.html" class="btn btn-accent" style="max-width: 320px; margin: 0 auto; display: block;">입점 신청 상담서 작성하기</a>
+      <a href="/apply.html" class="btn btn-accent" style="max-width: 320px; margin: 0 auto; display: block;">광고 입점 신청하기</a>
     </section>
 
   </main>
@@ -210,7 +253,7 @@
   <!-- 광고주 타겟 전용 모바일 하단 고정 B2B 입점 신청 CTA 바 -->
   <div class="sticky-cta-bar" id="guide-sticky-bar">
     <div class="sticky-cta-container">
-      <a href="/apply.html" class="btn btn-accent sticky-cta-btn" style="flex: 1;">📢 30초 간편 광고 입점 신청하기</a>
+      <a href="/apply.html" class="btn btn-accent sticky-cta-btn" style="flex: 1;">📢 광고 입점 신청하기</a>
     </div>
   </div>
 
