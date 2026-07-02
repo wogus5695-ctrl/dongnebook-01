@@ -331,11 +331,11 @@
         const end = new Date(slot.endDate);
         if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
 
-        // 지역 매칭 (계층 구조 지원)
+        // 지역 매칭 (계층 구조 지원: 동 단위일 경우 부모 구 단위 매칭)
         let currentReg = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || currentRegion;
         let matchedRegion = false;
         while (currentReg) {
-          if (currentReg.id === slot.regionId) {
+          if (currentReg.id === slot.purchaseRegionId) {
             matchedRegion = true;
             break;
           }

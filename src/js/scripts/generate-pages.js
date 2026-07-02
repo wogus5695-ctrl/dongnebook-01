@@ -9,7 +9,7 @@ const activeCategories = categories.filter(c => c.visible !== false);
 const targetRegions = [
   { name: "서울 강남구" },
   { name: "서울 송파구" },
-  { name: "경기 수원시" },
+  { name: "경기 수원시 영통구" },
   { name: "경기 성남시" }
 ];
 

@@ -61,7 +61,7 @@ function generateSitemap() {
         let currentReg = region;
         let matchedRegion = false;
         while (currentReg) {
-          if (currentReg.id === slot.regionId) {
+          if (currentReg.id === slot.purchaseRegionId) {
             matchedRegion = true;
             break;
           }

@@ -128,9 +128,11 @@ adSlots.forEach(slot => {
     logError(`AdSlot [${slot.id}]의 taskId [${slot.taskId}]가 실제 존재하지 않는 작업을 참조하고 있습니다.`);
   }
 
-  const foundReg = regions.find(r => r.id === slot.regionId);
+  const foundReg = regions.find(r => r.id === slot.purchaseRegionId);
   if (!foundReg) {
-    logError(`AdSlot [${slot.id}]의 regionId [${slot.regionId}]가 실제 존재하지 않는 지역을 참조하고 있습니다.`);
+    logError(`AdSlot [${slot.id}]의 purchaseRegionId [${slot.purchaseRegionId}]가 실제 존재하지 않는 지역을 참조하고 있습니다.`);
+  } else if (foundReg.level !== "district") {
+    logError(`AdSlot [${slot.id}]의 purchaseRegionId가 district(구) 레벨이 아닙니다! (참조 레벨: ${foundReg.level})`);
   }
 });
 logSuccess("광고 구좌(adSlots)의 참조 무결성 검증 완료.");

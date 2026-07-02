@@ -37,7 +37,7 @@ export const businesses = [
       "awning-cleaning",
       "sign-cleaning"
     ],
-    serviceRegionIds: ["seoul-gangnam", "seoul-gangnam-yeoksam", "seoul-gangnam-nonhyeon", "gyeonggi-suwon-yeongtong"],
+    serviceRegionIds: ["seoul-gangnam", "seoul-gangnam-yeoksam", "seoul-gangnam-nonhyeon", "seoul-songpa", "gyeonggi-suwon-yeongtong"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
@@ -111,7 +111,7 @@ export const businesses = [
       "window-rain-leak",
       "rain-leak"
     ],
-    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-yeongtong-mangpo"],
+    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-yeongtong-mangpo", "gyeonggi-paju"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
