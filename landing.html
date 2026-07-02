@@ -96,17 +96,21 @@
         <a href="/apply.html" id="mini-ad-apply-link" class="btn btn-outline" style="width: auto; font-size: 0.8rem; padding: 8px 16px; white-space: nowrap; border-color: var(--primary); color: var(--primary); background-color: var(--primary-light);">광고 입점 문의</a>
       </div>
 
-      <!-- 업체가 없는 경우의 대체 UI -->
+      <!-- 업체가 없는 경우의 대체 UI (소비자 친화적 개편) -->
       <div class="fallback-box" id="landing-fallback" style="display: none;">
-        <span class="ad-badge" style="background-color: hsl(0, 80%, 95%); color: hsl(0, 80%, 35%); border-color: hsl(0, 80%, 90%);">입점 모집 중</span>
-        <h3 style="font-size: 1.15rem; color: var(--text-dark); margin: 12px 0 6px;">현재 이 지역의 광고 등록 업체를 모집 중입니다</h3>
+        <h3 style="font-size: 1.15rem; color: var(--text-dark); margin: 12px 0 6px;">현재 이 지역에 바로 표시 가능한 업체 정보가 준비 중입니다.</h3>
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
-          등록된 업체가 없을 시 인근 인접 행정 구역의 연계 파트너 정보가 최우선 정렬됩니다.<br>
-          이 지면에 첫 번째 광고주로 선점 입점을 신청해 보세요!
+          인근 지역 상담 가능 업체 또는 관련 작업 페이지를 확인해보세요.
         </p>
         <div style="display: flex; flex-direction: column; gap: 8px; max-width: 280px; margin: 0 auto;">
-          <a href="/apply.html" class="btn btn-primary" id="fallback-apply-btn" style="font-size: 0.85rem; padding: 10px;">첫 광고 입점 문의하기</a>
-          <button class="btn btn-outline" id="fallback-nearby-btn" style="font-size: 0.85rem; padding: 10px; background-color: white;">인근 지역 상담 가능 업체 확인</button>
+          <button class="btn btn-primary" id="fallback-nearby-btn" style="font-size: 0.85rem; padding: 10px;">인근 지역 보기</button>
+          <a href="#related-tasks-wrapper" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px; background-color: white; text-align: center; display: inline-block; width: 100%;">관련 작업 보기</a>
+        </div>
+        
+        <!-- 광고주용 문구는 하단에 아주 작게 배치 -->
+        <div style="margin-top: 32px; border-top: 1px dashed var(--border-color); padding-top: 16px; font-size: 0.75rem; color: var(--text-muted);">
+          이 지역에서 <span id="fallback-task-placeholder">{작업명}</span> 업체를 운영 중이신가요?
+          <a href="/apply.html" id="fallback-apply-btn" style="color: var(--primary); text-decoration: underline; font-weight: 700; margin-left: 6px;">광고 입점 문의</a>
         </div>
       </div>
     </section>
@@ -351,7 +355,13 @@
           });
         }
       });
-      matched.sort((a, b) => b.slotPriority - a.slotPriority);
+      // 정렬 기준: adSlots.priority 오름차순 -> businesses.priority 오름차순
+      matched.sort((a, b) => {
+        if (a.slotPriority !== b.slotPriority) {
+          return a.slotPriority - b.slotPriority;
+        }
+        return a.priority - b.priority;
+      });
 
       const grid = document.getElementById('landing-listings-grid');
       const fallback = document.getElementById('landing-fallback');

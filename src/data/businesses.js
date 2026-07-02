@@ -137,7 +137,7 @@ export const businesses = [
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
-    description: "옥상 우레탄 방수 공사, 옥상 바닥 연삭 그라인딩 및 미세 누수 지점 정밀 진단 탑클래스 전문 시공점.",
+    description: "옥상 우레탄 방수 공사, 옥상 바닥 연삭 그라인딩 및 미세 누수 지점 정밀 진단 전문 시공점.",
     hashtags: ["옥상방수", "우레탄시공", "누수정밀진단"],
     image: "/assets/thumbs/water3.jpg",
     logo: "/assets/logos/water3.png",

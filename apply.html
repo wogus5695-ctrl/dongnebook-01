@@ -67,7 +67,6 @@
             <option value="general-cleaning">종합청소</option>
             <option value="waterproof-leak">방수/누수</option>
             <option value="window-caulking">창틀코킹/창틀누수</option>
-            <!-- 추후 재활성화를 위해 주석 처리: <option value="drain-clog">하수구막힘</option> -->
             <option value="etc">기타 (직접 작성)</option>
           </select>
         </div>
@@ -79,7 +78,10 @@
 
         <div class="form-group">
           <label class="form-label" for="targetWork">광고 노출 희망 작업명 <span style="color: red;">*</span></label>
-          <input type="text" id="targetWork" class="form-input" placeholder="예: 창틀코킹, 아파트유리창청소, 싱크대역류 막힘" required>
+          <select id="targetWork" class="form-select" required>
+            <option value="">업종을 먼저 선택해 주세요</option>
+          </select>
+          <input type="text" id="targetWorkEtc" class="form-input" style="margin-top: 8px; display: none;" placeholder="희망하는 작업명을 직접 작성해 주세요">
         </div>
 
         <div class="form-group">
@@ -160,6 +162,7 @@
   <script type="module">
     import { renderHeader } from '/src/components/Header.js';
     import { renderFooter } from '/src/components/Footer.js';
+    import { tasks } from '/src/data/tasks.js';
 
     renderHeader();
     renderFooter();
@@ -169,6 +172,64 @@
     // ----------------------------------------------------
     const GOOGLE_SCRIPT_URL = "YOUR_REAL_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
+    const categorySelect = document.getElementById('category');
+    const workSelect = document.getElementById('targetWork');
+    const workEtcInput = document.getElementById('targetWorkEtc');
+
+    // 업종별 작업명 동적 매핑 함수
+    function updateWorkOptions(catId, selectedTaskId = null) {
+      if (!catId) {
+        workSelect.innerHTML = '<option value="">업종을 먼저 선택해 주세요</option>';
+        workEtcInput.style.display = 'none';
+        workEtcInput.required = false;
+        return;
+      }
+
+      if (catId === 'etc') {
+        workSelect.innerHTML = '<option value="etc">기타 (직접 작성)</option>';
+        workSelect.value = 'etc';
+        workEtcInput.style.display = 'block';
+        workEtcInput.required = true;
+        return;
+      }
+
+      const filteredTasks = tasks.filter(t => t.categoryIds.includes(catId) && t.visible);
+      let optionsHTML = filteredTasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+      optionsHTML += '<option value="etc">기타 (직접 작성)</option>';
+      
+      workSelect.innerHTML = optionsHTML;
+      workEtcInput.style.display = 'none';
+      workEtcInput.required = false;
+
+      if (selectedTaskId) {
+        if (filteredTasks.some(t => t.id === selectedTaskId)) {
+          workSelect.value = selectedTaskId;
+        } else {
+          // 혹시 ID가 아닌 명칭으로 넘어왔을 때의 매칭 예외 지원
+          const foundByName = filteredTasks.find(t => t.name === selectedTaskId);
+          if (foundByName) {
+            workSelect.value = foundByName.id;
+          }
+        }
+      }
+    }
+
+    // 업종 변경 이벤트
+    categorySelect.addEventListener('change', () => {
+      updateWorkOptions(categorySelect.value);
+    });
+
+    // 작업명 변경 이벤트
+    workSelect.addEventListener('change', () => {
+      if (workSelect.value === 'etc') {
+        workEtcInput.style.display = 'block';
+        workEtcInput.required = true;
+      } else {
+        workEtcInput.style.display = 'none';
+        workEtcInput.required = false;
+      }
+    });
+
     // URL 쿼리 파라미터 연계 주입
     const urlParams = new URLSearchParams(window.location.search);
     const regParam = urlParams.get('reg');
@@ -177,23 +238,10 @@
     const prodParam = urlParams.get('prod');
 
     if (regParam) document.getElementById('targetRegion').value = regParam;
-    if (taskParam) {
-      const taskDisplayMap = {
-        "window-cleaning": "유리창청소",
-        "exterior-cleaning": "외벽청소",
-        "window-caulking-task": "창틀코킹",
-        "window-leak": "창틀누수",
-        "rain-leak": "빗물누수",
-        "drain-clogged": "하수구막힘",
-        "sink-clogged": "싱크대막힘",
-        "rooftop-waterproofing": "옥상방수"
-      };
-      document.getElementById('targetWork').value = taskDisplayMap[taskParam] || taskParam;
-    }
     if (catParam) {
-      const selectBox = document.getElementById('category');
-      if (selectBox.querySelector(`option[value="${catParam}"]`)) {
-        selectBox.value = catParam;
+      if (categorySelect.querySelector(`option[value="${catParam}"]`)) {
+        categorySelect.value = catParam;
+        updateWorkOptions(catParam, taskParam);
       }
     }
     if (prodParam) {
@@ -223,7 +271,6 @@
         submitBtn.textContent = "신청서 전송 중...";
 
         // 3. 데이터 취합
-        const categorySelect = document.getElementById('category');
         const productSelect = document.getElementById('adProduct');
         
         const now = new Date();
@@ -234,6 +281,13 @@
                             String(now.getMinutes()).padStart(2, '0') + ":" + 
                             String(now.getSeconds()).padStart(2, '0');
 
+        let finalizedWorkName = "";
+        if (workSelect.value === 'etc') {
+          finalizedWorkName = workEtcInput.value.trim();
+        } else {
+          finalizedWorkName = workSelect.options[workSelect.selectedIndex].text;
+        }
+
         const formData = {
           submittedAt: formattedDate,
           companyName: document.getElementById('companyName').value.trim(),
@@ -242,7 +296,7 @@
           category: categorySelect.value,
           categoryName: categorySelect.options[categorySelect.selectedIndex].text,
           targetRegion: document.getElementById('targetRegion').value.trim(),
-          targetWork: document.getElementById('targetWork').value.trim(),
+          targetWork: finalizedWorkName,
           adProduct: productSelect.value,
           adProductName: productSelect.options[productSelect.selectedIndex].text,
           kakaoLink: document.getElementById('kakaoLink').value.trim(),
@@ -266,7 +320,7 @@
           }
         } catch (error) {
           console.error("[연동 에러]:", error);
-          alert("신청 접수 중 문제가 발생했습니다. 잠시 후 다시 시도하거나 전화 문의를 이용해주세요.");
+          alert("신청 접수 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
         } finally {
           // 전송 성공/실패 여부 관계없이 최종 복원
           submitBtn.disabled = false;
