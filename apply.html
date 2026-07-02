@@ -444,7 +444,7 @@
         try {
           const success = await triggerExternalRelay(formData);
           if (success) {
-            alert("광고 신청이 접수되었습니다. 운영자가 확인 후 연락드리겠습니다.");
+            alert("광고 신청이 접수되었습니다. 운영자가 신청 구좌와 노출 범위를 확인한 뒤 연락드리겠습니다.");
             form.reset();
             window.location.href = "/";
           } else {
