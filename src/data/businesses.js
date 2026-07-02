@@ -14,7 +14,7 @@ export const businesses = [
       "floor-waxing",
       "awning-cleaning"
     ],
-    serviceRegionIds: ["seoul-gangnam", "seoul-songpa", "gyeonggi-suwon"],
+    serviceRegionIds: ["seoul-gangnam", "seoul-songpa", "gyeonggi-suwon-yeongtong"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
@@ -60,7 +60,7 @@ export const businesses = [
       "interior-cleaning",
       "hood-cleaning"
     ],
-    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-jangan"],
+    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-yeongtong-gwanggyo"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
@@ -88,7 +88,7 @@ export const businesses = [
       "chassis-silicon",
       "window-rain-leak"
     ],
-    serviceRegionIds: ["seoul-gangnam", "seoul-gangnam-nonhyeon", "gyeonggi-suwon"],
+    serviceRegionIds: ["seoul-gangnam", "seoul-gangnam-nonhyeon", "gyeonggi-suwon-yeongtong"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
@@ -111,7 +111,7 @@ export const businesses = [
       "window-rain-leak",
       "rain-leak"
     ],
-    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-jangan"],
+    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-yeongtong-mangpo"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
@@ -133,7 +133,7 @@ export const businesses = [
       "rooftop-leak",
       "rain-leak"
     ],
-    serviceRegionIds: ["seoul-gangnam", "seoul-songpa", "gyeonggi-suwon", "gyeonggi-suwon-yeongtong"],
+    serviceRegionIds: ["seoul-gangnam", "seoul-songpa", "gyeonggi-suwon-yeongtong"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
@@ -162,7 +162,7 @@ export const businesses = [
       "main-sewer-clogged",
       "main-sewer-backflow"
     ],
-    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon"],
+    serviceRegionIds: ["seoul-songpa", "seoul-songpa-jamsil", "gyeonggi-suwon-yeongtong"],
     phone: "추후 입력",
     kakaoUrl: "추후 입력",
     websiteUrl: "추후 입력",
