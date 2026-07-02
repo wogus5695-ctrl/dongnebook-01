@@ -29,13 +29,13 @@ function doPost(e) {
       
       // 시트가 처음 생성되었을 때 헤더(Header) 칼럼 빌드
       const headers = [
-        // A ~ O: apply.html 제출 데이터 (15개 컬럼)
+        // A ~ Q: apply.html 제출 데이터 (17개 컬럼)
         "제출일시", "업체명", "담당자명", "연락처", "선택 업종", 
-        "희망 지역", "희망 작업명", "희망 상품", "카카오톡 채널 링크", 
-        "홈페이지 URL", "네이버 블로그 URL", "인스타그램 URL", 
+        "희망 구 단위 지역", "희망 작업명", "선택 구좌명", "포함 동단위 지역 목록", "희망 상품", 
+        "카카오톡 채널 링크", "홈페이지 URL", "네이버 블로그 URL", "인스타그램 URL", 
         "사업자등록 여부", "추가 요청사항", "개인정보 동의 여부",
         
-        // P ~ X: 운영 관리용 추가 컬럼 (9개 컬럼)
+        // R ~ Z: 운영 관리용 추가 컬럼 (9개 컬럼)
         "처리 상태", "상담일", "결제 안내 여부", "결제 완료 여부", 
         "등록 완료 여부", "등록된 URL", "광고 시작일", "광고 종료일", "운영자 메모"
       ];
@@ -43,7 +43,7 @@ function doPost(e) {
       receiptSheet.getRange("1:1").setFontWeight("bold").setBackground("#f3f3f3");
     }
 
-    // 3. 기록용 로우(Row) 생성 (15개 제출 데이터 + 9개 운영 컬럼 초기치 지정)
+    // 3. 기록용 로우(Row) 생성 (17개 제출 데이터 + 9개 운영 컬럼 초기치 지정)
     const newRow = [
       data.submittedAt || new Date().toISOString(),
       data.companyName || "",
@@ -52,6 +52,8 @@ function doPost(e) {
       data.categoryName || data.category || "",
       data.targetRegion || "",
       data.targetWork || "",
+      data.adSlotName || "",
+      data.coverageList ? data.coverageList.join(", ") : "",
       data.adProductName || data.adProduct || "",
       data.kakaoLink || "",
       data.homepageUrl || "",
@@ -61,7 +63,7 @@ function doPost(e) {
       data.additionalMessage || "",
       data.privacyConsent ? "동의함" : "미동의",
       
-      // 운영 컬럼 초기 데이터 주입 (P~X)
+      // 운영 컬럼 초기 데이터 주입 (R~Z)
       "신규 접수",  // 처리 상태 (옵션: 신규 접수, 상담 중, 결제 안내, 결제 완료, 등록 완료, 보류, 거절, 만료)
       "",           // 상담일
       "N",          // 결제 안내 여부
@@ -98,12 +100,17 @@ function doPost(e) {
  */
 function sendSlackNotification(data) {
   try {
+    const coverageText = data.coverageList && data.coverageList.length > 0 
+      ? data.coverageList.join(", ") 
+      : "없음";
+
     const payload = {
       text: `📢 *동네책자 새로운 B2B 광고 신청이 접수되었습니다.*\n\n` +
             `• *업체명*: ${data.companyName}\n` +
             `• *담당자*: ${data.ownerName} (${data.phone})\n` +
-            `• *신청 업종*: ${data.categoryName}\n` +
-            `• *희망 지역/작업*: [${data.targetRegion}] ${data.targetWork}\n` +
+            `• *신청 업종*: ${data.categoryName} (${data.targetWork})\n` +
+            `• *선택 구좌*: *${data.adSlotName}*\n` +
+            `• *하위 노출 동*: ${coverageText}\n` +
             `• *선택 상품*: ${data.adProductName}\n` +
             `• *추가 메시지*: ${data.additionalMessage || "없음"}\n` +
             `\n스프레드시트를 확인하여 상담 및 결제 안내를 진행해 주세요.`

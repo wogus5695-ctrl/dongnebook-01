@@ -60,6 +60,7 @@
           <input type="tel" id="phone" class="form-input" placeholder="예: 010-1234-5678" required>
         </div>
 
+        <!-- 1단계. 업종 선택 -->
         <div class="form-group">
           <label class="form-label" for="category">업종 카테고리 선택 <span style="color: red;">*</span></label>
           <select id="category" class="form-select" required>
@@ -71,11 +72,7 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="targetRegion">광고 노출 희망 지역 <span style="color: red;">*</span></label>
-          <input type="text" id="targetRegion" class="form-input" placeholder="예: 서울 강남구 역삼동, 경기 수원시 장안구 전체" required>
-        </div>
-
+        <!-- 2단계. 작업명 선택 -->
         <div class="form-group">
           <label class="form-label" for="targetWork">광고 노출 희망 작업명 <span style="color: red;">*</span></label>
           <select id="targetWork" class="form-select" required>
@@ -84,13 +81,39 @@
           <input type="text" id="targetWorkEtc" class="form-input" style="margin-top: 8px; display: none;" placeholder="희망하는 작업명을 직접 작성해 주세요">
         </div>
 
+        <!-- 3단계. 구 단위 지역 선택 -->
+        <div class="form-group">
+          <label class="form-label" for="targetRegion">광고 노출 희망 구 단위 지역 <span style="color: red;">*</span></label>
+          <select id="targetRegion" class="form-select" required>
+            <option value="">지역을 선택해 주세요</option>
+          </select>
+        </div>
+
+        <!-- 4단계. 선택한 구좌 미리보기 -->
+        <div id="ad-slot-preview-box" class="form-group" style="display: none; background-color: var(--bg-card); border: 1.5px solid var(--primary); border-radius: var(--border-radius); padding: 18px; line-height: 1.6; margin-top: 20px; margin-bottom: 20px;">
+          <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; border-bottom: 1.5px solid var(--border-color); padding-bottom: 6px;">📋 선택한 광고 구좌 미리보기</h4>
+          <p style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 8px;">
+            <strong>신청 구좌:</strong> <span id="preview-slot-name" style="color: var(--secondary); font-weight: 800;">-</span>
+          </p>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">
+            <strong style="color: var(--text-dark); display: block; margin-bottom: 4px;">📣 노출 예정 범위 (동 단위):</strong>
+            <ul id="preview-coverage-list" style="padding-left: 18px; list-style-type: square; display: flex; flex-direction: column; gap: 3px;">
+              <!-- 동 단위 페이지 노출 범위 JS 동적 주입 -->
+            </ul>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 8px;">
+            ℹ️ 구 단위 지역을 선택하면 해당 구 페이지와 구 안의 동단위 페이지에 함께 노출됩니다.
+          </p>
+        </div>
+
+        <!-- 5단계. 희망 상품 선택 -->
         <div class="form-group">
           <label class="form-label" for="adProduct">광고 희망 상품 플랜 <span style="color: red;">*</span></label>
           <select id="adProduct" class="form-select" required>
             <option value="">원하시는 광고 예산 상품을 선택하세요</option>
-            <option value="product-single">구 단위 지역 1개 + 작업명 1개 광고 카드 노출 / 월 5만원</option>
-            <option value="product-triple">구 단위 지역 3개 패키지 / 월 12만원</option>
-            <option value="product-five">구 단위 지역 5개 패키지 / 월 20만원</option>
+            <option value="product-single">구좌 1개: 구 단위 지역 1개 + 작업명 1개 / 월 5만원</option>
+            <option value="product-triple">구좌 3개 패키지: 지역·작업명 조합 3개 / 월 12만원</option>
+            <option value="product-five">구좌 5개 패키지: 지역·작업명 조합 5개 / 월 20만원</option>
             <option value="product-banner">카테고리 상단 배너 / 별도 문의</option>
             <option value="decision-after-consult">상담 후 결정</option>
           </select>
@@ -175,6 +198,7 @@
     import { renderHeader } from '/src/components/Header.js';
     import { renderFooter } from '/src/components/Footer.js';
     import { tasks } from '/src/data/tasks.js';
+    import { regions } from '/src/data/regions.js';
 
     renderHeader();
     renderFooter();
@@ -187,6 +211,64 @@
     const categorySelect = document.getElementById('category');
     const workSelect = document.getElementById('targetWork');
     const workEtcInput = document.getElementById('targetWorkEtc');
+    const regionSelect = document.getElementById('targetRegion');
+
+    const previewBox = document.getElementById('ad-slot-preview-box');
+    const previewName = document.getElementById('preview-slot-name');
+    const previewList = document.getElementById('preview-coverage-list');
+
+    // 구 단위 지역 선택 리스트 초기 로드
+    const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
+    regionSelect.innerHTML = '<option value="">지역을 선택해 주세요</option>' + 
+      districts.map(d => `<option value="${d.id}">${d.displayName}</option>`).join('');
+
+    // 실시간 광고 구좌 미리보기 동적 렌더링 함수
+    function updateSlotPreview() {
+      const catVal = categorySelect.value;
+      const workVal = workSelect.value;
+      const regVal = regionSelect.value;
+
+      if (!catVal || !workVal || !regVal) {
+        previewBox.style.display = 'none';
+        return;
+      }
+
+      previewBox.style.display = 'block';
+
+      // 1. 구좌 명칭 조립
+      const selectedRegObj = regions.find(r => r.id === regVal);
+      const regText = selectedRegObj ? selectedRegObj.displayName : regVal;
+      
+      let workText = "";
+      if (workVal === 'etc') {
+        workText = workEtcInput.value.trim() || "(직접 입력 중)";
+      } else {
+        const foundT = tasks.find(t => t.id === workVal);
+        workText = foundT ? foundT.name : workVal;
+      }
+      previewName.textContent = `${regText} + ${workText}`;
+
+      // 2. 동 단위 하위 범위 리스트 추출
+      if (selectedRegObj && selectedRegObj.childRegionIds && selectedRegObj.childRegionIds.length > 0) {
+        const childIds = selectedRegObj.childRegionIds;
+        const displayLimit = 5;
+        const displayIds = childIds.slice(0, displayLimit);
+        
+        let listHTML = displayIds.map(cId => {
+          const foundChild = regions.find(r => r.id === cId);
+          const childName = foundChild ? foundChild.displayName : cId;
+          return `<li>${childName} ${workText}</li>`;
+        }).join('');
+
+        if (childIds.length > displayLimit) {
+          listHTML += `<li style="font-weight: bold; color: var(--primary); list-style: none; margin-top: 4px;">외 ${childIds.length - displayLimit}개 동단위 페이지 포함</li>`;
+        }
+
+        previewList.innerHTML = listHTML;
+      } else {
+        previewList.innerHTML = `<li>${regText} ${workText} 단독 노출 (하위 동 없음)</li>`;
+      }
+    }
 
     // 업종별 작업명 동적 매핑 함수
     function updateWorkOptions(catId, selectedTaskId = null) {
@@ -194,6 +276,7 @@
         workSelect.innerHTML = '<option value="">업종을 먼저 선택해 주세요</option>';
         workEtcInput.style.display = 'none';
         workEtcInput.required = false;
+        updateSlotPreview();
         return;
       }
 
@@ -202,6 +285,7 @@
         workSelect.value = 'etc';
         workEtcInput.style.display = 'block';
         workEtcInput.required = true;
+        updateSlotPreview();
         return;
       }
 
@@ -217,13 +301,13 @@
         if (filteredTasks.some(t => t.id === selectedTaskId)) {
           workSelect.value = selectedTaskId;
         } else {
-          // 혹시 ID가 아닌 명칭으로 넘어왔을 때의 매칭 예외 지원
           const foundByName = filteredTasks.find(t => t.name === selectedTaskId);
           if (foundByName) {
             workSelect.value = foundByName.id;
           }
         }
       }
+      updateSlotPreview();
     }
 
     // 업종 변경 이벤트
@@ -240,6 +324,17 @@
         workEtcInput.style.display = 'none';
         workEtcInput.required = false;
       }
+      updateSlotPreview();
+    });
+
+    // 직접 작성 작업명 키인 이벤트 리스너 추가
+    workEtcInput.addEventListener('input', () => {
+      updateSlotPreview();
+    });
+
+    // 지역 변경 이벤트
+    regionSelect.addEventListener('change', () => {
+      updateSlotPreview();
     });
 
     // URL 쿼리 파라미터 연계 주입
@@ -249,12 +344,22 @@
     const taskParam = urlParams.get('task');
     const prodParam = urlParams.get('prod');
 
-    if (regParam) document.getElementById('targetRegion').value = regParam;
     if (catParam) {
       if (categorySelect.querySelector(`option[value="${catParam}"]`)) {
         categorySelect.value = catParam;
         updateWorkOptions(catParam, taskParam);
       }
+    }
+    if (regParam) {
+      // 파라미터가 displayName 또는 id 일치 여부 판별
+      const matchedReg = regions.find(r => r.displayName === regParam || r.id === regParam);
+      if (matchedReg && matchedReg.level === 'district') {
+        regionSelect.value = matchedReg.id;
+      } else if (matchedReg && matchedReg.level === 'neighborhood') {
+        // 동 단위로 들어왔을 시 상위 구 단위를 선택 처리
+        regionSelect.value = matchedReg.parentId;
+      }
+      updateSlotPreview();
     }
     if (prodParam) {
       const prodSelect = document.getElementById('adProduct');
@@ -300,17 +405,32 @@
           finalizedWorkName = workSelect.options[workSelect.selectedIndex].text;
         }
 
+        const selectedRegObj = regions.find(r => r.id === regionSelect.value);
+        const finalizedRegionName = selectedRegObj ? selectedRegObj.displayName : regionSelect.value;
+        const finalSlotName = `${finalizedRegionName} + ${finalizedWorkName}`;
+        
+        // 하위 동 목록 정리
+        let coverageNames = [];
+        if (selectedRegObj && selectedRegObj.childRegionIds) {
+          coverageNames = selectedRegObj.childRegionIds.map(cId => {
+            const foundChild = regions.find(r => r.id === cId);
+            return foundChild ? foundChild.displayName : cId;
+          });
+        }
+
         const formData = {
           submittedAt: formattedDate,
+          category: categorySelect.value,
+          categoryName: categorySelect.options[categorySelect.selectedIndex].text,
+          targetWork: finalizedWorkName,
+          targetRegion: finalizedRegionName,
+          adSlotName: finalSlotName,
+          coverageList: coverageNames,
+          adProduct: productSelect.value,
+          adProductName: productSelect.options[productSelect.selectedIndex].text,
           companyName: document.getElementById('companyName').value.trim(),
           ownerName: document.getElementById('ownerName').value.trim(),
           phone: document.getElementById('phone').value.trim(),
-          category: categorySelect.value,
-          categoryName: categorySelect.options[categorySelect.selectedIndex].text,
-          targetRegion: document.getElementById('targetRegion').value.trim(),
-          targetWork: finalizedWorkName,
-          adProduct: productSelect.value,
-          adProductName: productSelect.options[productSelect.selectedIndex].text,
           kakaoLink: document.getElementById('kakaoLink').value.trim(),
           homepageUrl: document.getElementById('homepageUrl').value.trim(),
           blogUrl: document.getElementById('blogUrl').value.trim(),
