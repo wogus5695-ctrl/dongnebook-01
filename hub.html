@@ -178,9 +178,10 @@
     renderFooter();
 
     // 1. URL 파라미터 기반 카테고리 선정
+    const activeCategories = categories.filter(c => c.visible !== false);
     const urlParams = new URLSearchParams(window.location.search);
-    let activeCatId = urlParams.get('cat') || categories[0].id;
-    let activeCat = categories.find(c => c.id === activeCatId) || categories[0];
+    let activeCatId = urlParams.get('cat') || activeCategories[0].id;
+    let activeCat = activeCategories.find(c => c.id === activeCatId) || activeCategories[0];
 
     // 2. 카테고리별 H1 매핑 테이블 지정 (검색 로봇 JS 해석 전/후 일치 처리)
     const hubH1Map = {
@@ -225,7 +226,7 @@
     // 3. 탭 렌더링
     const tabsBox = document.getElementById('hub-tabs');
     if (tabsBox) {
-      tabsBox.innerHTML = categories.map(cat => {
+      tabsBox.innerHTML = activeCategories.map(cat => {
         const isActive = cat.id === activeCatId;
         return `
           <button class="btn ${isActive ? 'btn-primary' : 'btn-outline'}" 
@@ -328,7 +329,7 @@
       });
 
       // 5. 세부 작업 카드 목록 렌더링
-      const subTasks = tasks.filter(t => t.categoryId === activeCat.id);
+      const subTasks = tasks.filter(t => t.categoryIds.includes(activeCat.id) && t.visible);
       const tasksGrid = document.getElementById('hub-tasks-grid');
       if (tasksGrid) {
         tasksGrid.innerHTML = subTasks.map(t => `
@@ -341,7 +342,7 @@
       // 6. 지역 목록 로드
       const regGrid = document.getElementById('hub-regions-grid');
       if (regGrid) {
-        const subRegs = regions.filter(r => r.regionLevel === 'district' || r.regionLevel === 'city');
+        const subRegs = regions.filter(r => (r.level === 'district' || r.level === 'city') && r.visible);
         regGrid.innerHTML = `
           <div class="region-links-wrapper" style="justify-content: center;">
             ${subRegs.map(reg => `
@@ -354,7 +355,7 @@
       }
 
       // 7. 입점 업체 필터링 후 렌더링
-      const filteredBiz = businesses.filter(b => b.categoryIds.includes(activeCat.id) && b.adStatus === 'active' && b.visible);
+      const filteredBiz = businesses.filter(b => b.categoryIds.includes(activeCat.id) && b.status === 'active' && b.visible);
       const listingsGrid = document.getElementById('hub-listings-grid');
       if (listingsGrid) {
         if (filteredBiz.length > 0) {
@@ -363,9 +364,9 @@
               id: biz.id,
               name: biz.brandName,
               category: biz.categoryIds[0],
-              regions: biz.serviceRegions.map(regSlug => {
-                const found = regions.find(r => r.slug === regSlug);
-                return found ? found.displayName : regSlug;
+              regions: biz.serviceRegionIds.map(regId => {
+                const found = regions.find(r => r.id === regId);
+                return found ? found.displayName : regId;
               }),
               tags: biz.taskIds.map(tId => {
                 const foundTask = tasks.find(t => t.id === tId);
@@ -376,7 +377,8 @@
               siteLink: biz.websiteUrl,
               description: biz.description,
               isAd: true,
-              badgeText: biz.badge
+              badgeText: biz.badge,
+              thumbnail: biz.image
             };
             return CompanyCard(formatted);
           }).join('');

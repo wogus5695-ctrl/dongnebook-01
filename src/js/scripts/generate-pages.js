@@ -1,15 +1,11 @@
 import fs from 'fs';
 import path from 'path';
+import { categories } from '../../data/categories.js';
 
-// 1. 카테고리 데이터
-const categories = [
-  { id: "general-cleaning", name: "종합청소" },
-  { id: "waterproof-leak", name: "방수/누수" },
-  { id: "window-caulking", name: "창틀코킹/창틀누수" },
-  { id: "drain-clog", name: "하수구막힘" }
-];
+// 1. 활성 카테고리 데이터 필터링
+const activeCategories = categories.filter(c => c.visible !== false);
 
-// 2. 지역 데이터 (예시)
+// 2. 지역 데이터 (예시 대상지 - 빌드타임 생성 대상)
 const targetRegions = [
   { name: "서울 강남구" },
   { name: "서울 송파구" },
@@ -31,11 +27,10 @@ if (!fs.existsSync(outputDir)) {
 if (fs.existsSync(templatePath)) {
   const htmlTemplate = fs.readFileSync(templatePath, 'utf-8');
 
-  // 모든 지역 * 모든 카테고리 조합에 대하여 HTML 정적 파일 생성
+  // 모든 지역 * 모든 활성 카테고리 조합에 대하여 HTML 정적 파일 생성
   targetRegions.forEach(region => {
-    categories.forEach(cat => {
+    activeCategories.forEach(cat => {
       // SEO 친화적 URL/파일명 구조화
-      // 예: seoul-gangnam-drain-clog.html
       const fileName = `${region.name.replace(' ', '-')}-${cat.id}.html`;
       const outputPath = path.join(outputDir, fileName);
 
@@ -53,7 +48,7 @@ if (fs.existsSync(templatePath)) {
     });
   });
 
-  console.log(`성공: 총 ${targetRegions.length * categories.length}개의 정적 SEO 랜딩 페이지가 생성되었습니다. (${outputDir})`);
+  console.log(`성공: 총 ${targetRegions.length * activeCategories.length}개의 정적 SEO 랜딩 페이지가 생성되었습니다. (${outputDir})`);
 } else {
   console.error("오류: landing.html 템플릿 파일을 찾을 수 없습니다.");
 }

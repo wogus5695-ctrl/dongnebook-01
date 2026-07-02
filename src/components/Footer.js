@@ -9,7 +9,7 @@ export function renderFooter() {
               <li><a href="/hub.html?cat=general-cleaning">종합청소</a></li>
               <li><a href="/hub.html?cat=waterproof-leak">방수/누수</a></li>
               <li><a href="/hub.html?cat=window-caulking">창틀코킹/창틀누수</a></li>
-              <li><a href="/hub.html?cat=drain-clog">하수구막힘</a></li>
+              <!-- 추후 재활성화를 위해 주석 처리: <li><a href="/hub.html?cat=drain-clog">하수구막힘</a></li> -->
             </ul>
           </div>
           <div class="footer-section">

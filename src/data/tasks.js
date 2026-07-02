@@ -1,36 +1,306 @@
 export const tasks = [
   // 1. 종합청소 하위 작업들
-  { id: "exterior-cleaning", categoryId: "general-cleaning", name: "외벽청소", slug: "exterior-cleaning" },
-  { id: "window-cleaning", categoryId: "general-cleaning", name: "유리창청소", slug: "window-cleaning" },
-  { id: "fire-cleaning", categoryId: "general-cleaning", name: "화재청소", slug: "fire-cleaning" },
-  { id: "floor-waxing", categoryId: "general-cleaning", name: "바닥왁스코팅", slug: "floor-waxing" },
-  { id: "floor-cleaning", categoryId: "general-cleaning", name: "바닥청소", slug: "floor-cleaning" },
-  { id: "awning-cleaning", categoryId: "general-cleaning", name: "어닝청소", slug: "awning-cleaning" },
-  { id: "sign-cleaning", categoryId: "general-cleaning", name: "간판청소", slug: "sign-cleaning" },
-  { id: "post-construction-cleaning", categoryId: "general-cleaning", name: "준공청소", slug: "post-construction-cleaning" },
-  { id: "interior-cleaning", categoryId: "general-cleaning", name: "인테리어청소", slug: "interior-cleaning" },
-  { id: "hood-cleaning", categoryId: "general-cleaning", name: "후드청소", slug: "hood-cleaning" },
+  { 
+    id: "exterior-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "외벽청소", 
+    slug: "exterior-cleaning", 
+    displayName: "외벽청소", 
+    hashtags: ["외벽청소", "빌딩청소", "유리창세척"], 
+    shortIntro: "상가 및 빌딩 고층 건물 외벽 유리창 전문 청소 서비스입니다.", 
+    guideText: "안전 고소 로프 및 스카이 장비를 동원하여 안전하고 말끔하게 시공합니다.", 
+    visible: true 
+  },
+  { 
+    id: "window-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "유리창청소", 
+    slug: "window-cleaning", 
+    displayName: "유리창청소", 
+    hashtags: ["유리창청소", "아파트유리창", "상가유리창"], 
+    shortIntro: "실내에서 외부 유리까지 반짝이게 닦아내는 유리창 전문 케어입니다.", 
+    guideText: "자외선 차단 필름이나 유리 흠집 없이 전용 약품으로 잔사 없는 청소를 지원합니다.", 
+    visible: true 
+  },
+  { 
+    id: "fire-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "화재청소", 
+    slug: "fire-cleaning", 
+    displayName: "화재청소", 
+    hashtags: ["화재복구", "그을음제거", "냄새탈취"], 
+    shortIntro: "화재로 발생한 그을음, 유독 성분 탈취 및 폐기물 처리를 대행합니다.", 
+    guideText: "화재 그을음 특수 약제 중화 처리 및 정밀 세척으로 복구를 돕습니다.", 
+    visible: true 
+  },
+  { 
+    id: "floor-waxing", 
+    categoryIds: ["general-cleaning"], 
+    name: "바닥왁스코팅", 
+    slug: "floor-waxing", 
+    displayName: "바닥왁스코팅", 
+    hashtags: ["데코타일왁스", "바닥코팅", "광택작업"], 
+    shortIntro: "상가/사무실 데코타일 바닥 왁스 코팅 및 찌든 때 제거 전문입니다.", 
+    guideText: "기존 왁스 박리 후 프리미엄 왁스 2회 도포로 스크래치 방지 및 내구성을 향상시킵니다.", 
+    visible: true 
+  },
+  { 
+    id: "floor-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "바닥청소", 
+    slug: "floor-cleaning", 
+    displayName: "바닥청소", 
+    hashtags: ["바닥물청소", "사무실청소", "공장청소"], 
+    shortIntro: "사무실, 상가, 공장 등 모든 종류의 바닥 찌든 때 기계 세척을 진행합니다.", 
+    guideText: "재질에 맞는 전용 기계 세척 및 건조 작업을 통해 쾌적함을 되찾아 드립니다.", 
+    visible: true 
+  },
+  { 
+    id: "awning-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "어닝청소", 
+    slug: "awning-cleaning", 
+    displayName: "어닝청소", 
+    hashtags: ["어닝청소", "매장어닝", "천막세척"], 
+    shortIntro: "상가 전면 어닝의 이끼, 곰팡이 및 찌든 먼지를 고압 제거합니다.", 
+    guideText: "특수 어닝 세제와 고압수 세척으로 어닝 천막의 변색 없이 복구합니다.", 
+    visible: true 
+  },
+  { 
+    id: "sign-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "간판청소", 
+    slug: "sign-cleaning", 
+    displayName: "간판청소", 
+    hashtags: ["간판청소", "매장간판", "외부유리"], 
+    shortIntro: "매장의 첫인상인 외부 간판 먼지와 찌든 매연을 말끔히 씻어냅니다.", 
+    guideText: "스카이차 장비 세팅 및 고압 세척으로 높은 곳의 간판까지 안전하게 케어합니다.", 
+    visible: true 
+  },
+  { 
+    id: "post-construction-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "준공청소", 
+    slug: "post-construction-cleaning", 
+    displayName: "준공청소", 
+    hashtags: ["준공청소", "신축빌딩", "건축공사"], 
+    shortIntro: "신축 건물의 준공 검사 전 보양지 제거 및 내부 미세 가루 제거 공정입니다.", 
+    guideText: "공사 분진, 콘크리트 잔여물, 백시멘트를 제거해 건축물 입주 준비를 완료합니다.", 
+    visible: true 
+  },
+  { 
+    id: "interior-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "인테리어청소", 
+    slug: "interior-cleaning", 
+    displayName: "인테리어청소", 
+    hashtags: ["인테리어청소", "리모델링청소", "입주청소"], 
+    shortIntro: "실내 리모델링 공사 후 발생하는 미세 톱밥과 먼지를 완벽 클리닝합니다.", 
+    guideText: "가구 내부 서랍장 탈거 청소와 전등갓 안쪽 정밀 청소까지 꼼꼼히 시행합니다.", 
+    visible: true 
+  },
+  { 
+    id: "hood-cleaning", 
+    categoryIds: ["general-cleaning"], 
+    name: "후드청소", 
+    slug: "hood-cleaning", 
+    displayName: "후드청소", 
+    hashtags: ["주방후드", "식당덕트", "기름때제거"], 
+    shortIntro: "식당 및 업소용 주방 후드, 배기 덕트에 쌓인 화재 위험 유증기 기름때 제거입니다.", 
+    guideText: "화재 안전 기준을 충족할 수 있도록 약품 반응 고온 고압 세척을 수행합니다.", 
+    visible: true 
+  },
 
   // 2. 방수/누수 하위 작업들
-  { id: "exterior-waterproofing", categoryId: "waterproof-leak", name: "외벽방수", slug: "exterior-waterproofing" },
-  { id: "rooftop-waterproofing", categoryId: "waterproof-leak", name: "옥상방수", slug: "rooftop-waterproofing" },
-  { id: "roof-waterproofing", categoryId: "waterproof-leak", name: "지붕방수", slug: "roof-waterproofing" },
-  { id: "rain-leak", categoryId: "waterproof-leak", name: "빗물누수", slug: "rain-leak" },
-  { id: "exterior-leak", categoryId: "waterproof-leak", name: "외벽누수", slug: "exterior-leak" },
-  { id: "rooftop-leak", categoryId: "waterproof-leak", name: "옥상누수", slug: "rooftop-leak" },
+  { 
+    id: "exterior-waterproofing", 
+    categoryIds: ["waterproof-leak"], 
+    name: "외벽방수", 
+    slug: "exterior-waterproofing", 
+    displayName: "외벽방수", 
+    hashtags: ["외벽방수", "적벽돌방수", "발수제도포"], 
+    shortIntro: "건물 외벽 크랙 보수 및 침투성 투명 발수 코팅 시공입니다.", 
+    guideText: "줄눈 및 크랙 실리콘 충진 후 균일한 발수 스프레이 공정으로 외벽 누수를 차단합니다.", 
+    visible: true 
+  },
+  { 
+    id: "rooftop-waterproofing", 
+    categoryIds: ["waterproof-leak"], 
+    name: "옥상방수", 
+    slug: "rooftop-waterproofing", 
+    displayName: "옥상방수", 
+    hashtags: ["옥상방수", "우레탄방수", "방수공사"], 
+    shortIntro: "노후 옥상 바닥 균열 해결을 위한 다층식 우레탄 도막 방수공사입니다.", 
+    guideText: "바닥 면갈이(연삭)부터 하도, 중도, 상도 코팅까지 정석 시공으로 하자율을 낮춥니다.", 
+    visible: true 
+  },
+  { 
+    id: "roof-waterproofing", 
+    categoryIds: ["waterproof-leak"], 
+    name: "지붕방수", 
+    slug: "roof-waterproofing", 
+    displayName: "지붕방수", 
+    hashtags: ["지붕방수", "칼라강판", "지붕개량"], 
+    shortIntro: "노후 기와 및 칼라강판 지붕 틈새 빗물 침투를 원천 차단합니다.", 
+    guideText: "방수 시트 부착 및 지붕재 개량 공사를 통해 노후 지붕 누수를 완벽 복구합니다.", 
+    visible: true 
+  },
+  { 
+    id: "rain-leak", 
+    categoryIds: ["waterproof-leak", "window-caulking"], 
+    name: "빗물누수", 
+    slug: "rain-leak", 
+    displayName: "빗물누수", 
+    hashtags: ["빗물누수", "창틀코킹", "외벽누수"], 
+    shortIntro: "강우 시 천장이나 창틀 주변으로 번지는 빗물 스며듦 현상을 점검/보수합니다.", 
+    guideText: "빗물의 유입 경로를 추적하여 외벽 균열 실란트 시공 및 방수 처리를 병행합니다.", 
+    visible: true 
+  },
+  { 
+    id: "exterior-leak", 
+    categoryIds: ["waterproof-leak"], 
+    name: "외벽누수", 
+    slug: "exterior-leak", 
+    displayName: "외벽누수", 
+    hashtags: ["외벽누수", "외벽크랙", "창틀실리콘"], 
+    shortIntro: "건물 외벽의 미세 균열 및 석재 마감재 사이로 들어오는 빗물 차단입니다.", 
+    guideText: "고층 로프 작업으로 외벽 미세 균열 보수 및 특수 코킹 충진을 완수합니다.", 
+    visible: true 
+  },
+  { 
+    id: "rooftop-leak", 
+    categoryIds: ["waterproof-leak"], 
+    name: "옥상누수", 
+    slug: "rooftop-leak", 
+    displayName: "옥상누수", 
+    hashtags: ["옥상누수", "크랙보수", "방수층들뜸"], 
+    shortIntro: "비가 오면 아래층 천장이 젖는 현상을 차단하기 위한 옥상 정밀 크랙 보수입니다.", 
+    guideText: "방수층이 들뜬 부위를 철저히 칼로 긁어내고 방수 실란트를 깊숙이 주입합니다.", 
+    visible: true 
+  },
 
   // 3. 창틀코킹/창틀누수 하위 작업들
-  { id: "window-caulking-task", categoryId: "window-caulking", name: "창틀코킹", slug: "window-caulking" },
-  { id: "window-leak", categoryId: "window-caulking", name: "창틀누수", slug: "window-leak" },
-  { id: "window-silicon", categoryId: "window-caulking", name: "창틀실리콘", slug: "window-silicon" },
-  { id: "chassis-silicon", categoryId: "window-caulking", name: "샷시실리콘", slug: "chassis-silicon" },
-  { id: "window-rain-leak", categoryId: "window-caulking", name: "빗물누수", slug: "window-rain-leak" },
+  { 
+    id: "window-caulking-task", 
+    categoryIds: ["window-caulking"], 
+    name: "창틀코킹", 
+    slug: "window-caulking", 
+    displayName: "창틀코킹", 
+    hashtags: ["창틀코킹", "베란다실리콘", "빗물차단"], 
+    shortIntro: "아파트/빌라 베란다 외부 샷시 실리콘 코킹 전문 시공 서비스입니다.", 
+    guideText: "기존 삭은 실리콘을 전용 커터로 완전 제거한 후 외부 전용 프라이머와 실란트로 충진합니다.", 
+    visible: true 
+  },
+  { 
+    id: "window-leak", 
+    categoryIds: ["window-caulking"], 
+    name: "창틀누수", 
+    slug: "window-leak", 
+    displayName: "창틀누수", 
+    hashtags: ["창틀누수", "베란다누수", "실리콘크랙"], 
+    shortIntro: "창틀 주변 벽지 곰팡이나 물 스며듦의 주원인인 샷시 코킹 하자를 보수합니다.", 
+    guideText: "샤시 외부 프레임과 시멘트 옹벽 사이의 접착면 들뜸을 완벽히 차단 실링합니다.", 
+    visible: true 
+  },
+  { 
+    id: "window-silicon", 
+    categoryIds: ["window-caulking"], 
+    name: "창틀실리콘", 
+    slug: "window-silicon", 
+    displayName: "창틀실리콘", 
+    hashtags: ["창틀실리콘", "샤시코킹", "외벽로프"], 
+    shortIntro: "햇빛에 삭아 갈라진 샤시 실리콘을 외벽 전용 우레탄 실란트로 교체 시공합니다.", 
+    guideText: "자외선과 온도차 수축 팽창에 강한 창호 전용 실리콘을 사용해 긴 수명을 보장합니다.", 
+    visible: true 
+  },
+  { 
+    id: "chassis-silicon", 
+    categoryIds: ["window-caulking"], 
+    name: "샷시실리콘", 
+    slug: "chassis-silicon", 
+    displayName: "샷시실리콘", 
+    hashtags: ["샷시실리콘", "샤시코킹", "빗물방수"], 
+    shortIntro: "노후화되어 부스러지는 샷시 주변 외벽 틈새를 정교하게 씰링 작업합니다.", 
+    guideText: "실내측 뿐 아니라 실외측 유입부를 완벽 마감해야 빗물 유입을 장기적으로 방지합니다.", 
+    visible: true 
+  },
+  { 
+    id: "window-rain-leak", 
+    categoryIds: ["window-caulking"], 
+    name: "빗물누수", 
+    slug: "window-rain-leak", 
+    displayName: "창틀 빗물누수", 
+    hashtags: ["빗물누수", "창틀누수", "샤시코킹"], 
+    shortIntro: "비바람이 들이칠 때 창틀 하단으로 차오르는 물길을 확실하게 메워 줍니다.", 
+    guideText: "크랙 부위 실리콘 덧칠(덧방)을 지양하고 구형 자재 탈거 방식을 철저히 준수합니다.", 
+    visible: true 
+  },
 
-  // 4. 하수구막힘 하위 작업들
-  { id: "drain-clogged", categoryId: "drain-clog", name: "하수구막힘", slug: "drain-clogged" },
-  { id: "sink-clogged", categoryId: "drain-clog", name: "싱크대막힘", slug: "sink-clogged" },
-  { id: "toilet-clogged", categoryId: "drain-clog", name: "변기막힘", slug: "toilet-clogged" },
-  { id: "bathroom-drain-clogged", categoryId: "drain-clog", name: "배수구막힘", slug: "bathroom-drain-clogged" },
-  { id: "main-sewer-clogged", categoryId: "drain-clog", name: "오수관막힘", slug: "main-sewer-clogged" },
-  { id: "main-sewer-backflow", categoryId: "drain-clog", name: "오수관역류", slug: "main-sewer-backflow" }
+  // 4. 하수구막힘 하위 작업들 (비활성화 상태 유지)
+  { 
+    id: "drain-clogged", 
+    categoryIds: ["drain-clog"], 
+    name: "하수구막힘", 
+    slug: "drain-clogged", 
+    displayName: "하수구막힘", 
+    hashtags: ["하수구뚫음", "배관세척", "배수구역류"], 
+    shortIntro: "싱크대, 욕실, 변기 등 물이 내려가지 않는 하수관을 신속 통풍 처리합니다.", 
+    guideText: "배관 내부 이물질 성상에 맞춰 적합한 압력 스프링 및 석션 기계를 동원합니다.", 
+    visible: false 
+  },
+  { 
+    id: "sink-clogged", 
+    categoryIds: ["drain-clog"], 
+    name: "싱크대막힘", 
+    slug: "sink-clogged", 
+    displayName: "싱크대막힘", 
+    hashtags: ["싱크대역류", "싱크대뚫기", "배관기름제거"], 
+    shortIntro: "싱크대 배관 밑으로 기름 덩어리가 쌓여 물이 역류하는 현상을 해결합니다.", 
+    guideText: "배관 내시경으로 유증기 슬러지 적체 상태를 직접 확인하며 스케일링 세척을 지원합니다.", 
+    visible: false 
+  },
+  { 
+    id: "toilet-clogged", 
+    categoryIds: ["drain-clog"], 
+    name: "변기막힘", 
+    slug: "toilet-clogged", 
+    displayName: "변기막힘", 
+    hashtags: ["변기뚫는곳", "변기이물질", "변기탈거"], 
+    shortIntro: "휴지나 장난감, 이물질이 들어가 꽉 막힌 변기를 깔끔히 뚫어 드립니다.", 
+    guideText: "변기 배관 손상 없이 부드러운 관통기 또는 석션 공법으로 이물질을 신속 흡입합니다.", 
+    visible: false 
+  },
+  { 
+    id: "bathroom-drain-clogged", 
+    categoryIds: ["drain-clog"], 
+    name: "배수구막힘", 
+    slug: "bathroom-drain-clogged", 
+    displayName: "배수구막힘", 
+    hashtags: ["욕실하수구", "머리카락막힘", "트랩막힘"], 
+    shortIntro: "욕실 바닥 하수구나 세탁실 배수구에 쌓인 머리카락 및 석회 찌꺼기를 세척합니다.", 
+    guideText: "하수구 트랩을 깨끗이 탈거 청소하고 메인 입상관 합류점까지 소통 통과시킵니다.", 
+    visible: false 
+  },
+  { 
+    id: "main-sewer-clogged", 
+    categoryIds: ["drain-clog"], 
+    name: "오수관막힘", 
+    slug: "main-sewer-clogged", 
+    displayName: "오수관막힘", 
+    hashtags: ["공용배관", "오수관뚫음", "고압세척"], 
+    shortIntro: "상가 및 빌라 건물 1층 공용 배관 및 정화조 유입 배수관 막힘 해결입니다.", 
+    guideText: "대형 고압 세척 특수 차량 장비를 동원해 배관 내부 유지방 덩어리를 깎아냅니다.", 
+    visible: false 
+  },
+  { 
+    id: "main-sewer-backflow", 
+    categoryIds: ["drain-clog"], 
+    name: "오수관역류", 
+    slug: "main-sewer-backflow", 
+    displayName: "오수관역류", 
+    hashtags: ["배수관역류", "1층하수구역류", "메인관세척"], 
+    shortIntro: "공용관이 막혀 건물 1층 세대 화장실이나 싱크대로 역류하는 응급 문제를 해결합니다.", 
+    guideText: "배관 전문가의 정밀 진단 후 통수를 완료하고 재발 방지용 스케일링을 실시합니다.", 
+    visible: false 
+  }
 ];

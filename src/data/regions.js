@@ -1,103 +1,120 @@
 export const regions = [
-  // 1. 서울 특별시 계층 데이터
   {
+    id: "seoul-gangnam",
     province: "서울",
     city: "",
     district: "강남구",
     neighborhood: "",
     displayName: "서울 강남구",
     slug: "seoul/gangnam",
-    regionLevel: "district",
-    parentRegion: "seoul",
-    nearbyRegions: ["seoul/seocho", "seoul/songpa", "seoul/seongdong"]
+    level: "district",
+    parentId: "",
+    nearbyRegionIds: ["seoul-songpa", "seoul-gangnam-yeoksam", "seoul-gangnam-nonhyeon"],
+    visible: true
   },
   {
+    id: "seoul-gangnam-nonhyeon",
     province: "서울",
     city: "",
     district: "강남구",
-    neighborhood: "논현동", // 논현1동, 논현2동 -> 논현동 통합 표기 규칙
+    neighborhood: "논현동",
     displayName: "서울 강남구 논현동",
     slug: "seoul/gangnam/nonhyeon",
-    regionLevel: "neighborhood",
-    parentRegion: "seoul/gangnam",
-    nearbyRegions: ["seoul/gangnam/yeoksam", "seoul/gangnam/sinsa"]
+    level: "neighborhood",
+    parentId: "seoul-gangnam",
+    nearbyRegionIds: ["seoul-gangnam-yeoksam", "seoul-gangnam"],
+    visible: true
   },
   {
+    id: "seoul-gangnam-yeoksam",
     province: "서울",
     city: "",
     district: "강남구",
     neighborhood: "역삼동",
     displayName: "서울 강남구 역삼동",
     slug: "seoul/gangnam/yeoksam",
-    regionLevel: "neighborhood",
-    parentRegion: "seoul/gangnam",
-    nearbyRegions: ["seoul/gangnam/nonhyeon", "seoul/gangnam/samseong"]
+    level: "neighborhood",
+    parentId: "seoul-gangnam",
+    nearbyRegionIds: ["seoul-gangnam-nonhyeon", "seoul-gangnam"],
+    visible: true
   },
   {
+    id: "seoul-songpa",
     province: "서울",
     city: "",
     district: "송파구",
     neighborhood: "",
     displayName: "서울 송파구",
     slug: "seoul/songpa",
-    regionLevel: "district",
-    parentRegion: "seoul",
-    nearbyRegions: ["seoul/gangnam", "seoul/gangdong"]
+    level: "district",
+    parentId: "",
+    nearbyRegionIds: ["seoul-gangnam", "seoul-songpa-jamsil"],
+    visible: true
   },
   {
+    id: "seoul-songpa-jamsil",
     province: "서울",
     city: "",
     district: "송파구",
     neighborhood: "잠실동",
+    displayName: "서울 강남구 잠실동", // 기존 데이터 보존하되 한글명 가독성 매핑
     displayName: "서울 송파구 잠실동",
     slug: "seoul/songpa/jamsil",
-    regionLevel: "neighborhood",
-    parentRegion: "seoul/songpa",
-    nearbyRegions: ["seoul/songpa/samjeon", "seoul/gangnam/daechi"]
+    level: "neighborhood",
+    parentId: "seoul-songpa",
+    nearbyRegionIds: ["seoul-songpa", "seoul-gangnam-yeoksam"],
+    visible: true
   },
-
-  // 2. 경기도 계층 데이터 (수원시 등)
   {
+    id: "gyeonggi-suwon",
     province: "경기",
     city: "수원시",
     district: "",
+    neighborhood: "",
     displayName: "경기 수원시",
     slug: "gyeonggi/suwon",
-    regionLevel: "city",
-    parentRegion: "gyeonggi",
-    nearbyRegions: ["gyeonggi/yongin", "gyeonggi/hwaseong", "gyeonggi/uicheang"]
+    level: "city",
+    parentId: "",
+    nearbyRegionIds: ["gyeonggi-suwon-jangan", "gyeonggi-suwon-yeongtong"],
+    visible: true
   },
   {
+    id: "gyeonggi-suwon-jangan",
     province: "경기",
     city: "수원시",
     district: "장안구",
     neighborhood: "",
     displayName: "경기 수원시 장안구",
     slug: "gyeonggi/suwon/jangan",
-    regionLevel: "district",
-    parentRegion: "gyeonggi/suwon",
-    nearbyRegions: ["gyeonggi/suwon/gwonseon", "gyeonggi/suwon/paldal"]
+    level: "district",
+    parentId: "gyeonggi-suwon",
+    nearbyRegionIds: ["gyeonggi-suwon", "gyeonggi-suwon-yeongtong"],
+    visible: true
   },
   {
+    id: "gyeonggi-suwon-yeongtong",
     province: "경기",
     city: "수원시",
     district: "영통구",
     neighborhood: "",
     displayName: "경기 수원시 영통구",
     slug: "gyeonggi/suwon/yeongtong",
-    regionLevel: "district",
-    parentRegion: "gyeonggi/suwon",
-    nearbyRegions: ["gyeonggi/suwon/paldal", "gyeonggi/yongin/suji"]
+    level: "district",
+    parentId: "gyeonggi-suwon",
+    nearbyRegionIds: ["gyeonggi-suwon", "gyeonggi-suwon-jangan"],
+    visible: true
   },
   {
+    id: "gyeonggi-paju-unjeong",
     province: "경기",
     city: "파주시",
     district: "",
-    neighborhood: "운정동", // 운정1, 2, 3동 -> 운정동 통합 규칙
+    neighborhood: "운정동",
     displayName: "경기 파주시 운정동",
     slug: "gyeonggi/paju/unjeong",
-    regionLevel: "neighborhood",
-    parentRegion: "gyeonggi/paju",
-    nearbyRegions: ["gyeonggi/paju/geumchon", "gyeonggi/goyang/ilsanseo"]
+    level: "neighborhood",
+    parentId: "",
+    nearbyRegionIds: ["gyeonggi-suwon-jangan"],
+    visible: true
   }
 ];

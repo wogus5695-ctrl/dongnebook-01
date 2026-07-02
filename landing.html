@@ -210,6 +210,7 @@
     import { tasks } from '/src/data/tasks.js';
     import { regions } from '/src/data/regions.js';
     import { businesses } from '/src/data/businesses.js';
+    import { adSlots } from '/src/data/adSlots.js';
     import { CompanyCard } from '/src/components/CompanyCard.js';
     import { updateSeoMeta } from '/src/components/SeoMeta.js';
 
@@ -217,12 +218,13 @@
     renderFooter();
 
     // 1. URL 쿼리 파라미터 획득
+    const activeCategories = categories.filter(c => c.visible !== false);
     const urlParams = new URLSearchParams(window.location.search);
     const regParam = urlParams.get('reg') || '서울 강남구';
-    const catParam = urlParams.get('cat') || 'window-caulking';
+    const catParam = urlParams.get('cat') || activeCategories[0].id;
     const taskParam = urlParams.get('task') || 'window-caulking-task';
 
-    const currentCat = categories.find(c => c.id === catParam) || categories[0];
+    const currentCat = activeCategories.find(c => c.id === catParam) || activeCategories[0];
     const currentTask = tasks.find(t => t.id === taskParam) || tasks.find(t => t.categoryId === currentCat.id) || tasks[0];
     const currentRegion = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || regions[0];
 
@@ -315,22 +317,41 @@
       document.getElementById('fallback-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
       document.getElementById('sticky-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
 
-      // 4. 업체 매칭 필터링
-      const matched = businesses.filter(biz => {
-        if (!biz.visible || biz.adStatus !== 'active') return false;
-        
-        const start = new Date(biz.adStartDate);
-        const end = new Date(biz.adEndDate);
-        const now = new Date("2026-06-30");
-        if (now < start || now > end) return false;
+      // 4. 업체 매칭 필터링 (adSlots 구좌 기반)
+      const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+      const activeSlots = adSlots.filter(slot => {
+        if (slot.status !== "active") return false;
+        if (slot.categoryId !== catParam || slot.taskId !== taskParam) return false;
 
-        if (!biz.categoryIds.includes(catParam) || !biz.taskIds.includes(taskParam)) return false;
+        const start = new Date(slot.startDate);
+        const end = new Date(slot.endDate);
+        if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
 
-        const matchedRegion = biz.serviceRegions.some(regSlug => {
-          return currentRegion.slug === regSlug || currentRegion.slug.startsWith(regSlug + "/");
-        });
+        // 지역 매칭 (계층 구조 지원)
+        let currentReg = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || currentRegion;
+        let matchedRegion = false;
+        while (currentReg) {
+          if (currentReg.id === slot.regionId) {
+            matchedRegion = true;
+            break;
+          }
+          currentReg = currentReg.parentId ? regions.find(r => r.id === currentReg.parentId) : null;
+        }
+
         return matchedRegion;
-      }).sort((a, b) => b.priority - a.priority);
+      });
+
+      const matched = [];
+      activeSlots.forEach(slot => {
+        const biz = businesses.find(b => b.id === slot.businessId);
+        if (biz && biz.visible && biz.status === "active") {
+          matched.push({
+            ...biz,
+            slotPriority: slot.priority
+          });
+        }
+      });
+      matched.sort((a, b) => b.slotPriority - a.slotPriority);
 
       const grid = document.getElementById('landing-listings-grid');
       const fallback = document.getElementById('landing-fallback');
@@ -354,9 +375,9 @@
             id: biz.id,
             name: biz.brandName,
             category: biz.categoryIds[0],
-            regions: biz.serviceRegions.map(slug => {
-              const found = regions.find(r => r.slug === slug);
-              return found ? found.displayName : slug;
+            regions: biz.serviceRegionIds.map(regId => {
+              const found = regions.find(r => r.id === regId);
+              return found ? found.displayName : regId;
             }),
             tags: tagDisplayNames,
             phone: biz.phone,
@@ -365,7 +386,7 @@
             description: biz.description,
             isAd: true,
             badgeText: biz.badge,
-            thumbnail: biz.thumbnail
+            thumbnail: biz.image
           };
           return CompanyCard(listObj, { regionName, taskName });
         }).join('');

@@ -175,8 +175,8 @@
     // 2. 카테고리 및 대표 태그 로드
     const catGrid = document.getElementById('main-categories-grid');
     if (catGrid) {
-      catGrid.innerHTML = categories.map(cat => {
-        const subTasks = tasks.filter(t => t.categoryId === cat.id).slice(0, 4);
+      catGrid.innerHTML = categories.filter(cat => cat.visible !== false).map(cat => {
+        const subTasks = tasks.filter(t => t.categoryIds.includes(cat.id) && t.visible).slice(0, 4);
         const tagsHTML = subTasks.map(t => `<span class="cat-task-tag">${t.name}</span>`).join('');
         
         return `
@@ -202,7 +202,7 @@
       const provinceList = ["서울", "경기"];
       
       regionBox.innerHTML = provinceList.map(prov => {
-        const subRegs = regions.filter(r => r.province === prov && (r.regionLevel === 'district' || r.regionLevel === 'city'));
+        const subRegs = regions.filter(r => r.province === prov && (r.level === 'district' || r.level === 'city') && r.visible);
         const bubblesHTML = subRegs.map(reg => {
           // 카테고리 디폴트로 일반 매칭 연결
           return `
@@ -224,18 +224,18 @@
       }).join('');
     }
 
-    // 4. 입점 업체 (내부 6대 브랜드만 필터링) 로드
+    // 4. 입점 업체 (내부 브랜드) 로드
     const bizGrid = document.getElementById('main-businesses-grid');
     if (bizGrid) {
-      const activeBrands = businesses.filter(b => b.isInternalBrand && b.adStatus === 'active' && b.visible);
+      const activeBrands = businesses.filter(b => b.isInternalBrand && b.status === 'active' && b.visible);
       bizGrid.innerHTML = activeBrands.map(biz => {
         const formattedListing = {
           id: biz.id,
           name: biz.brandName,
           category: biz.categoryIds[0],
-          regions: biz.serviceRegions.map(regSlug => {
-            const found = regions.find(r => r.slug === regSlug);
-            return found ? found.displayName : regSlug;
+          regions: biz.serviceRegionIds.map(regId => {
+            const found = regions.find(r => r.id === regId);
+            return found ? found.displayName : regId;
           }),
           tags: biz.taskIds.map(tId => {
             const foundTask = tasks.find(t => t.id === tId);
@@ -246,7 +246,8 @@
           siteLink: biz.websiteUrl,
           description: biz.description,
           isAd: true,
-          badgeText: biz.badge
+          badgeText: biz.badge,
+          thumbnail: biz.image
         };
         return CompanyCard(formattedListing);
       }).join('');
