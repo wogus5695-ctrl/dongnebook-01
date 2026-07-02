@@ -87,6 +87,11 @@
         <!-- JS 렌더링 -->
       </div>
 
+      <!-- 광고 구좌 노출 안내 문구 -->
+      <p id="ad-coverage-notice" style="display: none; font-size: 0.75rem; color: var(--text-muted); margin-top: 16px; text-align: center; width: 100%;">
+        이 업체 정보는 선택 지역과 연관된 구 단위 광고 구좌 기준으로 표시될 수 있습니다.
+      </p>
+
       <!-- 4. 소형 광고주 CTA -->
       <div class="mini-ad-banner" id="listings-mini-ad-banner">
         <div>
@@ -323,6 +328,8 @@
 
       // 4. 업체 매칭 필터링 (adSlots 구좌 기반)
       const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+      const targetReg = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || currentRegion;
+
       const activeSlots = adSlots.filter(slot => {
         if (slot.status !== "active") return false;
         if (slot.categoryId !== catParam || slot.taskId !== taskParam) return false;
@@ -331,18 +338,14 @@
         const end = new Date(slot.endDate);
         if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
 
-        // 지역 매칭 (계층 구조 지원: 동 단위일 경우 부모 구 단위 매칭)
-        let currentReg = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || currentRegion;
-        let matchedRegion = false;
-        while (currentReg) {
-          if (currentReg.id === slot.purchaseRegionId) {
-            matchedRegion = true;
-            break;
-          }
-          currentReg = currentReg.parentId ? regions.find(r => r.id === currentReg.parentId) : null;
+        // 지역 매칭 분기
+        if (targetReg.level === "district") {
+          return slot.purchaseRegionId === targetReg.id;
+        } else if (targetReg.level === "neighborhood") {
+          return slot.purchaseRegionId === targetReg.parentId;
         }
 
-        return matchedRegion;
+        return false;
       });
 
       const matched = [];
@@ -351,16 +354,20 @@
         if (biz && biz.visible && biz.status === "active") {
           matched.push({
             ...biz,
-            slotPriority: slot.priority
+            slotPriority: slot.priority,
+            slotStartDate: slot.startDate ? new Date(slot.startDate) : new Date(0)
           });
         }
       });
-      // 정렬 기준: adSlots.priority 오름차순 -> businesses.priority 오름차순
+      // 정렬 기준: 1. adSlots.priority 오름차순 -> 2. businesses.priority 오름차순 -> 3. adSlots.startDate 내림차순
       matched.sort((a, b) => {
         if (a.slotPriority !== b.slotPriority) {
           return a.slotPriority - b.slotPriority;
         }
-        return a.priority - b.priority;
+        if (a.priority !== b.priority) {
+          return a.priority - b.priority;
+        }
+        return b.slotStartDate - a.slotStartDate;
       });
 
       const grid = document.getElementById('landing-listings-grid');
@@ -368,12 +375,14 @@
       const stickyCallBtn = document.getElementById('sticky-call-btn');
       const miniAdBanner = document.getElementById('listings-mini-ad-banner');
       const stickyApplyBtn = document.getElementById('sticky-apply-btn');
+      const coverageNotice = document.getElementById('ad-coverage-notice');
 
       if (matched.length > 0) {
         grid.style.display = 'grid';
         fallback.style.display = 'none';
         miniAdBanner.style.display = 'flex';
         stickyApplyBtn.style.display = 'inline-flex';
+        if (coverageNotice) coverageNotice.style.display = 'block';
 
         grid.innerHTML = matched.map(biz => {
           const tagDisplayNames = biz.taskIds.map(tId => {
@@ -413,6 +422,7 @@
         grid.style.display = 'none';
         miniAdBanner.style.display = 'none';
         fallback.style.display = 'block';
+        if (coverageNotice) coverageNotice.style.display = 'none';
 
         stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
         stickyCallBtn.textContent = `📢 이 지역 첫 광고 입점 신청`;
