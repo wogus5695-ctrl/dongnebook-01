@@ -15,9 +15,17 @@ const SLACK_WEBHOOK_URL = "";
 
 function doPost(e) {
   try {
-    // 1. 전송 데이터 수집 및 파싱
-    const jsonString = e.postData.contents;
-    const data = JSON.parse(jsonString);
+    // 1. 전송 데이터 수집 및 파싱 (JSON 및 Form URL Encoding 포맷 상호 호환 보완)
+    let data = {};
+    if (e.postData && e.postData.contents) {
+      try {
+        data = JSON.parse(e.postData.contents);
+      } catch(jsErr) {
+        data = e.parameter || {};
+      }
+    } else {
+      data = e.parameter || {};
+    }
     
     // 2. 관리 대상 Google Sheets 로드
     const sheetApp = SpreadsheetApp.getActiveSpreadsheet();

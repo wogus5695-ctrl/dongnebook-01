@@ -461,13 +461,9 @@
       });
     }
 
-    /**
-     * 구글 웹앱 서버(Relay)에 비동기 POST 전송
-     */
     async function triggerExternalRelay(data) {
       console.log("[디버그 페이로드 전송 확인]:", data);
 
-      // 플레이스홀더 주소 상태라면 목업(Mock) 브라우저 로컬 데이터 처리 후 성공으로 모사 처리
       if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf("YOUR_REAL_GOOGLE") !== -1) {
         return new Promise((resolve) => {
           setTimeout(() => {
@@ -477,17 +473,27 @@
         });
       }
 
-      // 실제 GAS 통신
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
+      // 폼 파라미터 형식으로 데이터 인코딩 전환 (CORS 우회 신뢰성 강화)
+      const formBody = [];
+      for (const property in data) {
+        const encodedKey = encodeURIComponent(property);
+        const val = Array.isArray(data[property]) ? data[property].join(", ") : data[property];
+        const encodedValue = encodeURIComponent(val);
+        formBody.push(encodedKey + "=" + encodedValue);
+      }
+      const serializedData = formBody.join("&");
+
+      // 실제 GAS 통신 (no-cors 모드 + URL 인코딩 적용)
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // Apps Script 리다이렉트 지원용 CORS 해제 모드
+        mode: 'no-cors',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
-        body: JSON.stringify(data)
+        body: serializedData
       });
       
-      return true; // no-cors는 결과 리턴을 가로채지 못하므로 전송 성공 시 true로 반환 처리
+      return true;
     }
   </script>
 </body>
