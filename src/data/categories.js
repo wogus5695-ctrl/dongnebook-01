@@ -8,7 +8,14 @@ export const categories = [
     relatedTaskIds: ["fire-cleaning", "floor-cleaning", "awning-cleaning", "sign-cleaning", "interior-cleaning", "hood-cleaning"],
     hubTitle: "서울·경기 종합청소 업체 찾기",
     hubDescription: "종합청소 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.",
-    visible: true
+    visible: true,
+    showOnMain: true,
+    mainTitle: "우리동네 유리창청소",
+    mainPriority: 10,
+    priceGuide: {
+      standard: "전화/채널 문의 시 무료 가견적",
+      note: "현장 층수, 시공 면적, 동원 장비에 따라 다르게 산정됩니다."
+    }
   },
   {
     id: "waterproof-leak",
@@ -19,7 +26,14 @@ export const categories = [
     relatedTaskIds: ["exterior-waterproofing", "roof-waterproofing", "exterior-leak"],
     hubTitle: "서울·경기 방수·누수 업체 찾기",
     hubDescription: "방수/누수 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.",
-    visible: true
+    visible: true,
+    showOnMain: true,
+    mainTitle: "우리동네 외벽방수",
+    mainPriority: 20,
+    priceGuide: {
+      standard: "전화/채널 문의 시 무료 가견적",
+      note: "현장 층수, 시공 면적, 동원 장비에 따라 다르게 산정됩니다."
+    }
   },
   {
     id: "window-caulking",
@@ -30,7 +44,14 @@ export const categories = [
     relatedTaskIds: ["window-silicon", "chassis-silicon"],
     hubTitle: "서울·경기 창틀코킹·창틀누수 업체 찾기",
     hubDescription: "창틀코킹/창틀누수 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.",
-    visible: true
+    visible: true,
+    showOnMain: true,
+    mainTitle: "우리동네 창틀누수",
+    mainPriority: 30,
+    priceGuide: {
+      standard: "전화/채널 문의 시 무료 가견적",
+      note: "현장 층수, 시공 면적, 동원 장비에 따라 다르게 산정됩니다."
+    }
   },
   {
     id: "drain-clog",
@@ -41,7 +62,14 @@ export const categories = [
     relatedTaskIds: ["bathroom-drain-clogged", "main-sewer-clogged", "main-sewer-backflow"],
     hubTitle: "서울·경기 하수구막힘 업체 찾기",
     hubDescription: "하수구막힘 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.",
-    visible: false
+    visible: false,
+    showOnMain: false,
+    mainTitle: "우리동네 하수구막힘",
+    mainPriority: 999,
+    priceGuide: {
+      standard: "전화/채널 문의 시 무료 가견적",
+      note: "현장 층수, 시공 면적, 동원 장비에 따라 다르게 산정됩니다."
+    }
   },
   {
     id: "elastic-coating",
@@ -59,6 +87,13 @@ export const categories = [
     adSelectable: true,
     hubVisible: true,
     sitemapInclude: true,
-    noindex: false
+    noindex: false,
+    showOnMain: true,
+    mainTitle: "우리동네 탄성코트",
+    mainPriority: 40,
+    priceGuide: {
+      standard: "전화/채널 문의 시 무료 가견적",
+      note: "현장 층수, 시공 면적, 동원 장비에 따라 다르게 산정됩니다."
+    }
   }
 ];

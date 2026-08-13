@@ -23,42 +23,9 @@
       <img src="/hero-banner.png" alt="우리 동네 업체를 한눈에 확인하고 바로 문의하세요 - 동네책자">
     </section>
 
-    <!-- 3. 우리동네 업체 섹션 (3개 카테고리별 3개 이하 노출) -->
+    <!-- 3. 우리동네 업체 섹션 (데이터 기반 자동 렌더링) -->
     <section class="section" id="featured-listings-section" style="padding: 24px 0;">
-      
-      <!-- 카테고리 1. 유리창청소 (종합청소) -->
-      <div style="margin-bottom: 40px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 18px;">
-          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0;">우리동네 유리창청소</h2>
-          <a href="/landing.html?reg=서울 강남구&cat=general-cleaning&task=window-cleaning" style="font-size: 0.8rem; color: var(--primary); font-weight: bold; text-decoration: none;">전체보기 →</a>
-        </div>
-        <div class="card-grid" id="featured-cleaning-grid">
-          <!-- JS 렌더링 -->
-        </div>
-      </div>
-
-      <!-- 카테고리 2. 외벽방수 (방수/누수) -->
-      <div style="margin-bottom: 40px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 18px;">
-          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0;">우리동네 외벽방수</h2>
-          <a href="/landing.html?reg=서울 송파구&cat=waterproof-leak&task=exterior-waterproof" style="font-size: 0.8rem; color: var(--primary); font-weight: bold; text-decoration: none;">전체보기 →</a>
-        </div>
-        <div class="card-grid" id="featured-waterproof-grid">
-          <!-- JS 렌더링 -->
-        </div>
-      </div>
-
-      <!-- 카테고리 3. 창틀누수 (창틀코킹/창틀누수) -->
-      <div style="margin-bottom: 24px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 18px;">
-          <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0;">우리동네 창틀누수</h2>
-          <a href="/landing.html?reg=경기 수원시 영통구&cat=window-caulking&task=window-leak" style="font-size: 0.8rem; color: var(--primary); font-weight: bold; text-decoration: none;">전체보기 →</a>
-        </div>
-        <div class="card-grid" id="featured-caulking-grid">
-          <!-- JS 렌더링 -->
-        </div>
-      </div>
-
+      <!-- JS로 동적 생성됨 -->
     </section>
 
     <!-- 4. 광고 입점 안내 섹션 (B2B 유도) -->
@@ -84,16 +51,25 @@
     import { tasks } from '/src/data/tasks.js';
     import { regions } from '/src/data/regions.js';
     import { businesses } from '/src/data/businesses.js';
-    import { CompanyCard } from '/src/components/CompanyCard.js';
+    import { adSlots } from '/src/data/adSlots.js';
 
     // 1. 공통 템플릿 로드
     renderHeader();
     renderFooter();
 
+    // 카테고리별 기본 폴백 이미지 맵
+    const categoryDefaultImages = {
+      "general-cleaning": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80",
+      "waterproof-leak": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
+      "window-caulking": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80",
+      "elastic-coating": "/assets/thumbs/elastic-coating-bareumspace.jpg"
+    };
+    const commonPlaceholderImage = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80";
+
     // 메인 페이지용 전용 간소화 업체 카드 컴포넌트 함수
     function renderMainCompanyCard(biz, targetRegName, catId, taskId) {
-      const defaultImage = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80";
-      const cardImage = biz.image || defaultImage;
+      const catDefaultImage = categoryDefaultImages[catId] || commonPlaceholderImage;
+      const cardImage = biz.image || catDefaultImage;
 
       // 해당 업체의 대표 작업명 추출
       const foundTask = tasks.find(t => t.id === taskId);
@@ -106,11 +82,14 @@
 
       // 상세 이동 경로
       const detailLink = `/landing.html?reg=${encodeURIComponent(targetRegName)}&cat=${catId}&task=${taskId}`;
+      
+      // 이미지 alt 문구 생성
+      const altText = `${targetRegName} ${taskName} 상담 가능 업체 ${biz.brandName}`;
 
       return `
         <article class="company-card" style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
           <div style="width: 100%; height: 150px; overflow: hidden;">
-            <img src="${cardImage}" alt="${biz.brandName}" style="width: 100%; height: 100%; object-fit: cover;">
+            <img src="${cardImage}" alt="${altText}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='${catDefaultImage}';">
           </div>
           <div style="padding: 16px; display: flex; flex-direction: column; flex-grow: 1; font-family: var(--font-family);">
             <div style="margin-bottom: 4px;">
@@ -129,26 +108,77 @@
       `;
     }
 
-    // 2. 주요 3대 카테고리 대표 시드 업체 데이터 로딩 (최대 3개 이하)
-    const cleanGrid = document.getElementById('featured-cleaning-grid');
-    if (cleanGrid) {
-      // 종합청소 - 유리창청소 (window-cleaning)
-      const cleaningBizs = businesses.filter(b => b.categoryIds.includes('general-cleaning') && b.taskIds.includes('window-cleaning') && b.status === 'active' && b.visible).slice(0, 3);
-      cleanGrid.innerHTML = cleaningBizs.map(biz => renderMainCompanyCard(biz, "서울 강남구", "general-cleaning", "window-cleaning")).join('');
-    }
+    // 2. 동적 렌더링 로직 실행
+    const featuredSection = document.getElementById('featured-listings-section');
+    if (featuredSection) {
+      // 카테고리 필터링 및 정렬
+      const mainCategories = categories
+        .filter(c => c.visible === true && c.showOnMain === true && c.publicVisible !== false && c.isActive !== false)
+        .sort((a, b) => (a.mainPriority || 999) - (b.mainPriority || 999));
 
-    const waterproofGrid = document.getElementById('featured-waterproof-grid');
-    if (waterproofGrid) {
-      // 방수/누수 - 외벽방수 (exterior-waterproof)
-      const waterproofBizs = businesses.filter(b => b.categoryIds.includes('waterproof-leak') && b.taskIds.includes('exterior-waterproof') && b.status === 'active' && b.visible).slice(0, 3);
-      waterproofGrid.innerHTML = waterproofBizs.map(biz => renderMainCompanyCard(biz, "서울 송파구", "waterproof-leak", "exterior-waterproof")).join('');
-    }
+      let sectionHtml = '';
 
-    const caulkingGrid = document.getElementById('featured-caulking-grid');
-    if (caulkingGrid) {
-      // 창틀코킹/창틀누수 - 창틀누수 (window-leak)
-      const caulkingBizs = businesses.filter(b => b.categoryIds.includes('window-caulking') && b.taskIds.includes('window-leak') && b.status === 'active' && b.visible).slice(0, 3);
-      caulkingGrid.innerHTML = caulkingBizs.map(biz => renderMainCompanyCard(biz, "경기 수원시 영통구", "window-caulking", "window-leak")).join('');
+      mainCategories.forEach(cat => {
+        // 활성 광고 구좌 찾기
+        const activeSlots = adSlots.filter(slot => slot.status === 'active' && slot.categoryId === cat.id);
+        if (activeSlots.length === 0) return;
+
+        // 고유 업체 매핑
+        const matchedBizs = [];
+        const seenBizIds = new Set();
+
+        activeSlots.forEach(slot => {
+          if (seenBizIds.has(slot.businessId)) return;
+          const biz = businesses.find(b => b.id === slot.businessId);
+          if (biz && biz.status === 'active' && biz.visible === true && biz.showOnMain !== false) {
+            seenBizIds.add(slot.businessId);
+            
+            const bizMainPriority = biz.mainPriority !== undefined ? biz.mainPriority : (biz.priority !== undefined ? biz.priority : 999);
+            
+            matchedBizs.push({
+              ...biz,
+              mainPriorityVal: bizMainPriority,
+              slotTaskId: slot.taskId,
+              slotRegionId: slot.purchaseRegionId
+            });
+          }
+        });
+
+        if (matchedBizs.length === 0) return;
+
+        // 정렬 및 최대 3-4개 노출 (3개 노출)
+        matchedBizs.sort((a, b) => a.mainPriorityVal - b.mainPriorityVal);
+        const displayBizs = matchedBizs.slice(0, 3);
+
+        // 전체보기 링크 생성 (1순위: hub URL, 2순위: 대표 landing URL, 3순위: 숨김)
+        let viewAllLink = `/hub.html?cat=${cat.id}`;
+        if (cat.id === 'elastic-coating') {
+          // 탄성코트 대표 landing URL
+          viewAllLink = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=elastic-coating&task=elastic-coating`;
+        }
+
+        // 각 카테고리별 업체 그리드 카드 리스트 HTML 생성
+        const cardsHtml = displayBizs.map(biz => {
+          const foundReg = regions.find(r => r.id === biz.slotRegionId);
+          const regionName = foundReg ? foundReg.displayName : "서울 강남구";
+          return renderMainCompanyCard(biz, regionName, cat.id, biz.slotTaskId);
+        }).join('');
+
+        // 섹션 HTML 조립
+        sectionHtml += `
+          <div style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-bottom: 18px;">
+              <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin: 0;">${cat.mainTitle}</h2>
+              <a href="${viewAllLink}" style="font-size: 0.8rem; color: var(--primary); font-weight: bold; text-decoration: none;">전체보기 →</a>
+            </div>
+            <div class="card-grid">
+              ${cardsHtml}
+            </div>
+          </div>
+        `;
+      });
+
+      featuredSection.innerHTML = sectionHtml;
     }
   </script>
 </body>

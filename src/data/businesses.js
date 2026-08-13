@@ -202,6 +202,8 @@ export const businesses = [
     isInternalBrand: true,
     status: "active",
     priority: 1,
-    visible: true
+    visible: true,
+    showOnMain: true,
+    mainPriority: 1
   }
 ];
