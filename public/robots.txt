@@ -1,6 +1,14 @@
 User-agent: *
 Allow: /
-Disallow: /src/
-Disallow: /node_modules/
+Allow: /index.html
+Allow: /landing.html
+Allow: /guide.html
+Allow: /apply.html
+Allow: /policy.html
+
+# 관리자 비공개 대시보드 지면 수집 차단
+Disallow: /keyword-map.html
+Disallow: /business-list.html
+Disallow: /admin/
 
 Sitemap: https://dongnebook-01.vercel.app/sitemap.xml

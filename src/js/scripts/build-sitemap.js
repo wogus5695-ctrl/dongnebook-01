@@ -114,6 +114,12 @@ function generateSitemap() {
   }
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml, 'utf-8');
 
+  // robots.txt 복사 및 배포
+  const robotsSrc = path.join(publicDir, 'robots.txt');
+  if (fs.existsSync(robotsSrc)) {
+    fs.writeFileSync(path.join(distDir, 'robots.txt'), fs.readFileSync(robotsSrc, 'utf-8'), 'utf-8');
+  }
+
   console.log(`[성공] Vercel 전용 sitemap.xml 빌드 완료. 포함된 총 URL 수: ${urls.length}개`);
 }
 
