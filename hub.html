@@ -142,7 +142,7 @@
       </div>
     </section>
 
-    <!-- 8. FAQ 섹션 (기본 정보성 FAQ 노출 유지) -->
+    <!-- 8. FAQ 섹션 -->
     <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 24px;">
       <h2 class="section-title" style="font-size: 1.25rem;" id="hub-faq-title">시공 자주 묻는 질문 (FAQ)</h2>
       <div class="faq-list" id="hub-faq-container">
@@ -150,7 +150,7 @@
       </div>
     </section>
 
-    <!-- 7. 광고주 CTA 배너 (소비자 탐색 이후 노출되도록 하단부 배치) -->
+    <!-- 7. 광고주 CTA 배너 -->
     <section class="section text-center" style="background-color: var(--primary-light); border-radius: var(--border-radius); padding: 28px; border: 1.5px dashed var(--primary); margin-top: 32px;">
       <h2 style="font-size: 1.2rem; color: var(--primary); margin-bottom: 8px;" id="hub-ad-title">이 카테고리에서 업체를 운영 중이신가요?</h2>
       <p style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 16px;">
@@ -182,6 +182,11 @@
     const urlParams = new URLSearchParams(window.location.search);
     let activeCatId = urlParams.get('cat') || activeCategories[0].id;
     let activeCat = activeCategories.find(c => c.id === activeCatId) || activeCategories[0];
+
+    // 만약 탄성코트 카테고리라면 관리자용 키워드맵 페이지로 화면을 완전히 재구성합니다.
+    if (activeCat.id === 'elastic-coating') {
+      window.location.href = `/keyword-map.html?cat=elastic-coating&admin=true`;
+    }
 
     // 2. 카테고리별 H1 매핑 테이블 지정 (검색 로봇 JS 해석 전/후 일치 처리)
     const hubH1Map = {

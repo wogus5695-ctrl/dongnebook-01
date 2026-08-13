@@ -135,6 +135,7 @@
           <option value="general-cleaning">종합청소</option>
           <option value="waterproof-leak">방수/누수</option>
           <option value="window-caulking">창틀코킹/창틀누수</option>
+          <option value="elastic-coating">탄성코트</option>
         </select>
       </div>
 
@@ -220,6 +221,12 @@
     const searchTask = document.getElementById('search-task');
     const statusSelect = document.getElementById('filter-status');
 
+    // cat 쿼리 파라미터가 있으면 해당 카테고리로 자동 선택
+    const catQueryParam = urlParams.get('cat');
+    if (catQueryParam && [...categorySelect.options].some(opt => opt.value === catQueryParam)) {
+      categorySelect.value = catQueryParam;
+    }
+
     const container = document.getElementById('keyword-list-container');
 
     // 3. 필터링 및 렌더링 주 연산
@@ -265,9 +272,14 @@
                 if (slot.status !== "active") return false;
                 if (slot.categoryId !== cat.id || slot.taskId !== task.id) return false;
 
-                const start = new Date(slot.startDate);
-                const end = new Date(slot.endDate);
-                if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
+                if (slot.startDate !== null) {
+                  const start = new Date(slot.startDate);
+                  if (CURRENT_DATE < start) return false;
+                }
+                if (slot.endDate !== null) {
+                  const end = new Date(slot.endDate);
+                  if (CURRENT_DATE > end) return false;
+                }
 
                 if (reg.level === "district") {
                   return slot.purchaseRegionId === reg.id;
