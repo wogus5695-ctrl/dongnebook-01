@@ -42,5 +42,23 @@ export const categories = [
     hubTitle: "서울·경기 하수구막힘 업체 찾기",
     hubDescription: "하수구막힘 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.",
     visible: false
+  },
+  {
+    id: "elastic-coating",
+    name: "탄성코트",
+    slug: "elastic-coating",
+    description: "아파트 베란다, 세탁실, 다용도실 등 실내 탄성코트 시공 상담 가능 업체를 확인할 수 있는 카테고리입니다.",
+    mainTaskIds: ["elastic-coating", "elastic-coating-work", "veranda-elastic-coating"],
+    relatedTaskIds: ["laundry-room-elastic-coating", "apartment-elastic-coating", "elastic-coating-company"],
+    hubTitle: "서울·경기 탄성코트 업체 찾기",
+    hubDescription: "탄성코트 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.",
+    isActive: true,
+    visible: true,
+    publicVisible: true,
+    landingEnabled: true,
+    adSelectable: true,
+    hubVisible: true,
+    sitemapInclude: true,
+    noindex: false
   }
 ];

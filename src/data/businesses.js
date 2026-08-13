@@ -174,5 +174,34 @@ export const businesses = [
     status: "active",
     priority: 7,
     visible: false
+  },
+  {
+    id: "bareumspace-elastic-coating",
+    brandName: "바름공간",
+    categoryIds: ["elastic-coating"],
+    taskIds: [
+      "elastic-coating",
+      "elastic-coating-work",
+      "veranda-elastic-coating",
+      "laundry-room-elastic-coating",
+      "apartment-elastic-coating",
+      "elastic-coating-company"
+    ],
+    serviceRegionIds: [
+      "seoul-eunpyeong",
+      "seoul-seodaemun"
+    ],
+    phone: "010-4667-5568",
+    telUrl: "tel:01046675568",
+    kakaoUrl: "http://pf.kakao.com/_LfhxnX",
+    websiteUrl: "https://www.barumspace.co.kr/",
+    description: "아파트 베란다, 세탁실, 다용도실 등 실내 결로·곰팡이 예방을 위한 탄성코트 시공 상담이 가능한 업체입니다.",
+    hashtags: ["#탄성코트", "#베란다탄성코트", "#세탁실탄성코트", "#아파트탄성코트"],
+    image: "/assets/thumbs/elastic-coating-bareumspace.jpg",
+    logo: "",
+    isInternalBrand: true,
+    status: "active",
+    priority: 1,
+    visible: true
   }
 ];
