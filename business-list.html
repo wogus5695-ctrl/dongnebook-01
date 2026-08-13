@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- 검색 로봇 인덱싱 영구 차단 -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>[관리자] 입점 업체 & 광고 구좌 관리 | 동네책자</title>
+  <link rel="stylesheet" href="/src/css/main.css">
+  <style>
+    /* 어드민 관리자 전용 주황/회색 스킨 */
+    .admin-banner {
+      background-color: #d35400;
+      color: white;
+      padding: 12px 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      font-family: var(--font-family);
+    }
+    .filter-panel {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      font-family: var(--font-family);
+    }
+    .biz-admin-card {
+      background-color: white;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      font-family: var(--font-family);
+    }
+    @media(min-width: 768px) {
+      .biz-admin-card {
+        flex-direction: row;
+      }
+    }
+    .biz-left {
+      flex: 1;
+      max-width: 220px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .biz-logo-frame {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .biz-right {
+      flex: 3;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .data-row {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: var(--text-dark);
+    }
+    .data-row strong {
+      color: var(--secondary);
+      display: inline-block;
+      width: 110px;
+    }
+    /* 상태 스타일 배지 */
+    .badge-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+    .status-active { background-color: #d4efdf; color: #196f3d; }
+    .status-pending { background-color: #fcf3cf; color: #7d6608; }
+    .status-paused { background-color: #ebf5fb; color: #1f618d; }
+    .status-expired { background-color: #fadbd8; color: #78281f; }
+    .status-rejected { background-color: #f2f3f4; color: #5d6d7e; }
+
+    .action-btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 공통 헤더 마운트 -->
+  <div id="header-container"></div>
+
+  <main class="container" style="margin-top: 12px;">
+    
+    <!-- 2. 관리자 페이지 안내 배너 -->
+    <div class="admin-banner">
+      <span>⚙️ 동네책자 입점 업체 & 광고 관리 대시보드</span>
+      <span style="font-size: 0.75rem; background-color: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px;">OPERATOR MODE</span>
+    </div>
+
+    <div style="margin-bottom: 20px; font-family: var(--font-family);">
+      <h1 style="font-size: 1.5rem; font-weight: 900; color: var(--secondary); margin-bottom: 6px;">입점 파트너 및 광고 계약 현황</h1>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+        등록된 입점 업체의 정보(전화, 카톡, 홈페이지)와 연결된 광고 구좌의 상태 및 유효 기간을 모니터링하는 페이지입니다.
+      </p>
+    </div>
+
+    <!-- 3. 필터 영역 -->
+    <section class="filter-panel">
+      <div class="form-group" style="margin: 0;">
+        <label class="form-label" for="filter-category" style="font-size: 0.8rem;">업종</label>
+        <select id="filter-category" class="form-select" style="padding: 8px;">
+          <option value="all">전체 업종</option>
+          <option value="general-cleaning">종합청소</option>
+          <option value="waterproof-leak">방수/누수</option>
+          <option value="window-caulking">창틀코킹/창틀누수</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin: 0;">
+        <label class="form-label" for="filter-task" style="font-size: 0.8rem;">작업명</label>
+        <select id="filter-task" class="form-select" style="padding: 8px;">
+          <option value="all">전체 작업</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin: 0;">
+        <label class="form-label" for="filter-region" style="font-size: 0.8rem;">구 단위 지역</label>
+        <select id="filter-region" class="form-select" style="padding: 8px;">
+          <option value="all">전체 지역</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin: 0;">
+        <label class="form-label" for="filter-status" style="font-size: 0.8rem;">광고 상태</label>
+        <select id="filter-status" class="form-select" style="padding: 8px;">
+          <option value="all">전체 상태</option>
+          <option value="active">active (진행중)</option>
+          <option value="pending">pending (대기)</option>
+          <option value="paused">paused (일시중지)</option>
+          <option value="expired">expired (만료됨)</option>
+          <option value="rejected">rejected (거절됨)</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin: 0; display: flex; align-items: flex-end; padding-bottom: 4px;">
+        <label class="form-checkbox" style="font-size: 0.8rem; margin: 0; display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="filter-expiring" style="width:16px; height:16px; margin:0;">
+          <span>7일 이내 만료/만료됨 감지</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 4. 업체 리스트 영역 -->
+    <section id="businesses-list-container">
+      <!-- JS 동적 렌더링 -->
+    </section>
+
+  </main>
+
+  <!-- 5. 관리자용 간소 Footer -->
+  <footer style="background-color: var(--bg-card); border-top: 1px solid var(--border-color); padding: 20px 0; margin-top: 48px; text-align: center; font-family: var(--font-family);">
+    <div class="container">
+      <p style="font-size: 0.75rem; color: var(--text-muted);">
+        동네책자 내부 시스템 관리 전용 모니터링 툴입니다. 기밀 및 유출 주의.
+      </p>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { renderHeader } from '/src/components/Header.js';
+    import { categories } from '/src/data/categories.js';
+    import { tasks } from '/src/data/tasks.js';
+    import { regions } from '/src/data/regions.js';
+    import { businesses } from '/src/data/businesses.js';
+    import { adSlots } from '/src/data/adSlots.js';
+
+    // 1. 헤더 마운트
+    renderHeader();
+
+    // 2. 권한 검증
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') !== 'true') {
+      alert("관리자 권한이 요구되는 페이지입니다.");
+      window.location.href = "/";
+    }
+
+    const categorySelect = document.getElementById('filter-category');
+    const taskSelect = document.getElementById('filter-task');
+    const regionSelect = document.getElementById('filter-region');
+    const statusSelect = document.getElementById('filter-status');
+    const expiringCheckbox = document.getElementById('filter-expiring');
+
+    const container = document.getElementById('businesses-list-container');
+
+    // 3. 작업명 및 지역 선택 드롭다운 초기화
+    function initDropdowns() {
+      // 작업명
+      const activeTasks = tasks.filter(t => t.visible);
+      taskSelect.innerHTML = '<option value="all">전체 작업</option>' + 
+        activeTasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+
+      // 구 단위 지역
+      const districts = regions.filter(r => r.level === 'district');
+      regionSelect.innerHTML = '<option value="all">전체 지역</option>' + 
+        districts.map(d => `<option value="${d.id}">${d.displayName}</option>`).join('');
+    }
+
+    // 4. 대표 URL 복사 함수 선언 (전역 윈도우 스코프 바인딩)
+    window.copyLandingUrl = function(urlText) {
+      const fullUrl = window.location.origin + urlText;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        alert("대표 랜딩 URL 복사 완료:\n" + fullUrl);
+      }).catch(err => {
+        console.error("복사 실패:", err);
+      });
+    }
+
+    // 5. 입점 파트너 리스트 여과 및 렌더링
+    function renderBusinesses() {
+      const catVal = categorySelect.value;
+      const taskVal = taskSelect.value;
+      const regVal = regionSelect.value;
+      const statusVal = statusSelect.value;
+      const isExpiringCheck = expiringCheckbox.checked;
+
+      const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+      let html = "";
+
+      // 6. 모든 등록 파트너를 돌며 해당 업체의 광고 구좌(adSlots)를 매칭하여 출력
+      businesses.forEach(biz => {
+        // 해당 업체의 광고 구좌(adSlots) 모두 수집
+        const slotsOfBiz = adSlots.filter(slot => slot.businessId === biz.id);
+        
+        // 만약 구좌가 없는 일반 업체라면 가상의 1개 플랫 구조로 매칭
+        const displaySlots = slotsOfBiz.length > 0 ? slotsOfBiz : [{
+          id: "no-slot-" + biz.id,
+          status: "none",
+          categoryId: biz.categoryIds[0],
+          taskId: biz.taskIds[0],
+          purchaseRegionId: biz.serviceRegionIds[0],
+          startDate: "N/A",
+          endDate: "N/A"
+        }];
+
+        displaySlots.forEach(slot => {
+          // 1. 업종 필터링
+          if (catVal !== 'all' && slot.categoryId !== catVal) return;
+          // 2. 작업명 필터링
+          if (taskVal !== 'all' && slot.taskId !== taskVal) return;
+          // 3. 지역 필터링
+          if (regVal !== 'all') {
+            if (slot.purchaseRegionId !== regVal) return;
+          }
+          // 4. 광고 상태 필터링
+          if (statusVal !== 'all' && slot.status !== statusVal) return;
+
+          // 5. 만료 예정 필터링 (7일 이내 만료이거나 만료 상태 감지)
+          if (isExpiringCheck && slot.endDate !== "N/A") {
+            const endDateObj = new Date(slot.endDate);
+            const diffTime = endDateObj - CURRENT_DATE;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            // 7일 이내 혹은 이미 마이너스(만료) 상태일 때만 합격
+            if (diffDays > 7) return;
+          }
+
+          // 이름 파싱
+          const categoryObj = categories.find(c => c.id === slot.categoryId);
+          const catName = categoryObj ? categoryObj.name : slot.categoryId;
+
+          const taskObj = tasks.find(t => t.id === slot.taskId);
+          const taskName = taskObj ? taskObj.name : slot.taskId;
+
+          const regionObj = regions.find(r => r.id === slot.purchaseRegionId);
+          const regName = regionObj ? regionObj.displayName : slot.purchaseRegionId;
+          const subDongCount = regionObj && regionObj.childRegionIds ? regionObj.childRegionIds.length : 0;
+
+          // 대표 랜딩 URL 조립
+          const landingUrl = `/landing.html?reg=${encodeURIComponent(regName)}&cat=${slot.categoryId}&task=${slot.taskId}`;
+
+          // 상태 배지 조립
+          let statusBadgeClass = "badge-status";
+          switch(slot.status) {
+            case "active": statusBadgeClass += " status-active"; break;
+            case "pending": statusBadgeClass += " status-pending"; break;
+            case "paused": statusBadgeClass += " status-paused"; break;
+            case "expired": statusBadgeClass += " status-expired"; break;
+            case "rejected": statusBadgeClass += " status-rejected"; break;
+            default: statusBadgeClass += " status-rejected";
+          }
+
+          const defaultLogo = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80";
+          const logoImage = biz.image || defaultLogo;
+
+          html += `
+            <div class="biz-admin-card">
+              <!-- 6. 좌측: 로고 및 업체 타이틀 -->
+              <div class="biz-left">
+                <div class="biz-logo-frame">
+                  <img src="${logoImage}" alt="${biz.brandName}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin: 0;">${biz.brandName}</h3>
+                <span class="${statusBadgeClass}">${slot.status.toUpperCase()}</span>
+              </div>
+
+              <!-- 7. 우측: 상세 정보 테이블 형태 구성 -->
+              <div class="biz-right">
+                <div>
+                  <div class="data-row"><strong>업체 고유 ID</strong>: ${biz.id}</div>
+                  <div class="data-row"><strong>매칭 업종</strong>: ${catName}</div>
+                  <div class="data-row"><strong>매칭 작업명</strong>: ${taskName}</div>
+                  <div class="data-row"><strong>구 단위 지역</strong>: ${regName} (${subDongCount}개 동 자동상속)</div>
+                  <div class="data-row"><strong>전화번호</strong>: <a href="tel:${biz.phone}" style="color: var(--primary); font-weight:bold;">${biz.phone}</a></div>
+                </div>
+                <div>
+                  <div class="data-row"><strong>카카오 링크</strong>: <a href="${biz.kakaoUrl}" target="_blank" style="color: #d35400; text-decoration: underline;">오픈채팅 주소 ↗</a></div>
+                  <div class="data-row"><strong>홈페이지</strong>: ${biz.websiteUrl && biz.websiteUrl !== "추후 입력" ? `<a href="${biz.websiteUrl}" target="_blank" style="text-decoration: underline; color: var(--primary);">${biz.websiteUrl}</a>` : 'N/A'}</div>
+                  <div class="data-row"><strong>광고 시작일</strong>: ${slot.startDate}</div>
+                  <div class="data-row"><strong>광고 종료일</strong>: <span style="font-weight:bold; color:${slot.status === 'expired' ? '#c0392b' : 'inherit'}">${slot.endDate}</span></div>
+                  <div class="data-row" style="margin-top: 6px;">
+                    <strong>랜딩 액션</strong>: 
+                    <button class="btn btn-outline" style="font-size:0.75rem; padding: 3px 8px; border-radius: 4px;" onclick="window.copyLandingUrl('${landingUrl}')">🔗 대표 URL 복사</button>
+                    <a href="${landingUrl}" target="_blank" class="btn btn-primary" style="font-size:0.75rem; padding: 4px 8px; border-radius: 4px; text-decoration:none; color:white;">미리보기 ↗</a>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 8. 추후 어드민 확장용 기능 플레이스홀더 -->
+              <div style="border-left: 1px dashed var(--border-color); padding-left: 16px; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-align: center;">어드민 기능 (준비 중)</span>
+                <div class="action-btn-group">
+                  <!-- 추후 수정/일시중지/만료수동처리 UI 주입 스코프 -->
+                  <button class="btn btn-outline" style="font-size: 0.72rem; padding: 6px; cursor: not-allowed; opacity: 0.5;" disabled>정보 수정</button>
+                  <button class="btn btn-outline" style="font-size: 0.72rem; padding: 6px; cursor: not-allowed; opacity: 0.5;" disabled>일시 중지</button>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      });
+
+      container.innerHTML = html || `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">검색 및 필터 조건에 부합하는 입점 업체가 존재하지 않습니다.</div>`;
+    }
+
+    // 드롭다운 및 리스트 최초 기동
+    initDropdowns();
+    renderBusinesses();
+
+    // 이벤트 리스너 바인딩
+    categorySelect.addEventListener('change', renderBusinesses);
+    taskSelect.addEventListener('change', renderBusinesses);
+    regionSelect.addEventListener('change', renderBusinesses);
+    statusSelect.addEventListener('change', renderBusinesses);
+    expiringCheckbox.addEventListener('change', renderBusinesses);
+  </script>
+</body>
+</html>
