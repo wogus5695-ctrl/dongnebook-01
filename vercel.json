@@ -1,0 +1,21 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/general-cleaning",
+      "destination": "/hub.html?cat=general-cleaning"
+    },
+    {
+      "source": "/waterproof-leak",
+      "destination": "/hub.html?cat=waterproof-leak"
+    },
+    {
+      "source": "/window-caulking",
+      "destination": "/hub.html?cat=window-caulking"
+    },
+    {
+      "source": "/elastic-coating",
+      "destination": "/hub.html?cat=elastic-coating"
+    }
+  ]
+}
