@@ -13,6 +13,8 @@ export default defineConfig({
         guide: resolve(__dirname, 'guide.html'),
         apply: resolve(__dirname, 'apply.html'),
         policy: resolve(__dirname, 'policy.html'),
+        keywordMap: resolve(__dirname, 'keyword-map.html'),
+        businessList: resolve(__dirname, 'business-list.html'),
       }
     }
   }
