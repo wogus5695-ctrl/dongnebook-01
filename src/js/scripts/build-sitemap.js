@@ -51,11 +51,19 @@ function generateSitemap() {
       // 해당 지역, 카테고리, 작업에 할당된 active 광고 구좌(adSlot)가 있는지 확인
       const hasActiveListing = adSlots.some(slot => {
         if (slot.status !== "active") return false;
-        if (slot.categoryId !== category.id || slot.taskId !== task.id) return false;
+        if (slot.categoryId !== category.id) return false;
 
-        const start = new Date(slot.startDate);
-        const end = new Date(slot.endDate);
-        if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
+        const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === task.id;
+        if (!taskMatches) return false;
+
+        if (slot.startDate !== null) {
+          const start = new Date(slot.startDate);
+          if (CURRENT_DATE < start) return false;
+        }
+        if (slot.endDate !== null) {
+          const end = new Date(slot.endDate);
+          if (CURRENT_DATE > end) return false;
+        }
 
         // 지역 매칭 (계층형 고려)
         let currentReg = region;

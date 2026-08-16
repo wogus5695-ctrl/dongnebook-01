@@ -317,11 +317,19 @@
 
       const activeSlots = adSlots.filter(slot => {
         if (slot.status !== "active") return false;
-        if (slot.categoryId !== catParam || slot.taskId !== taskParam) return false;
+        if (slot.categoryId !== catParam) return false;
 
-        const start = new Date(slot.startDate);
-        const end = new Date(slot.endDate);
-        if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
+        const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === taskParam;
+        if (!taskMatches) return false;
+
+        if (slot.startDate !== null) {
+          const start = new Date(slot.startDate);
+          if (CURRENT_DATE < start) return false;
+        }
+        if (slot.endDate !== null) {
+          const end = new Date(slot.endDate);
+          if (CURRENT_DATE > end) return false;
+        }
 
         // 지역 매칭 분기
         if (targetReg.level === "district") {

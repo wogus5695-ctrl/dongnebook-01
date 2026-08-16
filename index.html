@@ -138,7 +138,7 @@
             matchedBizs.push({
               ...biz,
               mainPriorityVal: bizMainPriority,
-              slotTaskId: slot.taskId,
+              slotTaskId: slot.taskId || (cat.id === 'elastic-coating' ? 'elastic-coating' : ''),
               slotRegionId: slot.purchaseRegionId
             });
           }

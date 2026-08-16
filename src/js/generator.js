@@ -116,17 +116,26 @@ function filterBusinessesForPage({ regionId, categoryId, taskId }) {
   // 활성화된 광고 구좌 필터링
   const activeSlots = adSlots.filter(slot => {
     if (slot.status !== "active") return false;
-    if (slot.categoryId !== categoryId || slot.taskId !== taskId) return false;
+    if (slot.categoryId !== categoryId) return false;
 
-    const start = new Date(slot.startDate);
-    const end = new Date(slot.endDate);
-    if (CURRENT_DATE < start || CURRENT_DATE > end) return false;
+    const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === taskId;
+    if (!taskMatches) return false;
+
+    if (slot.startDate !== null) {
+      const start = new Date(slot.startDate);
+      if (CURRENT_DATE < start) return false;
+    }
+    if (slot.endDate !== null) {
+      const end = new Date(slot.endDate);
+      if (CURRENT_DATE > end) return false;
+    }
 
     // 지역 매칭 (계층형 지원: 페이지의 지역이 광고 구좌 지역의 자식인지 여부)
     let currentReg = regions.find(r => r.id === regionId);
     let matchedRegion = false;
     while (currentReg) {
-      if (currentReg.id === slot.regionId) {
+      const slotRegId = slot.purchaseRegionId || slot.regionId;
+      if (currentReg.id === slotRegId) {
         matchedRegion = true;
         break;
       }

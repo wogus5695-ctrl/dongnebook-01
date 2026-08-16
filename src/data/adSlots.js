@@ -101,7 +101,43 @@ export const adSlots = [
     priority: 1,
     memo: "경기 파주시 빗물누수 구좌"
   },
-  // 7. 서울 은평구 + 탄성코트 6개 작업명 광고 구좌 (바름공간)
+  // 7. 서울 은평구 + 탄성코트 업종 전체 구좌 (바름공간 - 신규 통합 구좌)
+  {
+    id: "slot-bareumspace-elastic-coating-eunpyeong-01",
+    businessId: "bareumspace-elastic-coating",
+    categoryId: "elastic-coating",
+    purchaseRegionId: "seoul-eunpyeong",
+    purchaseRegionLevel: "district",
+    coverageMode: "district-all-subregions-all-tasks",
+    coverageTaskMode: "all-category-tasks",
+    slotNumber: 1,
+    position: "card",
+    planType: "manual-test",
+    status: "active",
+    startDate: null,
+    endDate: null,
+    priority: 1,
+    memo: "바름공간 은평구 탄성코트 업종 전체 키워드 구좌"
+  },
+  // 8. 서울 서대문구 + 탄성코트 업종 전체 구좌 (바름공간 - 신규 통합 구좌)
+  {
+    id: "slot-bareumspace-elastic-coating-seodaemun-01",
+    businessId: "bareumspace-elastic-coating",
+    categoryId: "elastic-coating",
+    purchaseRegionId: "seoul-seodaemun",
+    purchaseRegionLevel: "district",
+    coverageMode: "district-all-subregions-all-tasks",
+    coverageTaskMode: "all-category-tasks",
+    slotNumber: 1,
+    position: "card",
+    planType: "manual-test",
+    status: "active",
+    startDate: null,
+    endDate: null,
+    priority: 1,
+    memo: "바름공간 서대문구 탄성코트 업종 전체 키워드 구좌"
+  },
+  // 기존 은평구/서대문구 작업명별 구좌 마이그레이션 처리 (status: migrated)
   {
     id: "slot-bareumspace-eunpyeong-elastic-coating",
     businessId: "bareumspace-elastic-coating",
@@ -112,11 +148,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 은평구 탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 은평구 탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-eunpyeong-elastic-coating-work",
@@ -128,11 +164,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 은평구 탄성코트시공 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 은평구 탄성코트시공 테스트 구좌"
   },
   {
     id: "slot-bareumspace-eunpyeong-veranda-elastic-coating",
@@ -144,11 +180,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 은평구 베란다탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 은평구 베란다탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-eunpyeong-laundry-room-elastic-coating",
@@ -160,11 +196,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 은평구 세탁실탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 은평구 세탁실탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-eunpyeong-apartment-elastic-coating",
@@ -176,11 +212,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 은평구 아파트탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 은평구 아파트탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-eunpyeong-elastic-coating-company",
@@ -192,13 +228,12 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 은평구 탄성코트업체 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 은평구 탄성코트업체 테스트 구좌"
   },
-  // 8. 서울 서대문구 + 탄성코트 6개 작업명 광고 구좌 (바름공간)
   {
     id: "slot-bareumspace-seodaemun-elastic-coating",
     businessId: "bareumspace-elastic-coating",
@@ -209,11 +244,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 서대문구 탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 서대문구 탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-seodaemun-elastic-coating-work",
@@ -225,11 +260,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 서대문구 탄성코트시공 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 서대문구 탄성코트시공 테스트 구좌"
   },
   {
     id: "slot-bareumspace-seodaemun-veranda-elastic-coating",
@@ -241,11 +276,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 서대문구 베란다탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 서대문구 베란다탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-seodaemun-laundry-room-elastic-coating",
@@ -257,11 +292,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 서대문구 세탁실탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 서대문구 세탁실탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-seodaemun-apartment-elastic-coating",
@@ -273,11 +308,11 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 서대문구 아파트탄성코트 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 서대문구 아파트탄성코트 테스트 구좌"
   },
   {
     id: "slot-bareumspace-seodaemun-elastic-coating-company",
@@ -289,10 +324,10 @@ export const adSlots = [
     coverageMode: "district-with-neighborhoods",
     position: "card",
     planType: "manual-test",
-    status: "active",
+    status: "migrated",
     startDate: null,
     endDate: null,
     priority: 1,
-    memo: "바름공간 서울 서대문구 탄성코트업체 테스트 구좌"
+    memo: "[마이그레이션] 바름공간 서울 서대문구 탄성코트업체 테스트 구좌"
   }
 ];
