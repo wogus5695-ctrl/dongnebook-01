@@ -342,9 +342,12 @@
       });
 
       const matched = [];
+      const seenBizIds = new Set();
       activeSlots.forEach(slot => {
+        if (seenBizIds.has(slot.businessId)) return;
         const biz = businesses.find(b => b.id === slot.businessId);
         if (biz && biz.visible && biz.status === "active") {
+          seenBizIds.add(slot.businessId);
           matched.push({
             ...biz,
             slotPriority: slot.priority,
