@@ -9,11 +9,15 @@ export function renderHeader() {
   const isLandingPage = currentPath.includes('landing.html');
   const isGuidePage = currentPath.includes('guide.html');
   const isApplyPage = currentPath.includes('apply.html');
-  const isAdminPage = currentPath.includes('hub.html'); // 관리자 지면
+  const isAdminPage = currentPath.includes('keyword-map.html') || currentPath.includes('business-list.html') || window.location.search.includes('admin=true');
 
   // 우측 버튼 분기 처리
   let ctaButtonsHTML = '';
-  if (isMainPage) {
+  if (isAdminPage) {
+    ctaButtonsHTML = `
+      <span style="font-size: 0.75rem; background-color: #e67e22; color: white; padding: 4px 8px; border-radius: 10px; font-weight: bold; display: inline-block;">OPERATOR ONLY</span>
+    `;
+  } else if (isMainPage) {
     ctaButtonsHTML = `
       <a href="/guide.html" class="btn btn-outline" style="font-size: 0.75rem; padding: 6px 12px; border-color: var(--border-color); background-color: white; color: var(--text-dark);">광고 입점 안내</a>
       <a href="/apply.html" class="btn btn-accent" style="font-size: 0.75rem; padding: 6px 12px; background-color: var(--primary); color: white; border: none;">광고 신청</a>
@@ -29,16 +33,38 @@ export function renderHeader() {
     ctaButtonsHTML = `
       <a href="/guide.html" class="btn btn-outline" style="font-size: 0.75rem; padding: 6px 12px; border-color: var(--border-color); background-color: white; color: var(--text-dark);">광고 입점 안내</a>
     `;
-  } else if (isAdminPage) {
-    ctaButtonsHTML = `
-      <span style="font-size: 0.7rem; background-color: #e67e22; color: white; padding: 3px 8px; border-radius: 4px; font-weight: bold; display: inline-block;">관리자</span>
-    `;
   } else {
     // 기타 정책 지면 (policy.html 등)의 경우 기본 CTA 노출
     ctaButtonsHTML = `
       <a href="/guide.html" class="btn btn-outline" style="font-size: 0.75rem; padding: 6px 12px; border-color: var(--border-color); background-color: white; color: var(--text-dark);">광고 입점 안내</a>
     `;
   }
+
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const catParam = urlParams.get('cat');
+  let catText = '';
+  if (catParam === 'elastic-coating') catText = '탄성코트';
+  else if (catParam === 'general-cleaning') catText = '종합청소';
+  else if (catParam === 'waterproof-leak') catText = '방수/누수';
+  else if (catParam === 'window-caulking') catText = '창틀코킹';
+
+  const sloganHTML = isAdminPage
+    ? `<span style="color: #e67e22; font-weight: bold; font-size: 0.95rem;">⚙️ 관리자 키워드맵 ${catText ? `[${catText}]` : ''}</span>`
+    : `
+      <style>
+        .slogan-pc-text { display: inline; font-size: 0.95rem; }
+        .slogan-mo-text { display: none; }
+        .highlight-word-primary { color: var(--primary); font-weight: 700; }
+        
+        @media (max-width: 768px) {
+          .slogan-pc-text { display: none; }
+          .slogan-mo-text { display: inline; font-size: 0.8rem; color: var(--text-muted); }
+        }
+      </style>
+      <span class="slogan-pc-text">우리 동네 업체, <span class="highlight-word-primary">한눈에</span> 찾고 <span class="highlight-word-primary">바로 문의</span></span>
+      <span class="slogan-mo-text">우리 동네 업체 바로 찾기</span>
+    `;
 
   container.innerHTML = `
     <header class="header" style="background-color: white; border-bottom: 1px solid var(--border-color); padding: 12px 16px; position: sticky; top: 0; z-index: 100; font-family: var(--font-family);">
@@ -50,22 +76,11 @@ export function renderHeader() {
             <span style="font-size: 1.15rem; font-weight: 900; color: var(--primary);">📖 동네책자</span>
           </a>
         </div>
-
+ 
         <!-- 중앙: 브랜드 슬로건 (반응형 대응) -->
         <div class="slogan-area" style="justify-self: center; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px;">
           <div class="header-slogan" style="color: var(--text-dark); font-weight: 600; letter-spacing: -0.02em;">
-            <style>
-              .slogan-pc-text { display: inline; font-size: 0.95rem; }
-              .slogan-mo-text { display: none; }
-              .highlight-word-primary { color: var(--primary); font-weight: 700; }
-              
-              @media (max-width: 768px) {
-                .slogan-pc-text { display: none; }
-                .slogan-mo-text { display: inline; font-size: 0.8rem; color: var(--text-muted); }
-              }
-            </style>
-            <span class="slogan-pc-text">우리 동네 업체, <span class="highlight-word-primary">한눈에</span> 찾고 <span class="highlight-word-primary">바로 문의</span></span>
-            <span class="slogan-mo-text">우리 동네 업체 바로 찾기</span>
+            ${sloganHTML}
           </div>
         </div>
 

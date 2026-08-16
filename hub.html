@@ -183,9 +183,13 @@
     let activeCatId = urlParams.get('cat') || activeCategories[0].id;
     let activeCat = activeCategories.find(c => c.id === activeCatId) || activeCategories[0];
 
-    // 만약 탄성코트 카테고리라면 관리자용 키워드맵 페이지로 화면을 완전히 재구성합니다.
+    // 만약 탄성코트 카테고리라면
     if (activeCat.id === 'elastic-coating') {
-      window.location.href = `/keyword-map.html?cat=elastic-coating&admin=true`;
+      if (urlParams.get('admin') === 'true') {
+        window.location.href = `/keyword-map.html?cat=elastic-coating&admin=true`;
+      } else {
+        window.location.href = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=elastic-coating&task=elastic-coating`;
+      }
     }
 
     // 2. 카테고리별 H1 매핑 테이블 지정 (검색 로봇 JS 해석 전/후 일치 처리)
