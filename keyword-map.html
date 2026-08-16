@@ -71,23 +71,74 @@
       display: flex;
       justify-content: space-between;
     }
+    main.container {
+      max-width: 1200px !important;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
     .keyword-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       text-align: left;
+      min-width: 1100px;
     }
     .keyword-table th {
       background-color: var(--bg-main);
-      padding: 10px;
+      padding: 12px 14px;
       font-weight: bold;
       border-bottom: 2px solid var(--border-color);
       color: var(--text-dark);
+      white-space: nowrap;
+      text-align: center;
     }
     .keyword-table td {
-      padding: 10px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border-color);
       vertical-align: middle;
+      line-height: 1.5;
+    }
+    .col-district {
+      white-space: nowrap;
+      font-weight: bold;
+      min-width: 80px;
+    }
+    .col-neighborhoods {
+      min-width: 220px;
+      word-break: keep-all;
+    }
+    .col-tasks {
+      min-width: 180px;
+      word-break: keep-all;
+    }
+    .col-slot {
+      white-space: nowrap;
+      min-width: 90px;
+      text-align: center;
+    }
+    .col-remaining {
+      white-space: nowrap;
+      min-width: 80px;
+      text-align: center;
+    }
+    .col-landing {
+      white-space: nowrap;
+      min-width: 100px;
+      text-align: center;
+    }
+    .col-details {
+      white-space: nowrap;
+      min-width: 60px;
+      text-align: center;
+    }
+    .btn-action-group {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .btn-action-group .btn {
+      white-space: nowrap;
+      min-width: 40px;
     }
     /* 상태 표시 배지 규격 */
     .status-badge {
@@ -395,21 +446,21 @@
       };
 
       let html = `
-        <div style="overflow-x: auto; background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px;">
+        <div class="keyword-table-wrap" style="overflow-x: auto; background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; width: 100%;">
           <table class="keyword-table">
             <thead>
               <tr>
-                <th style="width: 10%;">대상 구</th>
-                <th style="width: 20%;">포함 동/면/읍</th>
-                <th style="width: 15%;">적용 작업명</th>
-                <th style="width: 8%;">생성 키워드 수</th>
-                <th style="width: 8%;">1번 구좌</th>
-                <th style="width: 8%;">2번 구좌</th>
-                <th style="width: 8%;">3번 구좌</th>
-                <th style="width: 8%;">4번 구좌</th>
-                <th style="width: 6%;">남은 구좌</th>
-                <th style="width: 11%;">대표 랜딩</th>
-                <th style="width: 6%;">상세</th>
+                <th class="col-district">대상 구</th>
+                <th class="col-neighborhoods">포함 동/면/읍</th>
+                <th class="col-tasks">적용 작업명</th>
+                <th style="white-space: nowrap; text-align: center;">생성 키워드 수</th>
+                <th class="col-slot">1번 구좌</th>
+                <th class="col-slot">2번 구좌</th>
+                <th class="col-slot">3번 구좌</th>
+                <th class="col-slot">4번 구좌</th>
+                <th class="col-remaining">남은 구좌</th>
+                <th class="col-landing">대표 랜딩</th>
+                <th class="col-details">상세</th>
               </tr>
             </thead>
             <tbody>
@@ -529,23 +580,23 @@
 
         html += `
           <tr>
-            <td><strong>${dist.displayName.split(' ').pop()}</strong></td>
-            <td><span title="${neighborhoodNames.join(', ')}" style="cursor: help; text-decoration: underline dashed var(--text-muted);">${neighborhoodText}</span></td>
-            <td><span title="${taskDisplayNames.join(', ')}" style="cursor: help; text-decoration: underline dashed var(--text-muted);">${taskText}</span></td>
-            <td><strong>${keywordsCount}</strong>개</td>
-            <td>${slot1Html}</td>
-            <td>${slot2Html}</td>
-            <td>${slot3Html}</td>
-            <td>${slot4Html}</td>
-            <td>${remainingText}</td>
-            <td>
-              <div style="display: flex; gap: 4px; align-items: center;">
-                <a href="${landingUrl}" target="_blank" style="color: var(--primary); text-decoration: underline; font-weight: bold;">이동</a>
-                <button id="${copyBtnId}" class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; width: auto;" onclick="copyToClipboard('${fullLandingUrl}', '${copyBtnId}')">복사</button>
+            <td class="col-district"><strong>${dist.displayName.split(' ').pop()}</strong></td>
+            <td class="col-neighborhoods"><span title="${neighborhoodNames.join(', ')}" style="cursor: help; text-decoration: underline dashed var(--text-muted);">${neighborhoodText}</span></td>
+            <td class="col-tasks"><span title="${taskDisplayNames.join(', ')}" style="cursor: help; text-decoration: underline dashed var(--text-muted);">${taskText}</span></td>
+            <td style="white-space: nowrap; text-align: center;"><strong>${keywordsCount}</strong>개</td>
+            <td class="col-slot">${slot1Html}</td>
+            <td class="col-slot">${slot2Html}</td>
+            <td class="col-slot">${slot3Html}</td>
+            <td class="col-slot">${slot4Html}</td>
+            <td class="col-remaining">${remainingText}</td>
+            <td class="col-landing">
+              <div class="btn-action-group">
+                <a href="${landingUrl}" target="_blank" class="btn btn-accent" style="font-size: 0.65rem; padding: 2px 6px; text-decoration: none; color: white;">이동</a>
+                <button id="${copyBtnId}" class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px;" onclick="copyToClipboard('${fullLandingUrl}', '${copyBtnId}')">복사</button>
               </div>
             </td>
-            <td>
-              <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; width: auto; background-color: #f2f4f4;" onclick="toggleKeywords('${panelId}')">보기</button>
+            <td class="col-details">
+              <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; background-color: #f2f4f4;" onclick="toggleKeywords('${panelId}')">보기</button>
             </td>
           </tr>
           <tr id="${panelId}" style="display: none; background-color: #fafbfb;">
