@@ -694,7 +694,7 @@
 
         const keywordsCount = (1 + subNeighborhoods.length) * associatedTasks.length;
 
-        const firstTask = associatedTasks[0] || { id: 'elastic-coating' };
+        const firstTask = associatedTasks[0] || { id: cat.id };
         const landingUrl = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${cat.id}&task=${firstTask.id}`;
         const fullLandingUrl = `${window.location.origin}${landingUrl}`;
         const copyBtnId = `copy-btn-${dist.id}`;
