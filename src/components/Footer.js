@@ -36,9 +36,9 @@ export function renderFooter() {
             <div class="footer-section" style="flex: 1; min-width: 150px;">
               <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-dark); margin-bottom: 12px;">서비스 카테고리</h4>
               <ul class="footer-links" style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
-                <li><a href="/hub.html?cat=general-cleaning" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: none;">종합청소</a></li>
                 <li><a href="/hub.html?cat=waterproof-leak" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: none;">방수/누수</a></li>
                 <li><a href="/hub.html?cat=window-caulking" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: none;">창틀코킹/창틀누수</a></li>
+                <li><a href="/hub.html?cat=elastic-coating" style="font-size: 0.75rem; color: var(--text-muted); text-decoration: none;">탄성코트</a></li>
               </ul>
             </div>
 

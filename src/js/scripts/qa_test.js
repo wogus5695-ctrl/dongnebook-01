@@ -23,10 +23,10 @@ function logSuccess(msg) {
 const activeCats = categories.filter(c => c.visible !== false);
 const inactiveCats = categories.filter(c => c.visible === false);
 
-if (activeCats.length === 4) {
-  logSuccess(`활성 카테고리 수 검증 완료 (총 4개: ${activeCats.map(c=>c.id).join(', ')})`);
+if (activeCats.length === 3) {
+  logSuccess(`활성 카테고리 수 검증 완료 (총 3개: ${activeCats.map(c=>c.id).join(', ')})`);
 } else {
-  logError(`활성 카테고리 수가 4개가 아닙니다! (현재 활성 수: ${activeCats.length}개)`);
+  logError(`활성 카테고리 수가 3개가 아닙니다! (현재 활성 수: ${activeCats.length}개)`);
 }
 
 const drainClogCat = categories.find(c => c.id === "drain-clog");

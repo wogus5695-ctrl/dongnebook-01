@@ -195,6 +195,7 @@
   <script type="module">
     import { renderHeader } from '/src/components/Header.js';
     import { renderFooter } from '/src/components/Footer.js';
+    import { categories } from '/src/data/categories.js';
     import { tasks } from '/src/data/tasks.js';
     import { regions } from '/src/data/regions.js';
 
@@ -209,6 +210,11 @@
     const categorySelect = document.getElementById('category');
     const workSelect = document.getElementById('targetWork');
     const regionSelect = document.getElementById('targetRegion');
+
+    // 업종 카테고리 동적 초기화 (managed: true인 항목만 노출)
+    const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
+    categorySelect.innerHTML = '<option value="">업종을 선택해 주세요</option>' +
+      managedCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
     const previewBox = document.getElementById('ad-slot-preview-box');
     const previewName = document.getElementById('preview-slot-name');

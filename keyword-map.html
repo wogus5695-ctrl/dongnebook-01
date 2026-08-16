@@ -307,10 +307,12 @@
     const slotStatusSelect = document.getElementById('filter-slot-status');
     const indexStatusSelect = document.getElementById('filter-index-status');
 
-    // cat 쿼리 파라미터가 있으면 해당 카테고리만 옵션으로 남김
+    // 업종 선택 필터 동적 채우기 (managed: true인 항목만 노출)
     const catQueryParam = urlParams.get('cat');
+    const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
+
     if (catQueryParam) {
-      const activeCat = categories.find(c => c.id === catQueryParam);
+      const activeCat = managedCats.find(c => c.id === catQueryParam);
       if (activeCat) {
         categorySelect.innerHTML = '';
         const opt = document.createElement('option');
@@ -319,6 +321,9 @@
         categorySelect.appendChild(opt);
         categorySelect.value = activeCat.id;
       }
+    } else {
+      categorySelect.innerHTML = '<option value="all">전체 업종</option>' +
+        managedCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     }
 
     const container = document.getElementById('keyword-list-container');
