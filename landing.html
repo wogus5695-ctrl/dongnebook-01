@@ -223,32 +223,33 @@
     // 2. 동적 콘텐츠 치환 및 SEO 주입
     function initLandingPage() {
       const regionName = regParam;
+      const keywordRegionName = regionName.split(' ').pop();
       const taskName = currentTask.name;
       const catName = currentCat.name;
 
       // H1 구조 유지
-      document.getElementById('landing-h1').textContent = `${regionName} ${taskName} 업체 찾기`;
-      document.getElementById('landing-faq-title').textContent = `${regionName} ${taskName} 자주 묻는 질문 (FAQ)`;
+      document.getElementById('landing-h1').textContent = `${keywordRegionName} ${taskName} 업체 찾기`;
+      document.getElementById('landing-faq-title').textContent = `${keywordRegionName} ${taskName} 자주 묻는 질문 (FAQ)`;
 
       // 섹션명 변경
-      document.getElementById('listings-main-title').textContent = `${regionName} 인근 상담 가능 업체`;
+      document.getElementById('listings-main-title').textContent = `${keywordRegionName} 인근 상담 가능 업체`;
 
       // B2C 중립 정보 아코디언 헤더 및 텍스트 갱신 (details/summary 대응)
-      document.getElementById('info-section1-title').textContent = `${regionName} ${taskName}이 필요한 경우`;
+      document.getElementById('info-section1-title').textContent = `${keywordRegionName} ${taskName}이 필요한 경우`;
       document.getElementById('info-section3-desc').textContent = `${taskName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
 
       // 작업명별 문맥 동적 적용
       let flowText = "";
       if (catParam === 'general-cleaning') {
-        flowText = `상가 전면 유리, 사무실 창문, 건물 외부 유리는 먼지, 빗물 자국, 배기가스 오염이 쌓이면 내부 청결감과 매장 인상에 영향을 줄 수 있습니다. ${regionName}처럼 상가와 업무시설이 많은 지역에서는 정기적인 유리창청소 문의가 발생할 수 있습니다.`;
+        flowText = `상가 전면 유리, 사무실 창문, 건물 외부 유리는 먼지, 빗물 자국, 배기가스 오염이 쌓이면 내부 청결감과 매장 인상에 영향을 줄 수 있습니다. ${keywordRegionName}처럼 상가와 업무시설이 많은 지역에서는 정기적인 유리창청소 문의가 발생할 수 있습니다.`;
       } else if (catParam === 'window-caulking') {
-        flowText = `비가 온 뒤 창틀 주변 벽지, 몰딩, 바닥 쪽으로 물이 스며든다면 창틀 실리콘 노후화, 외벽 균열, 샷시 주변 틈새 등을 함께 확인해야 할 수 있습니다. ${regionName} 인근 상담 가능 업체를 통해 현장 사진 기반 상담을 받아볼 수 있습니다.`;
+        flowText = `비가 온 뒤 창틀 주변 벽지, 몰딩, 바닥 쪽으로 물이 스며든다면 창틀 실리콘 노후화, 외벽 균열, 샷시 주변 틈새 등을 함께 확인해야 할 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현장 사진 기반 상담을 받아볼 수 있습니다.`;
       } else if (catParam === 'drain-clog') {
-        flowText = `싱크대, 변기, 배수구 막힘은 사용 환경, 배관 구조, 이물질 유입 여부에 따라 원인이 달라질 수 있습니다. ${regionName} 인근 상담 가능 업체에 증상과 사진을 전달하면 상담이 더 빠르게 진행될 수 있습니다.`;
+        flowText = `싱크대, 변기, 배수구 막힘은 사용 환경, 배관 구조, 이물질 유입 여부에 따라 원인이 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체에 증상과 사진을 전달하면 상담이 더 빠르게 진행될 수 있습니다.`;
       } else if (catParam === 'waterproof-leak') {
-        flowText = `옥상, 외벽, 베란다 누수는 균열 위치, 방수층 상태, 빗물 유입 경로에 따라 점검 방식이 달라질 수 있습니다. ${regionName} 인근 상담 가능 업체를 통해 현장 조건에 맞는 상담을 받아보는 것이 좋습니다.`;
+        flowText = `옥상, 외벽, 베란다 누수는 균열 위치, 방수층 상태, 빗물 유입 경로에 따라 점검 방식이 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현장 조건에 맞는 상담을 받아보는 것이 좋습니다.`;
       } else {
-        flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskName}이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. ${regionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
+        flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskName}이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
       }
       document.getElementById('info-section1-desc').textContent = flowText;
 
@@ -259,32 +260,32 @@
       // H1 바로 아래 소비자 중심 맞춤형 보조 문구
       let helperSubtitle = "";
       if (catParam === 'general-cleaning') {
-        helperSubtitle = `건물 외부 유리, 상가 유리, 고층 창문 청소가 필요하다면 ${regionName} 인근 상담 가능 업체를 확인해보세요.`;
+        helperSubtitle = `건물 외부 유리, 상가 유리, 고층 창문 청소가 필요하다면 ${keywordRegionName} 인근 상담 가능 업체를 확인해보세요.`;
       } else if (catParam === 'window-caulking') {
-        helperSubtitle = `비 오는 날 창틀 주변으로 물이 스며든다면 ${regionName} 인근 창틀누수 상담 가능 업체를 확인해보세요.`;
+        helperSubtitle = `비 오는 날 창틀 주변으로 물이 스며든다면 ${keywordRegionName} 인근 창틀누수 상담 가능 업체를 확인해보세요.`;
       } else if (catParam === 'drain-clog') {
-        helperSubtitle = `싱크대, 변기, 배수구 막힘이 발생했다면 ${regionName} 인근 하수구막힘 상담 가능 업체를 확인해보세요.`;
+        helperSubtitle = `싱크대, 변기, 배수구 막힘이 발생했다면 ${keywordRegionName} 인근 하수구막힘 상담 가능 업체를 확인해보세요.`;
       } else if (catParam === 'waterproof-leak') {
-        helperSubtitle = `옥상 누수나 방수층 손상이 의심된다면 ${regionName} 인근 방수 상담 가능 업체를 확인해보세요.`;
+        helperSubtitle = `옥상 누수나 방수층 손상이 의심된다면 ${keywordRegionName} 인근 방수 상담 가능 업체를 확인해보세요.`;
       } else {
-        helperSubtitle = `${regionName} 인근에서 ${taskName} 상담 가능한 업체 정보를 확인해보세요.`;
+        helperSubtitle = `${keywordRegionName} 인근에서 ${taskName} 상담 가능한 업체 정보를 확인해보세요.`;
       }
       document.getElementById('landing-subtitle').textContent = helperSubtitle;
 
       // 브레드크럼
-      document.getElementById('bread-region').textContent = regionName.split(' ')[0];
+      document.getElementById('bread-region').textContent = keywordRegionName;
       document.getElementById('bread-category').textContent = catName;
       document.getElementById('bread-task').textContent = taskName;
 
       // 브레드크럼
-      document.getElementById('bread-region').textContent = regionName.split(' ')[0];
+      document.getElementById('bread-region').textContent = keywordRegionName;
       document.getElementById('bread-category').textContent = catName;
       document.getElementById('bread-task').textContent = taskName;
 
       // SEO 최적화 적용
       updateSeoMeta({
-        title: `${regionName} ${taskName} 업체 찾기 | 동네책자`,
-        description: `${regionName}에서 ${taskName} 상담 가능한 업체 정보를 확인하고, 지역 키워드 광고 입점도 신청할 수 있습니다.`
+        title: `${keywordRegionName} ${taskName} 업체 찾기 | 동네책자`,
+        description: `${keywordRegionName}에서 ${taskName} 상담 가능한 업체 정보를 확인하고, 지역 키워드 광고 입점도 신청할 수 있습니다.`
       });
 
       // Canonical 및 Open Graph 설정
@@ -299,8 +300,8 @@
       canonLink.href = pageUrl;
 
       // Open Graph 주입
-      document.querySelector("meta[property='og:title']").setAttribute('content', `${regionName} ${taskName} 업체 찾기 | 동네책자`);
-      document.querySelector("meta[property='og:description']").setAttribute('content', `${regionName}에서 ${taskName} 해결을 위해 입점된 전문 광고 업체의 전화/카톡 정보를 바로 안내받으세요.`);
+      document.querySelector("meta[property='og:title']").setAttribute('content', `${keywordRegionName} ${taskName} 업체 찾기 | 동네책자`);
+      document.querySelector("meta[property='og:description']").setAttribute('content', `${keywordRegionName}에서 ${taskName} 해결을 위해 입점된 전문 광고 업체의 전화/카톡 정보를 바로 안내받으세요.`);
 
       // CTA 링크 정보 수정
       const convertBtn = document.getElementById('convert-apply-btn');
