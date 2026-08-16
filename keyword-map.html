@@ -233,42 +233,93 @@
       </div>
     </section>
 
-    <!-- 4. 업종별 키워드 요약 (상단 통계 카드) -->
-    <section class="summary-box" style="font-family: var(--font-family); grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
-      <div class="summary-card" id="card-stat-districts" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('districts')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">대상 구 수</div>
-        <div class="summary-value" id="stat-districts-count" style="color: var(--text-dark);">-</div>
-      </div>
-      <div class="summary-card" id="card-stat-slots-limit" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('slots-limit')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">총 판매 가능 구좌</div>
-        <div class="summary-value" id="stat-slots-limit-count" style="color: var(--secondary);">-</div>
-      </div>
-      <div class="summary-card" id="card-stat-ad-yes" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('ad-yes')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 구좌</div>
-        <div class="summary-value" id="stat-ad-yes-count" style="color: var(--primary);">-</div>
-      </div>
-      <div class="summary-card" id="card-stat-ad-no" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('ad-no')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">남은 구좌</div>
-        <div class="summary-value" id="stat-ad-no-count" style="color: #e67e22;">-</div>
-      </div>
-      <div class="summary-card" id="card-stat-businesses" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('businesses')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 업체 수</div>
-        <div class="summary-value" id="stat-businesses-count" style="color: #27ae60;">-</div>
-      </div>
-      <div class="summary-card" id="card-stat-keywords" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('keywords')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">생성 키워드 수</div>
-        <div class="summary-value" id="stat-keywords-count" style="color: #8e44ad;">-</div>
-      </div>
-      <div class="summary-card" id="card-stat-noindex" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('noindex')">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">noindex 지면</div>
-        <div class="summary-value" id="stat-noindex-count" style="color: #c0392b;">-</div>
-      </div>
-    </section>
+    <!-- 1) 전체 관리자 인덱스 뷰 -->
+    <div id="admin-index-view" style="display: none;">
+      <section class="summary-box" style="font-family: var(--font-family); grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 24px;">
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">총 관리 업종</div>
+          <div class="summary-value" id="total-categories-count">-</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">전체 대상 구</div>
+          <div class="summary-value" id="total-districts-count">-</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">전체 구좌 한도</div>
+          <div class="summary-value" id="total-slots-limit">-</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 구좌</div>
+          <div class="summary-value" id="total-ad-yes" style="color: var(--primary);">-</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">잔여 구좌</div>
+          <div class="summary-value" id="total-ad-no" style="color: #e67e22;">-</div>
+        </div>
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">참여 업체</div>
+          <div class="summary-value" id="total-businesses" style="color: #27ae60;">-</div>
+        </div>
+      </section>
 
-    <!-- 5. 지역별 키워드 리스트 -->
-    <section id="keyword-list-container">
-      <!-- JS 렌더링 -->
-    </section>
+      <div class="keyword-table-wrap" style="overflow-x: auto; background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; width: 100%;">
+        <table class="keyword-table">
+          <thead>
+            <tr>
+              <th style="white-space: nowrap; text-align: left; padding: 12px 14px;">업종명</th>
+              <th style="white-space: nowrap; text-align: left; padding: 12px 14px;">업종 ID</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">구 개수</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">총 구좌</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">등록 구좌</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">잔여</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">업체</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">관리</th>
+            </tr>
+          </thead>
+          <tbody id="admin-index-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2) 업종별 상세 키워드 관리 뷰 -->
+    <div id="cat-specific-view" style="display: none;">
+      <!-- 4. 업종별 키워드 요약 (상단 통계 카드) -->
+      <section class="summary-box" style="font-family: var(--font-family); grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+        <div class="summary-card" id="card-stat-districts" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('districts')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">대상 구 수</div>
+          <div class="summary-value" id="stat-districts-count" style="color: var(--text-dark);">-</div>
+        </div>
+        <div class="summary-card" id="card-stat-slots-limit" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('slots-limit')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">총 판매 가능 구좌</div>
+          <div class="summary-value" id="stat-slots-limit-count" style="color: var(--secondary);">-</div>
+        </div>
+        <div class="summary-card" id="card-stat-ad-yes" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('ad-yes')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 구좌</div>
+          <div class="summary-value" id="stat-ad-yes-count" style="color: var(--primary);">-</div>
+        </div>
+        <div class="summary-card" id="card-stat-ad-no" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('ad-no')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">남은 구좌</div>
+          <div class="summary-value" id="stat-ad-no-count" style="color: #e67e22;">-</div>
+        </div>
+        <div class="summary-card" id="card-stat-businesses" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('businesses')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 업체 수</div>
+          <div class="summary-value" id="stat-businesses-count" style="color: #27ae60;">-</div>
+        </div>
+        <div class="summary-card" id="card-stat-keywords" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('keywords')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">생성 키워드 수</div>
+          <div class="summary-value" id="stat-keywords-count" style="color: #8e44ad;">-</div>
+        </div>
+        <div class="summary-card" id="card-stat-noindex" style="cursor: pointer; transition: all 0.2s;" onclick="applyStatFilter('noindex')">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">noindex 지면</div>
+          <div class="summary-value" id="stat-noindex-count" style="color: #c0392b;">-</div>
+        </div>
+      </section>
+
+      <!-- 5. 지역별 키워드 리스트 -->
+      <section id="keyword-list-container">
+        <!-- JS 렌더링 -->
+      </section>
+    </div>
 
   </main>
 
@@ -299,37 +350,112 @@
       window.location.href = "/";
     }
 
+    const catQueryParam = urlParams.get('cat');
+    const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
+
+    // 청소업종 차단 정책
+    if (catQueryParam === 'general-cleaning') {
+      alert("종합청소 업종은 더 이상 신규 운영 대상이 아닙니다.");
+      window.location.href = "/keyword-map.html?admin=true";
+    }
+
+    // 그 외 비활성 업종 차단 정책
+    if (catQueryParam && !managedCats.some(c => c.id === catQueryParam)) {
+      alert("존재하지 않거나 비활성화된 업종 코드입니다.");
+      window.location.href = "/keyword-map.html?admin=true";
+    }
+
     const categorySelect = document.getElementById('filter-category');
+    let activeStatFilter = 'all';
+
+    // 뷰 분기 및 타이틀 조립
+    if (catQueryParam) {
+      document.getElementById('cat-specific-view').style.display = 'block';
+      document.getElementById('cat-specific-view-stats').style.display = 'block';
+      document.getElementById('admin-index-view').style.display = 'none';
+
+      const activeCat = managedCats.find(c => c.id === catQueryParam);
+      document.getElementById('admin-title').textContent = `${activeCat.name} 동적키워드 구좌 관리맵`;
+      document.getElementById('admin-desc').textContent = `[${activeCat.name}] 업종에 등록된 구 단위 광고 입점 현황 및 동별 동적키워드 세부 모니터링 화면입니다.`;
+
+      categorySelect.innerHTML = '';
+      const opt = document.createElement('option');
+      opt.value = activeCat.id;
+      opt.textContent = activeCat.name;
+      categorySelect.appendChild(opt);
+      categorySelect.value = activeCat.id;
+    } else {
+      document.getElementById('admin-index-view').style.display = 'block';
+      document.getElementById('cat-specific-view').style.display = 'none';
+      document.getElementById('cat-specific-view-stats').style.display = 'none';
+
+      document.getElementById('admin-title').textContent = "동네책자 키워드맵 관리자 인덱스";
+      document.getElementById('admin-desc').textContent = "등록된 전체 활성 업종의 대상 구 개수와 광고 입점 구좌 현황을 요약 조회하고 제어하는 종합 관리자 홈입니다.";
+
+      renderAdminIndex();
+    }
+
+    function renderAdminIndex() {
+      const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
+      const totalCats = managedCats.length;
+      const totalDists = districts.length;
+      const slotsLimitVal = totalCats * totalDists * 4;
+
+      const activeAdSlots = adSlots.filter(s => s.status === 'active' && managedCats.some(c => c.id === s.categoryId));
+      const totalAdYesVal = activeAdSlots.length;
+      const totalAdNoVal = slotsLimitVal - totalAdYesVal;
+
+      const uniqueBizIds = new Set(activeAdSlots.map(s => s.businessId));
+      const totalBizVal = uniqueBizIds.size;
+
+      document.getElementById('total-categories-count').textContent = `${totalCats}개`;
+      document.getElementById('total-districts-count').textContent = `${totalDists}개`;
+      document.getElementById('total-slots-limit').textContent = `${slotsLimitVal}개`;
+      document.getElementById('total-ad-yes').textContent = `${totalAdYesVal}개`;
+      document.getElementById('total-ad-no').textContent = `${totalAdNoVal}개`;
+      document.getElementById('total-businesses').textContent = `${totalBizVal}개`;
+
+      const tbody = document.getElementById('admin-index-table-body');
+      let tbodyHtml = '';
+
+      managedCats.forEach(cat => {
+        const catSlots = adSlots.filter(s => s.status === 'active' && s.categoryId === cat.id);
+        const catBizIds = new Set(catSlots.map(s => s.businessId));
+
+        const distsCount = totalDists;
+        const totalSlots = distsCount * 4;
+        const regSlots = catSlots.length;
+        const remSlots = totalSlots - regSlots;
+        const bizCount = catBizIds.size;
+
+        tbodyHtml += `
+          <tr>
+            <td style="padding: 12px 14px; text-align: left;"><strong>${cat.name}</strong></td>
+            <td style="padding: 12px 14px; text-align: left; font-family: monospace;">${cat.id}</td>
+            <td style="padding: 12px 14px; text-align: center;"><strong>${distsCount}</strong>개</td>
+            <td style="padding: 12px 14px; text-align: center;">${totalSlots}개</td>
+            <td style="padding: 12px 14px; text-align: center; color: var(--primary); font-weight: bold;">${regSlots}개</td>
+            <td style="padding: 12px 14px; text-align: center; color: #e67e22; font-weight: bold;">${remSlots}개</td>
+            <td style="padding: 12px 14px; text-align: center; color: #27ae60; font-weight: bold;">${bizCount}개</td>
+            <td style="padding: 12px 14px; text-align: center;">
+              <a href="/keyword-map.html?cat=${cat.id}&admin=true" class="btn btn-accent" style="font-size: 0.75rem; padding: 4px 10px; text-decoration: none; color: white; display: inline-block;">관리</a>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = tbodyHtml;
+    }
+
     const searchDistrict = document.getElementById('search-district');
     const searchNeighborhood = document.getElementById('search-neighborhood');
     const searchTask = document.getElementById('search-task');
     const searchBusiness = document.getElementById('search-business');
     const slotStatusSelect = document.getElementById('filter-slot-status');
     const indexStatusSelect = document.getElementById('filter-index-status');
-
-    // 업종 선택 필터 동적 채우기 (managed: true인 항목만 노출)
-    const catQueryParam = urlParams.get('cat');
-    const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
-
-    if (catQueryParam) {
-      const activeCat = managedCats.find(c => c.id === catQueryParam);
-      if (activeCat) {
-        categorySelect.innerHTML = '';
-        const opt = document.createElement('option');
-        opt.value = activeCat.id;
-        opt.textContent = activeCat.name;
-        categorySelect.appendChild(opt);
-        categorySelect.value = activeCat.id;
-      }
-    } else {
-      categorySelect.innerHTML = '<option value="all">전체 업종</option>' +
-        managedCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-    }
-
     const container = document.getElementById('keyword-list-container');
-    
-    // 클릭 필터 저장용 변수
-    let activeStatFilter = 'all';
+
+    // 중복 제거 완료
 
     window.applyStatFilter = function(filterType) {
       if (activeStatFilter === filterType) {
