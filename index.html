@@ -150,11 +150,14 @@
         matchedBizs.sort((a, b) => a.mainPriorityVal - b.mainPriorityVal);
         const displayBizs = matchedBizs.slice(0, 3);
 
-        // 전체보기 링크 생성 (1순위: hub URL, 2순위: 대표 landing URL, 3순위: 숨김)
-        let viewAllLink = `/hub.html?cat=${cat.id}`;
+        // 전체보기 링크 생성 (대표 landing URL 연동)
+        let viewAllLink = '#';
         if (cat.id === 'elastic-coating') {
-          // 탄성코트 대표 landing URL
           viewAllLink = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=elastic-coating&task=elastic-coating`;
+        } else if (cat.id === 'waterproof-leak') {
+          viewAllLink = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=waterproof-leak&task=rooftop-waterproofing`;
+        } else if (cat.id === 'window-caulking') {
+          viewAllLink = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=window-caulking&task=window-caulking-task`;
         }
 
         // 각 카테고리별 업체 그리드 카드 리스트 HTML 생성
