@@ -18,7 +18,8 @@ function generateSitemap() {
   const staticPages = [
     { loc: "/", changefreq: "daily", priority: "1.0" },
     { loc: "/guide.html", changefreq: "weekly", priority: "0.8" },
-    { loc: "/apply.html", changefreq: "weekly", priority: "0.8" }
+    { loc: "/apply.html", changefreq: "weekly", priority: "0.8" },
+    { loc: "/policy.html", changefreq: "monthly", priority: "0.5" }
   ];
   staticPages.forEach(p => urls.push(p));
 
