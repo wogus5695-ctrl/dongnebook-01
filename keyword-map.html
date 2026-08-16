@@ -231,165 +231,199 @@
 
     // 3. 필터링 및 렌더링 주 연산
     function renderKeywordMap() {
-      const activeCats = categories.filter(c => c.visible !== false && c.id !== 'drain-clog');
-      const districts = regions.filter(r => r.level === 'district');
-
       const catFilter = categorySelect.value;
       const regQuery = searchRegion.value.trim().toLowerCase();
       const taskQuery = searchTask.value.trim().toLowerCase();
-      const statusFilter = statusSelect.value;
 
-      let html = "";
-      
-      let totalCount = 0;
+      if (catFilter === 'all') {
+        container.innerHTML = `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">상단의 업종 선택 필터에서 특정 업종을 선택하시면 구 단위 광고 구좌 현황판이 활성화됩니다.</div>`;
+        document.getElementById('summary-total').textContent = "-";
+        document.getElementById('summary-ad-yes').textContent = "-";
+        document.getElementById('summary-ad-no').textContent = "-";
+        document.getElementById('summary-noindex').textContent = "-";
+        return;
+      }
+
+      const cat = categories.find(c => c.id === catFilter);
+      if (!cat) return;
+
+      const associatedTasks = tasks.filter(t => t.categoryIds.includes(cat.id) && t.visible);
+      const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
+
+      let totalSlots = districts.length * 4;
       let adYesCount = 0;
-      let adNoCount = 0;
       let noindexCount = 0;
 
+      let html = `
+        <div style="overflow-x: auto; background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px;">
+          <table class="keyword-table">
+            <thead>
+              <tr>
+                <th style="width: 10%;">대상 구</th>
+                <th style="width: 20%;">포함 동/면/읍</th>
+                <th style="width: 15%;">적용 작업명</th>
+                <th style="width: 8%;">생성 키워드 수</th>
+                <th style="width: 8%;">1번 구좌</th>
+                <th style="width: 8%;">2번 구좌</th>
+                <th style="width: 8%;">3번 구좌</th>
+                <th style="width: 8%;">4번 구좌</th>
+                <th style="width: 6%;">남은 구좌</th>
+                <th style="width: 11%;">대표 랜딩</th>
+                <th style="width: 6%;">상세</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      // 글로벌 복사 및 토글 함수 마운트
+      window.copyToClipboard = function(text, btnId) {
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.getElementById(btnId);
+          if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = "복사됨";
+            btn.style.backgroundColor = "#2ecc71";
+            btn.style.color = "white";
+            setTimeout(() => {
+              btn.textContent = originalText;
+              btn.style.backgroundColor = "";
+              btn.style.color = "";
+            }, 1200);
+          }
+        });
+      };
+
+      window.toggleKeywords = function(panelId) {
+        const panel = document.getElementById(panelId);
+        if (panel) {
+          panel.style.display = panel.style.display === "none" ? "table-row" : "none";
+        }
+      };
+
       districts.forEach(dist => {
-        // 해당 구의 하위 동 리스트 수집
-        const subNeighborhoods = regions.filter(r => r.parentId === dist.id);
-        const allTargetRegs = [dist, ...subNeighborhoods];
+        // 지역 필터 검증
+        if (regQuery && !dist.displayName.toLowerCase().includes(regQuery)) {
+          // 혹시 하위 동 명칭이라도 매칭되는지 확인
+          const hasMatchingSubReg = regions.some(r => r.parentId === dist.id && r.displayName.toLowerCase().includes(regQuery));
+          if (!hasMatchingSubReg) return;
+        }
 
-        let matchedRows = [];
+        const subNeighborhoods = regions.filter(r => r.parentId === dist.id && r.visible !== false);
+        noindexCount += subNeighborhoods.length;
 
-        allTargetRegs.forEach(reg => {
-          // 해당 지역이 숨김 상태라면 스킵
-          if (reg.visible === false) return;
-
-          activeCats.forEach(cat => {
-            if (catFilter !== 'all' && cat.id !== catFilter) return;
-
-            const associatedTasks = tasks.filter(t => t.categoryIds.includes(cat.id) && t.visible);
-
-            associatedTasks.forEach(task => {
-              if (taskQuery && !task.name.toLowerCase().includes(taskQuery)) return;
-              if (regQuery && !reg.displayName.toLowerCase().includes(regQuery)) return;
-
-              // 1. 광고 구좌 매칭 유무 판정
-              const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
-              const activeSlot = adSlots.find(slot => {
-                if (slot.status !== "active") return false;
-                if (slot.categoryId !== cat.id) return false;
-
-                const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === task.id;
-                if (!taskMatches) return false;
-
-                if (slot.startDate !== null) {
-                  const start = new Date(slot.startDate);
-                  if (CURRENT_DATE < start) return false;
-                }
-                if (slot.endDate !== null) {
-                  const end = new Date(slot.endDate);
-                  if (CURRENT_DATE > end) return false;
-                }
-
-                if (reg.level === "district") {
-                  return slot.purchaseRegionId === reg.id;
-                } else if (reg.level === "neighborhood") {
-                  return slot.purchaseRegionId === reg.parentId;
-                }
-                return false;
-              });
-
-              const hasAd = !!activeSlot;
-              
-              // 2. 상태 뱃지 판독
-              let isLandingCreated = false;
-              if (reg.level === 'district') {
-                isLandingCreated = true; // 구 단위는 sitemap 등에 포함되는 기본 정적 생성 단위
-              }
-
-              // 3. noindex 여부 (동 단위는 noindex 처리됨)
-              const isNoindex = reg.level === 'neighborhood';
-
-              // 상태 필터링 매칭
-              let statusText = "신청 가능";
-              let badgeClass = "badge-apply";
-
-              if (hasAd) {
-                statusText = "광고 있음";
-                badgeClass = "badge-ad-yes";
-              } else {
-                statusText = "광고 없음";
-                badgeClass = "badge-ad-no";
-              }
-
-              if (statusFilter !== 'all') {
-                if (statusFilter === 'landing' && reg.level !== 'district') return;
-                if (statusFilter === 'ad-yes' && !hasAd) return;
-                if (statusFilter === 'ad-no' && hasAd) return;
-                if (statusFilter === 'apply' && hasAd) return;
-              }
-
-              // 통계 카운트 증가
-              totalCount++;
-              if (hasAd) adYesCount++;
-              else adNoCount++;
-              if (isNoindex) noindexCount++;
-
-              const detailUrl = `/landing.html?reg=${encodeURIComponent(reg.displayName)}&cat=${cat.id}&task=${task.id}`;
-
-              matchedRows.push({
-                regionName: reg.displayName,
-                levelName: reg.level === 'district' ? '구' : '동',
-                taskName: task.name,
-                url: detailUrl,
-                statusText: statusText,
-                badgeClass: badgeClass,
-                isNoindex: isNoindex
-              });
-
-            });
-          });
+        // 구 단위 active slots
+        const distSlots = adSlots.filter(slot => {
+          return slot.status === "active" &&
+                 slot.categoryId === cat.id &&
+                 slot.purchaseRegionId === dist.id;
         });
 
-        // 매칭된 항목이 있을 때만 구 단위 카드 생성
-        if (matchedRows.length > 0) {
-          html += `
-            <div class="district-card">
-              <div class="district-title">
-                <span>📍 ${dist.province} ${dist.displayName}</span>
-                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">매칭 구좌수: ${matchedRows.length}개</span>
-              </div>
-              <div style="overflow-x: auto;">
-                <table class="keyword-table">
-                  <thead>
-                    <tr>
-                      <th style="width: 25%;">대상 지역</th>
-                      <th style="width: 25%;">작업명</th>
-                      <th style="width: 20%;">상태 배지</th>
-                      <th style="width: 30%;">랜딩 페이지 URL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${matchedRows.map(row => `
-                      <tr>
-                        <td><strong>${row.regionName}</strong> <span style="font-size:0.7rem; color:var(--text-muted);">(${row.levelName})</span></td>
-                        <td>${row.taskName}</td>
-                        <td>
-                          <span class="status-badge ${row.badgeClass}">${row.statusText}</span>
-                          ${row.isNoindex ? '<span class="status-badge badge-noindex">noindex</span>' : '<span class="status-badge badge-landing">정적생성</span>'}
-                        </td>
-                        <td>
-                          <a href="${row.url}" target="_blank" style="color: var(--primary); text-decoration: underline;">랜딩 이동 ↗</a>
-                        </td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          `;
+        adYesCount += distSlots.length;
+
+        // 1번 ~ 4번 구좌 매칭
+        const slot1 = distSlots.find(s => s.slotNumber === 1 || s.priority === 1);
+        const slot2 = distSlots.find(s => s.slotNumber === 2);
+        const slot3 = distSlots.find(s => s.slotNumber === 3);
+        const slot4 = distSlots.find(s => s.slotNumber === 4);
+
+        const slot1Biz = slot1 ? (businesses.find(b => b.id === slot1.businessId)?.brandName || '') : '';
+        const slot2Biz = slot2 ? (businesses.find(b => b.id === slot2.businessId)?.brandName || '') : '';
+        const slot3Biz = slot3 ? (businesses.find(b => b.id === slot3.businessId)?.brandName || '') : '';
+        const slot4Biz = slot4 ? (businesses.find(b => b.id === slot4.businessId)?.brandName || '') : '';
+
+        const remainingSlots = 4 - distSlots.length;
+        const remainingText = remainingSlots === 0 ? '<span style="color:red; font-weight:bold;">마감</span>' : `${remainingSlots}개`;
+
+        // 포함 동 텍스트 (앞 5개 노출 후 외 n개)
+        const neighborhoodNames = subNeighborhoods.map(r => r.displayName.split(' ').pop());
+        let neighborhoodText = neighborhoodNames.slice(0, 5).join(', ');
+        if (neighborhoodNames.length > 5) {
+          neighborhoodText += ` 외 ${neighborhoodNames.length - 5}개`;
         }
+
+        // 적용 작업명 전체
+        const taskNames = associatedTasks.map(t => t.name);
+        const taskDisplayNames = associatedTasks.map(t => t.displayName || t.name);
+        let taskText = taskDisplayNames.slice(0, 3).join(', ');
+        if (taskDisplayNames.length > 3) {
+          taskText += ` 외 ${taskDisplayNames.length - 3}개`;
+        }
+
+        // 생성 키워드 수
+        const keywordsCount = (1 + subNeighborhoods.length) * associatedTasks.length;
+
+        // 대표 랜딩 URL
+        const firstTask = associatedTasks[0] || { id: 'elastic-coating' };
+        const landingUrl = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${cat.id}&task=${firstTask.id}`;
+        const fullLandingUrl = `${window.location.origin}${landingUrl}`;
+        const copyBtnId = `copy-btn-${dist.id}`;
+
+        // 펼침 패널 ID
+        const panelId = `panel-${dist.id}`;
+
+        // 전체 키워드 목록 생성
+        let expandedKeywordsHtml = '';
+        
+        // 구 단위 키워드
+        expandedKeywordsHtml += `<div style="margin-bottom: 8px;"><strong>🏢 구 단위 키워드:</strong><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">`;
+        associatedTasks.forEach(t => {
+          expandedKeywordsHtml += `<span style="background-color: #ebf5fb; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${dist.displayName.split(' ').pop()} ${t.name}</span>`;
+        });
+        expandedKeywordsHtml += `</div></div>`;
+
+        // 동 단위 키워드
+        expandedKeywordsHtml += `<div><strong>📍 동 단위 키워드:</strong><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">`;
+        subNeighborhoods.forEach(neigh => {
+          associatedTasks.forEach(t => {
+            expandedKeywordsHtml += `<span style="background-color: #fdfefe; border: 1px solid #ebedef; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${neigh.displayName.split(' ').pop()} ${t.name}</span>`;
+          });
+        });
+        expandedKeywordsHtml += `</div></div>`;
+
+        html += `
+          <tr>
+            <td><strong>${dist.displayName.split(' ').pop()}</strong></td>
+            <td><span title="${neighborhoodNames.join(', ')}" style="cursor: help; text-decoration: underline dashed var(--text-muted);">${neighborhoodText}</span></td>
+            <td><span title="${taskDisplayNames.join(', ')}" style="cursor: help; text-decoration: underline dashed var(--text-muted);">${taskText}</span></td>
+            <td><strong>${keywordsCount}</strong>개</td>
+            <td>${slot1Biz}</td>
+            <td>${slot2Biz}</td>
+            <td>${slot3Biz}</td>
+            <td>${slot4Biz}</td>
+            <td>${remainingText}</td>
+            <td>
+              <div style="display: flex; gap: 4px; align-items: center;">
+                <a href="${landingUrl}" target="_blank" style="color: var(--primary); text-decoration: underline; font-weight: bold;">이동</a>
+                <button id="${copyBtnId}" class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; width: auto;" onclick="copyToClipboard('${fullLandingUrl}', '${copyBtnId}')">복사</button>
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; width: auto; background-color: #f2f4f4;" onclick="toggleKeywords('${panelId}')">보기</button>
+            </td>
+          </tr>
+          <tr id="${panelId}" style="display: none; background-color: #fafbfb;">
+            <td colspan="11" style="padding: 16px; border-bottom: 2px solid var(--border-color);">
+              <div style="font-family: var(--font-family); font-size: 0.8rem; line-height: 1.6;">
+                <div style="margin-bottom: 12px; font-weight: bold; font-size: 0.85rem; color: var(--secondary);">📍 ${dist.displayName} 전체 동적키워드 조합 리스트</div>
+                ${expandedKeywordsHtml}
+              </div>
+            </td>
+          </tr>
+        `;
       });
 
-      container.innerHTML = html || `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">필터 조건에 부합하는 키워드 매핑 구좌가 존재하지 않습니다.</div>`;
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
 
-      // 요약 카드 대입
-      document.getElementById('summary-total').textContent = `${totalCount}개`;
+      container.innerHTML = html;
+
+      // 요약 카드 업데이트
+      document.getElementById('summary-total').textContent = `${totalSlots}개`;
       document.getElementById('summary-ad-yes').textContent = `${adYesCount}개`;
-      document.getElementById('summary-ad-no').textContent = `${adNoCount}개`;
+      document.getElementById('summary-ad-no').textContent = `${totalSlots - adYesCount}개`;
       document.getElementById('summary-noindex').textContent = `${noindexCount}개`;
     }
 
