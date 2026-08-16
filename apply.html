@@ -65,17 +65,17 @@
           <label class="form-label" for="category">업종 카테고리 선택 <span style="color: red;">*</span></label>
           <select id="category" class="form-select" required>
             <option value="">업종을 선택해 주세요</option>
-            <option value="general-cleaning">종합청소</option>
             <option value="waterproof-leak">방수/누수</option>
             <option value="window-caulking">창틀코킹/창틀누수</option>
+            <option value="elastic-coating">탄성코트</option>
           </select>
         </div>
  
-        <!-- 2단계. 작업명 선택 -->
-        <div class="form-group">
-          <label class="form-label" for="targetWork">광고 노출 희망 작업명 <span style="color: red;">*</span></label>
-          <select id="targetWork" class="form-select" required>
-            <option value="">업종을 먼저 선택해 주세요</option>
+        <!-- 2단계. 작업명 선택 (비노출 처리 및 기본값 자동 전송용 참고 필드) -->
+        <div class="form-group" style="display: none;">
+          <label class="form-label" for="targetWork">광고 노출 희망 작업명</label>
+          <select id="targetWork" class="form-select">
+            <option value="all-tasks" selected>해당 업종 전체 작업명 자동 포함</option>
           </select>
         </div>
  
@@ -94,13 +94,13 @@
             <strong>신청 구좌:</strong> <span id="preview-slot-name" style="color: var(--secondary); font-weight: 800;">-</span>
           </p>
           <div style="font-size: 0.85rem; color: var(--text-dark);">
-            <strong style="color: var(--text-dark); display: block; margin-bottom: 4px;">📣 노출 예정 범위 (동 단위):</strong>
+            <strong style="color: var(--text-dark); display: block; margin-bottom: 4px;">📣 노출 예정 범위 예시 (해당 구 및 하위 행정동 조합 전체):</strong>
             <ul id="preview-coverage-list" style="padding-left: 18px; list-style-type: square; display: flex; flex-direction: column; gap: 3px; font-size: 0.8rem; color: var(--text-muted);">
               <!-- 동 단위 페이지 노출 범위 JS 동적 주입 -->
             </ul>
           </div>
           <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 8px;">
-            ℹ️ 구 단위 지역을 선택하면 해당 구 페이지와 구 안의 동단위 페이지에 함께 노출됩니다.
+            ℹ️ 작업명은 별도로 개별 구매하지 않으며, 구좌 1개 계약 시 해당 업종의 모든 세부 작업명 키워드 조합 페이지에 업체 정보가 자동으로 동시 노출됩니다.
           </p>
         </div>
  
@@ -109,9 +109,9 @@
           <label class="form-label" for="adProduct">광고 희망 상품 플랜 <span style="color: red;">*</span></label>
           <select id="adProduct" class="form-select" required>
             <option value="">원하시는 광고 예산 상품을 선택하세요</option>
-            <option value="product-single">구좌 1개: 구 단위 지역 1개 + 작업명 1개 / 월 5만원</option>
-            <option value="product-triple">구좌 3개 패키지: 지역·작업명 조합 3개 / 월 12만원</option>
-            <option value="product-five">구좌 5개 패키지: 지역·작업명 조합 5개 / 월 20만원</option>
+            <option value="product-single">구좌 1개: 선택 업종 1개 + 구 단위 지역 1개 (해당 구 내 전체 동/작업명 자동 포함) / 월 5만원</option>
+            <option value="product-triple">구좌 3개 패키지: 선택 업종 및 구 단위 지역 3개 / 월 12만원</option>
+            <option value="product-five">구좌 5개 패키지: 선택 업종 및 구 단위 지역 5개 / 월 20만원</option>
             <option value="product-banner">카테고리 상단 배너 / 별도 문의</option>
             <option value="decision-after-consult">상담 후 결정</option>
           </select>
@@ -160,8 +160,8 @@
           <div style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; font-size: 0.8rem; line-height: 1.6; color: var(--text-dark); margin-bottom: 16px;">
             <h4 style="font-size: 0.85rem; font-weight: bold; color: var(--secondary); margin-bottom: 6px;">📢 광고 구좌 운영 기준 및 유의사항 고지</h4>
             <ul style="padding-left: 18px; list-style-type: disc; display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
-              <li>광고 구좌 1개는 구 단위 지역 1개와 작업명 키워드 1개 조합으로 운영됩니다.</li>
-              <li>구 단위 지역을 선택하면 해당 구 페이지와 구 안의 동단위 페이지에 함께 노출됩니다.</li>
+              <li>광고 구좌 1개는 특정 업종 1개와 구 단위 지역 1개를 기준으로 계약 및 등록됩니다.</li>
+              <li>선택하신 구와 구 내부의 하위 행정동 전체, 그리고 해당 업종의 모든 작업명 키워드 조합 페이지에 동시 노출됩니다.</li>
               <li>노출 위치와 기간은 운영자 검토 및 광고 등록 상태에 따라 적용됩니다.</li>
               <li style="font-weight: 700; color: hsl(0, 70%, 40%);">노출 수, 문의 수, 상위노출은 보장하지 않습니다.</li>
             </ul>
@@ -228,10 +228,9 @@
     // 실시간 광고 구좌 미리보기 동적 렌더링 함수
     function updateSlotPreview() {
       const catVal = categorySelect.value;
-      const workVal = workSelect.value;
       const regVal = regionSelect.value;
 
-      if (!catVal || !workVal || !regVal) {
+      if (!catVal || !regVal) {
         previewBox.style.display = 'none';
         return;
       }
@@ -242,65 +241,46 @@
       const selectedRegObj = regions.find(r => r.id === regVal);
       const regText = selectedRegObj ? selectedRegObj.displayName : regVal;
       
-      const foundT = tasks.find(t => t.id === workVal);
-      const workText = foundT ? foundT.name : workVal;
-      previewName.textContent = `${regText} + ${workText}`;
+      const activeCat = categories.find(c => c.id === catVal);
+      const catName = activeCat ? activeCat.name : catVal;
+      previewName.textContent = `${regText} + [${catName}] 업종 전체 키워드`;
 
-      // 2. 동 단위 하위 범위 리스트 추출
-      if (selectedRegObj && selectedRegObj.childRegionIds && selectedRegObj.childRegionIds.length > 0) {
-        const childIds = selectedRegObj.childRegionIds;
-        const displayLimit = 5;
-        const displayIds = childIds.slice(0, displayLimit);
-        
-        let listHTML = displayIds.map(cId => {
-          const foundChild = regions.find(r => r.id === cId);
-          const childName = foundChild ? foundChild.displayName : cId;
-          return `<li>${childName} ${workText}</li>`;
-        }).join('');
+      // 2. 동 단위 하위 범위 및 해당 업종의 활성 작업명(task) 조합 추출
+      const associatedTasks = tasks.filter(t => t.categoryIds.includes(catVal) && t.visible);
+      const shortRegName = regText.split(' ').pop();
 
-        if (childIds.length > displayLimit) {
-          listHTML += `<li style="font-weight: bold; color: var(--primary); list-style: none; margin-top: 4px;">외 ${childIds.length - displayLimit}개 동단위 페이지 포함</li>`;
-        }
-
-        previewList.innerHTML = listHTML;
-      } else {
-        previewList.innerHTML = `<li>${regText} ${workText} 단독 노출 (하위 동 없음)</li>`;
-      }
-    }
-
-    // 업종별 작업명 동적 매핑 함수
-    function updateWorkOptions(catId, selectedTaskId = null) {
-      if (!catId) {
-        workSelect.innerHTML = '<option value="">업종을 먼저 선택해 주세요</option>';
-        updateSlotPreview();
-        return;
-      }
-
-      const filteredTasks = tasks.filter(t => t.categoryIds.includes(catId) && t.visible);
-      let optionsHTML = filteredTasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+      const previewKeywords = [];
       
-      workSelect.innerHTML = optionsHTML;
+      associatedTasks.forEach(t => {
+        previewKeywords.push(`${shortRegName} ${t.name}`);
+      });
 
-      if (selectedTaskId) {
-        if (filteredTasks.some(t => t.id === selectedTaskId)) {
-          workSelect.value = selectedTaskId;
-        } else {
-          const foundByName = filteredTasks.find(t => t.name === selectedTaskId);
-          if (foundByName) {
-            workSelect.value = foundByName.id;
+      if (selectedRegObj && selectedRegObj.childRegionIds) {
+        selectedRegObj.childRegionIds.forEach(cId => {
+          const foundChild = regions.find(r => r.id === cId);
+          if (foundChild) {
+            const shortChildName = foundChild.displayName.split(' ').pop();
+            associatedTasks.forEach(t => {
+              previewKeywords.push(`${shortChildName} ${t.name}`);
+            });
           }
-        }
+        });
       }
-      updateSlotPreview();
+
+      const displayLimit = 7;
+      const displayKeywords = previewKeywords.slice(0, displayLimit);
+      
+      let listHTML = displayKeywords.map(keyword => `<li>${keyword}</li>`).join('');
+
+      if (previewKeywords.length > displayLimit) {
+        listHTML += `<li style="font-weight: bold; color: var(--primary); list-style: none; margin-top: 4px;">외 ${previewKeywords.length - displayLimit}개 키워드 조합 자동 노출</li>`;
+      }
+
+      previewList.innerHTML = listHTML;
     }
 
     // 업종 변경 이벤트
     categorySelect.addEventListener('change', () => {
-      updateWorkOptions(categorySelect.value);
-    });
-
-    // 작업명 변경 이벤트
-    workSelect.addEventListener('change', () => {
       updateSlotPreview();
     });
 
@@ -319,7 +299,6 @@
     if (catParam) {
       if (categorySelect.querySelector(`option[value="${catParam}"]`)) {
         categorySelect.value = catParam;
-        updateWorkOptions(catParam, taskParam);
       }
     }
     if (regParam) {
@@ -370,14 +349,11 @@
                             String(now.getMinutes()).padStart(2, '0') + ":" + 
                             String(now.getSeconds()).padStart(2, '0');
 
-        let finalizedWorkName = "";
-        if (workSelect.selectedIndex >= 0) {
-          finalizedWorkName = workSelect.options[workSelect.selectedIndex].text;
-        }
+        let finalizedWorkName = "해당 업종 전체 키워드 자동 포함";
 
         const selectedRegObj = regions.find(r => r.id === regionSelect.value);
         const finalizedRegionName = selectedRegObj ? selectedRegObj.displayName : regionSelect.value;
-        const finalSlotName = `${finalizedRegionName} + ${finalizedWorkName}`;
+        const finalSlotName = `${finalizedRegionName} + [${categorySelect.options[categorySelect.selectedIndex].text}] 업종`;
         
         // 하위 동 목록 정리
         let coverageNames = [];
