@@ -23,10 +23,10 @@ function logSuccess(msg) {
 const activeCats = categories.filter(c => c.visible !== false);
 const inactiveCats = categories.filter(c => c.visible === false);
 
-if (activeCats.length === 3) {
-  logSuccess(`활성 카테고리 수 검증 완료 (총 3개: ${activeCats.map(c=>c.id).join(', ')})`);
+if (activeCats.length === 4) {
+  logSuccess(`활성 카테고리 수 검증 완료 (총 4개: ${activeCats.map(c=>c.id).join(', ')})`);
 } else {
-  logError(`활성 카테고리 수가 3개가 아닙니다! (현재 활성 수: ${activeCats.length}개)`);
+  logError(`활성 카테고리 수가 4개가 아닙니다! (현재 활성 수: ${activeCats.length}개)`);
 }
 
 const drainClogCat = categories.find(c => c.id === "drain-clog");
@@ -81,10 +81,10 @@ logSuccess("지역 데이터 계층형 parentId 및 인근 지역 nearbyRegionId
 
 // 4. 업체 검수 (businesses)
 const internalBrands = businesses.filter(b => b.isInternalBrand === true && b.visible !== false);
-if (internalBrands.length === 6) {
-  logSuccess("활성 내부 브랜드가 정상적으로 6개 등록되어 있습니다. (청소 3개, 방수/코킹 3개)");
+if (internalBrands.length === 7) {
+  logSuccess("활성 내부 브랜드가 정상적으로 7개 등록되어 있습니다. (청소 3개, 방수/코킹 3개, 탄성코트 1개)");
 } else {
-  logError(`활성 내부 브랜드 수가 6개가 아닙니다! (현재 수: ${internalBrands.length}개)`);
+  logError(`활성 내부 브랜드 수가 7개가 아닙니다! (현재 수: ${internalBrands.length}개)`);
 }
 
 businesses.forEach(b => {
@@ -123,9 +123,13 @@ adSlots.forEach(slot => {
     logError(`AdSlot [${slot.id}]의 categoryId [${slot.categoryId}]가 실제 존재하지 않는 카테고리를 참조하고 있습니다.`);
   }
 
-  const foundTask = tasks.find(t => t.id === slot.taskId);
-  if (!foundTask) {
-    logError(`AdSlot [${slot.id}]의 taskId [${slot.taskId}]가 실제 존재하지 않는 작업을 참조하고 있습니다.`);
+  if (slot.taskId) {
+    const foundTask = tasks.find(t => t.id === slot.taskId);
+    if (!foundTask) {
+      logError(`AdSlot [${slot.id}]의 taskId [${slot.taskId}]가 실제 존재하지 않는 작업을 참조하고 있습니다.`);
+    }
+  } else if (slot.coverageTaskMode !== "all-category-tasks" && slot.status === "active") {
+    logError(`AdSlot [${slot.id}]의 taskId가 존재하지 않고, category-wide 모드도 아닙니다.`);
   }
 
   const foundReg = regions.find(r => r.id === slot.purchaseRegionId);
