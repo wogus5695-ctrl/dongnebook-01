@@ -1,4 +1,4 @@
-페이지 유형,상세 구분,배포 URL,노출 대상/수집 여부
+﻿페이지 유형,상세 구분,배포 URL,노출 대상/수집 여부
 공개 페이지,메인 페이지 (브랜드 소개),https://dongnebook-01.vercel.app/,전체 공개 / sitemap 포함
 공개 페이지,B2B 광고 입점 안내 페이지,https://dongnebook-01.vercel.app/guide.html,전체 공개 / sitemap 포함
 공개 페이지,B2B 광고 입점 신청 페이지,https://dongnebook-01.vercel.app/apply.html,전체 공개 / sitemap 포함
