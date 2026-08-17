@@ -1,16 +1,23 @@
-﻿페이지 유형,상세 구분,배포 URL,노출 대상/수집 여부
+페이지 유형,상세 구분,배포 URL,노출 대상/수집 여부
 공개 페이지,메인 페이지 (브랜드 소개),https://dongnebook-01.vercel.app/,전체 공개 / sitemap 포함
-공개 페이지,광고 입점 안내 페이지,https://dongnebook-01.vercel.app/guide.html,전체 공개 / sitemap 포함
-공개 페이지,광고 입점 신청 페이지,https://dongnebook-01.vercel.app/apply.html,전체 공개 / sitemap 포함
+공개 페이지,B2B 광고 입점 안내 페이지,https://dongnebook-01.vercel.app/guide.html,전체 공개 / sitemap 포함
+공개 페이지,B2B 광고 입점 신청 페이지,https://dongnebook-01.vercel.app/apply.html,전체 공개 / sitemap 포함
+공개 페이지,통합 정책 및 약관 기본 페이지,https://dongnebook-01.vercel.app/policy.html,전체 공개 / sitemap 포함
 공개 페이지,개인정보처리방침 약관,https://dongnebook-01.vercel.app/policy.html?tab=privacy,전체 공개 / sitemap 포함
 공개 페이지,서비스 이용약관,https://dongnebook-01.vercel.app/policy.html?tab=terms,전체 공개 / sitemap 포함
 공개 페이지,광고 운영 기준 정책,https://dongnebook-01.vercel.app/policy.html?tab=ad-standards,전체 공개 / sitemap 포함
 공개 페이지,광고비 환불 정책 약관,https://dongnebook-01.vercel.app/policy.html?tab=refund,전체 공개 / sitemap 포함
-공개 페이지,종합청소 카테고리 허브,https://dongnebook-01.vercel.app/hub.html?cat=general-cleaning,전체 공개 / sitemap 포함
-공개 페이지,방수 및 누수 카테고리 허브,https://dongnebook-01.vercel.app/waterproof-leak,전체 공개 / sitemap 포함
-공개 페이지,창틀코킹 및 창틀누수 허브,https://dongnebook-01.vercel.app/window-caulking,전체 공개 / sitemap 포함
-동적 랜딩,종합청소 (유리창청소 예시),https://dongnebook-01.vercel.app/landing.html?reg=서울 강남구&cat=general-cleaning&task=window-cleaning,소비자 유입 / sitemap 포함
-동적 랜딩,방수 및 누수 (외벽방수 예시),https://dongnebook-01.vercel.app/landing.html?reg=서울 송파구&cat=waterproof-leak&task=exterior-waterproof,소비자 유입 / sitemap 포함
-동적 랜딩,창틀코킹 및 누수 (창틀누수 예시),https://dongnebook-01.vercel.app/landing.html?reg=경기 수원시 영통구&cat=window-caulking&task=window-leak,소비자 유입 / sitemap 포함
-관리자용,관리자용 키워드맵 대시보드,https://dongnebook-01.vercel.app/keyword-map.html?admin=true,운영자 전용 / noindex & sitemap 제외
-관리자용,관리자용 입점 업체 리스트,https://dongnebook-01.vercel.app/business-list.html?admin=true,운영자 전용 / noindex & sitemap 제외
+공개 보류 허브,방수 및 누수 보류 안내 지면,https://dongnebook-01.vercel.app/waterproof-leak,공개 보류 / noindex & sitemap 제외
+공개 보류 허브,창틀코킹 및 창틀누수 보류 안내 지면,https://dongnebook-01.vercel.app/window-caulking,공개 보류 / noindex & sitemap 제외
+공개 보류 허브,탄성코트 보류 안내 지면,https://dongnebook-01.vercel.app/elastic-coating,공개 보류 / noindex & sitemap 제외
+서비스 종료,종합청소 서비스 종료 안내 지면,https://dongnebook-01.vercel.app/general-cleaning,서비스 종료 / noindex & sitemap 제외
+동적 로컬 랜딩,방수 및 누수 (은평구 빗물누수 예시),https://dongnebook-01.vercel.app/landing.html?reg=서울 은평구&cat=waterproof-leak&task=rain-leak,소비자 유입 / sitemap 포함
+동적 로컬 랜딩,창틀코킹 및 창틀누수 (은평구 창틀코킹 예시),https://dongnebook-01.vercel.app/landing.html?reg=서울 은평구&cat=window-caulking&task=window-caulking-task,소비자 유입 / sitemap 포함
+동적 로컬 랜딩,탄성코트 (은평구 탄성코트 예시),https://dongnebook-01.vercel.app/landing.html?reg=서울 은평구&cat=elastic-coating&task=elastic-coating,소비자 유입 / sitemap 포함
+관리자용,관리자용 키워드맵 대시보드 (종합 인덱스),https://dongnebook-01.vercel.app/keyword-map.html?admin=true,운영자 전용 / noindex & sitemap 제외
+관리자용,방수 및 누수 키워드맵 관리자 지면,https://dongnebook-01.vercel.app/keyword-map.html?cat=waterproof-leak&admin=true,운영자 전용 / noindex & sitemap 제외
+관리자용,창틀코킹 및 창틀누수 키워드맵 관리자 지면,https://dongnebook-01.vercel.app/keyword-map.html?cat=window-caulking&admin=true,운영자 전용 / noindex & sitemap 제외
+관리자용,탄성코트 키워드맵 관리자 지면,https://dongnebook-01.vercel.app/keyword-map.html?cat=elastic-coating&admin=true,운영자 전용 / noindex & sitemap 제외
+관리자용,관리자용 입점 업체 & 광고 구좌 관리 대시보드,https://dongnebook-01.vercel.app/business-list.html?admin=true,운영자 전용 / noindex & sitemap 제외
+기술 규격 파일,검색 로봇 제어 파일 (robots.txt),https://dongnebook-01.vercel.app/robots.txt,전체 공개 / robots 규격
+기술 규격 파일,정식 검색 사이트맵 (sitemap.xml),https://dongnebook-01.vercel.app/sitemap.xml,전체 공개 / sitemap 규격
