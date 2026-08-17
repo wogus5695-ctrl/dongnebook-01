@@ -416,6 +416,7 @@
       const statusVal = statusSelect.value;
       const isExpiringCheck = expiringCheckbox.checked;
       const isMigratedShow = migratedCheckbox.checked;
+      const isNoSlotsShow = noSlotsCheckbox.checked;
 
       const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
 
@@ -436,8 +437,6 @@
         if (searchName && !biz.brandName.toLowerCase().includes(searchName)) {
           return;
         }
-
-        const isNoSlotsShow = noSlotsCheckbox.checked;
 
         // 해당 업체의 전체 구좌(adSlots) 수집
         const slotsOfBiz = adSlots.filter(slot => slot.businessId === biz.id);
