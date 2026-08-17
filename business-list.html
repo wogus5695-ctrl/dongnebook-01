@@ -472,13 +472,30 @@
           return c ? c.name : cid;
         }).join(", ") : "미지정";
 
+        // 개별 업체 카드별 구좌 통계 계산 (실제 데이터 기준)
+        let bizContractedSlots = 0;
+        let bizExposureRegions = 0;
+        let bizTotalKeywords = 0;
+
+        filteredSlots.forEach(s => {
+          if (s.status === "active" || s.status === "pending") {
+            bizContractedSlots++;
+          }
+          const regionObj = regions.find(r => r.id === s.purchaseRegionId);
+          const subDongCount = regionObj && regionObj.childRegionIds ? regionObj.childRegionIds.length : 0;
+          const associatedTasks = tasks.filter(t => t.categoryIds.includes(s.categoryId) && t.visible);
+          
+          bizExposureRegions += (1 + subDongCount);
+          bizTotalKeywords += (1 + subDongCount) * associatedTasks.length;
+        });
+
         // 구좌 상세 테이블 로우 HTML 빌드
         let slotsTableRowsHtml = "";
         if (filteredSlots.length === 0) {
           slotsTableRowsHtml = `
             <tr>
               <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 16px;">
-                연결된 광고 구좌가 없거나 필터 조건에 부합하는 구좌가 없습니다.
+                연결 광고 구좌가 없거나 필터 조건에 부합하는 구좌가 없습니다.
               </td>
             </tr>
           `;
@@ -493,7 +510,7 @@
 
             const subDongCount = regionObj && regionObj.childRegionIds ? regionObj.childRegionIds.length : 0;
             const associatedTasks = tasks.filter(t => t.categoryIds.includes(slot.categoryId) && t.visible);
-            const taskText = associatedTasks.length > 0 ? `전체 작업명 ${associatedTasks.length}개` : "전체 작업명 포함";
+            const taskText = associatedTasks.length > 0 ? `전체 작업명 ${associatedTasks.length}개 포함` : "전체 작업명 포함";
 
             const keywordsCount = (1 + subDongCount) * associatedTasks.length;
 
@@ -510,8 +527,8 @@
             const firstTask = associatedTasks[0] || { id: slot.categoryId };
             const landingUrl = `/landing.html?reg=${encodeURIComponent(regDisplayName)}&cat=${slot.categoryId}&task=${firstTask.id}`;
 
-            const displayStartDate = slot.startDate && slot.startDate !== "N/A" ? slot.startDate : "기간 미설정";
-            const displayEndDate = slot.endDate && slot.endDate !== "N/A" ? slot.endDate : "기간 미설정";
+            const displayStartDate = slot.startDate && slot.startDate !== "N/A" && slot.startDate !== "null" ? slot.startDate : "기간 미설정";
+            const displayEndDate = slot.endDate && slot.endDate !== "N/A" && slot.endDate !== "null" ? slot.endDate : "기간 미설정";
             const slotNumText = slot.slotNumber ? `${slot.slotNumber}번` : "미지정";
 
             slotsTableRowsHtml += `
@@ -534,14 +551,21 @@
           });
         }
 
-        // 홈페이지/오픈채팅/데이터상태 분기 처리
-        const displayWebsite = biz.websiteUrl && biz.websiteUrl !== "추후 입력" && biz.websiteUrl !== "N/A"
-          ? `<a href="${biz.websiteUrl}" target="_blank" style="text-decoration: underline; color: var(--primary);">${biz.websiteUrl}</a>`
+        // 홈페이지/카카오채널/전화번호 예외 분기 처리
+        const displayWebsite = biz.websiteUrl && biz.websiteUrl !== "추후 입력" && biz.websiteUrl !== "N/A" && biz.websiteUrl !== "null"
+          ? `<a href="${biz.websiteUrl}" target="_blank" style="text-decoration: underline; color: var(--primary); font-weight: bold;">열기 ↗</a>`
           : "미설정";
 
-        const displayKakao = biz.kakaoUrl && biz.kakaoUrl !== "#"
-          ? `<a href="${biz.kakaoUrl}" target="_blank" style="color: #d35400; text-decoration: underline;">오픈채팅 주소 ↗</a>`
+        const displayKakao = biz.kakaoUrl && biz.kakaoUrl !== "#" && biz.kakaoUrl !== "null"
+          ? `<a href="${biz.kakaoUrl}" target="_blank" style="color: #d35400; text-decoration: underline; font-weight: bold;">열기 ↗</a>`
           : "미설정";
+
+        let displayPhone = biz.phone;
+        if (!biz.phone || biz.phone.trim() === "" || biz.phone === "추후 입력" || biz.phone === "null") {
+          displayPhone = `<span style="color: #c0392b; font-weight: bold;">추후 입력 또는 확인 필요</span>`;
+        } else {
+          displayPhone = `<a href="tel:${biz.phone}" style="color: var(--primary); font-weight: bold;">${biz.phone}</a>`;
+        }
 
         const errorStatusBadge = hasError 
           ? `<span style="color: #c0392b; font-weight: bold; background-color: #fce4d6; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">⚠️ 확인 필요 (${errorReasons.join(', ')})</span>`
@@ -561,17 +585,19 @@
                 <div style="display: flex; gap: 4px; margin-top: 2px;">
                   <span class="${bizStatusBadgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${bizStatusText}</span>
                 </div>
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
-                  등록 구좌: <strong>${slotsOfBiz.length}개</strong><br>
-                  운영 업종: ${bizCats}
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; line-height: 1.5; text-align: left;">
+                  계약 구좌 수: <strong>${bizContractedSlots}개</strong><br>
+                  노출 지역 단위: <strong>${bizExposureRegions}개</strong><br>
+                  생성 키워드 수: <strong>${bizTotalKeywords}개</strong><br>
+                  운영 업종: <strong>${bizCats}</strong>
                 </div>
               </div>
 
               <!-- 중앙: 상세 메타 정보 -->
               <div style="flex: 2; min-width: 280px; display: flex; flex-direction: column; gap: 6px; justify-content: center;">
                 <div class="data-row"><strong>업체 고유 ID</strong>: <span style="font-family: monospace;">${biz.id}</span></div>
-                <div class="data-row"><strong>전화번호</strong>: <a href="tel:${biz.phone || ''}" style="color: var(--primary); font-weight: bold;">${biz.phone || "미설정"}</a></div>
-                <div class="data-row"><strong>카카오 링크</strong>: ${displayKakao}</div>
+                <div class="data-row"><strong>전화번호</strong>: ${displayPhone}</div>
+                <div class="data-row"><strong>카카오 채널</strong>: ${displayKakao}</div>
                 <div class="data-row"><strong>홈페이지</strong>: ${displayWebsite}</div>
                 <div class="data-row"><strong>데이터 상태</strong>: ${errorStatusBadge}</div>
               </div>
@@ -591,7 +617,7 @@
             <!-- 하단: 광고 구좌 상세 테이블 영역 -->
             <div style="width: 100%;">
               <div style="font-size: 0.8rem; font-weight: bold; color: var(--secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
-                📋 연결된 광고 구좌 내역 (필터 매칭된 구좌: ${filteredSlots.length}개 / 전체 구좌: ${slotsOfBiz.length}개)
+                📋 연결 광고 구좌 (필터 매칭된 구좌: ${filteredSlots.length}개 / 전체 구좌: ${slotsOfBiz.length}개)
               </div>
               <div class="slots-table-wrap">
                 <table class="slots-table">
