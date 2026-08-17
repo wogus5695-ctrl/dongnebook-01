@@ -287,10 +287,24 @@
     }
 
     // 4. 대표 URL 복사 함수 선언 (전역 윈도우 스코프 바인딩)
-    window.copyLandingUrl = function(urlText) {
+    window.copyLandingUrl = function(urlText, btnElement) {
       const fullUrl = window.location.origin + urlText;
       navigator.clipboard.writeText(fullUrl).then(() => {
-        alert("대표 랜딩 URL 복사 완료:\n" + fullUrl);
+        if (btnElement) {
+          const originalText = btnElement.textContent;
+          btnElement.textContent = "복사됨";
+          btnElement.style.backgroundColor = "#27ae60";
+          btnElement.style.color = "white";
+          btnElement.style.borderColor = "#27ae60";
+          setTimeout(() => {
+            btnElement.textContent = originalText;
+            btnElement.style.backgroundColor = "";
+            btnElement.style.color = "";
+            btnElement.style.borderColor = "";
+          }, 1500);
+        } else {
+          alert("대표 랜딩 URL 복사 완료:\n" + fullUrl);
+        }
       }).catch(err => {
         console.error("복사 실패:", err);
       });
@@ -492,10 +506,14 @@
         // 구좌 상세 테이블 로우 HTML 빌드
         let slotsTableRowsHtml = "";
         if (filteredSlots.length === 0) {
+          const placeholderMsg = slotsOfBiz.length === 0
+            ? "연결된 광고 구좌가 없습니다. 업체 정보만 등록된 상태입니다."
+            : "현재 필터 조건에 맞는 광고 구좌가 없습니다.";
+            
           slotsTableRowsHtml = `
             <tr>
-              <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 16px;">
-                연결 광고 구좌가 없거나 필터 조건에 부합하는 구좌가 없습니다.
+              <td colspan="11" style="text-align: center; color: var(--text-muted); padding: 16px;">
+                ${placeholderMsg}
               </td>
             </tr>
           `;
@@ -527,8 +545,26 @@
             const firstTask = associatedTasks[0] || { id: slot.categoryId };
             const landingUrl = `/landing.html?reg=${encodeURIComponent(regDisplayName)}&cat=${slot.categoryId}&task=${firstTask.id}`;
 
-            const displayStartDate = slot.startDate && slot.startDate !== "N/A" && slot.startDate !== "null" ? slot.startDate : "기간 미설정";
-            const displayEndDate = slot.endDate && slot.endDate !== "N/A" && slot.endDate !== "null" ? slot.endDate : "기간 미설정";
+            // 기간 설정 정리
+            let displayPeriod = "";
+            if (!slot.startDate || slot.startDate === "N/A" || slot.startDate === "null" || !slot.endDate || slot.endDate === "N/A" || slot.endDate === "null") {
+              displayPeriod = "기간 미설정";
+            } else {
+              const fmtStart = slot.startDate.replace(/-/g, '.');
+              const fmtEnd = slot.endDate.replace(/-/g, '.');
+              displayPeriod = `${fmtStart} ~ ${fmtEnd}`;
+              
+              // 만료 여부 판정
+              const endDateObj = new Date(slot.endDate);
+              const diffTime = endDateObj - CURRENT_DATE;
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              if (diffDays <= 0) {
+                displayPeriod += ` <span style="color:#c0392b; font-weight:bold; font-size:0.75rem;">(만료)</span>`;
+              } else if (diffDays <= 7) {
+                displayPeriod += ` <span style="color:#e67e22; font-weight:bold; font-size:0.75rem;">(만료 임박)</span>`;
+              }
+            }
+
             const slotNumText = slot.slotNumber ? `${slot.slotNumber}번` : "미지정";
 
             slotsTableRowsHtml += `
@@ -537,14 +573,17 @@
                 <td>${regNameOnly}</td>
                 <td style="text-align: center;">${slotNumText}</td>
                 <td style="text-align: center;"><span class="${slotStatusBadgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${slotStatusText}</span></td>
+                <td style="text-align: center;">1개</td>
                 <td>${regNameOnly} 및 하위 동 ${subDongCount}개</td>
                 <td>${taskText}</td>
                 <td style="text-align: center; font-weight: bold;">${keywordsCount}개</td>
-                <td style="text-align: center;">${displayStartDate}</td>
-                <td style="text-align: center;">${displayEndDate}</td>
+                <td style="text-align: center;">${displayPeriod}</td>
                 <td style="text-align: center;">
-                  <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px;" onclick="window.copyLandingUrl('${landingUrl}')">복사</button>
+                  <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px;" onclick="window.copyLandingUrl('${landingUrl}', this)">복사</button>
                   <a href="${landingUrl}" target="_blank" class="btn btn-primary" style="font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; text-decoration: none; color: white;">이동</a>
+                </td>
+                <td style="text-align: center;">
+                  <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; cursor: not-allowed; opacity: 0.5;" disabled>상세</button>
                 </td>
               </tr>
             `;
@@ -627,12 +666,13 @@
                       <th>구 단위 지역</th>
                       <th style="text-align: center;">구좌 번호</th>
                       <th style="text-align: center;">상태</th>
-                      <th>포함 지역</th>
+                      <th style="text-align: center;">계약 구좌</th>
+                      <th>노출 지역 단위</th>
                       <th>포함 작업명</th>
                       <th style="text-align: center;">생성 키워드 수</th>
-                      <th style="text-align: center;">시작일</th>
-                      <th style="text-align: center;">종료일</th>
+                      <th style="text-align: center;">기간</th>
                       <th style="text-align: center;">대표 랜딩</th>
+                      <th style="text-align: center;">액션</th>
                     </tr>
                   </thead>
                   <tbody>
