@@ -218,6 +218,10 @@
           <input type="checkbox" id="filter-migrated" style="width:16px; height:16px; margin:0; cursor: pointer;">
           <span>이전/마이그레이션 구좌 보기</span>
         </label>
+        <label class="form-checkbox" style="font-size: 0.85rem; margin: 0; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="checkbox" id="filter-no-slots" style="width:16px; height:16px; margin:0; cursor: pointer;">
+          <span>구좌 없는 업체 보기</span>
+        </label>
       </div>
     </section>
 
@@ -261,6 +265,7 @@
     const statusSelect = document.getElementById('filter-status');
     const expiringCheckbox = document.getElementById('filter-expiring');
     const migratedCheckbox = document.getElementById('filter-migrated');
+    const noSlotsCheckbox = document.getElementById('filter-no-slots');
 
     const container = document.getElementById('businesses-list-container');
 
@@ -315,6 +320,8 @@
           return;
         }
 
+        const isNoSlotsShow = noSlotsCheckbox.checked;
+
         // 해당 업체의 전체 구좌(adSlots) 수집
         const slotsOfBiz = adSlots.filter(slot => slot.businessId === biz.id);
 
@@ -329,6 +336,9 @@
         // 업종 필터링
         if (catVal !== 'all') {
           filteredSlots = filteredSlots.filter(s => s.categoryId === catVal);
+        } else {
+          // 업종 선택이 '전체 업종'일 때는 운영 3대 업종 구좌만 포함하고 general-cleaning 등 제외
+          filteredSlots = filteredSlots.filter(s => managedCats.some(mc => mc.id === s.categoryId));
         }
 
         // 지역 필터링
@@ -352,9 +362,14 @@
           });
         }
 
-        // 만약 구좌를 가지고 있는 업체인데 필터링 후 남은 구좌가 0개라면 이 업체는 노출 제외
-        if (slotsOfBiz.length > 0 && filteredSlots.length === 0) {
-          return;
+        // 구좌 없는 업체 숨김 처리 조건 적용
+        if (filteredSlots.length === 0) {
+          // '구좌 없는 업체 보기' 체크박스가 켜져 있고, 실제로 등록된 전체 구좌가 0개인 업체만 노출 허용
+          if (isNoSlotsShow && slotsOfBiz.length === 0) {
+            // 통계 및 렌더링 유지
+          } else {
+            return; // 그 외의 경우는 모두 노출 제외
+          }
         }
 
         // 데이터 오류 감지 조건
@@ -598,6 +613,7 @@
     statusSelect.addEventListener('change', renderBusinesses);
     expiringCheckbox.addEventListener('change', renderBusinesses);
     migratedCheckbox.addEventListener('change', renderBusinesses);
+    noSlotsCheckbox.addEventListener('change', renderBusinesses);
   </script>
 </body>
 </html>
