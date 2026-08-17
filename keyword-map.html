@@ -514,10 +514,51 @@
       }
 
       const cat = categories.find(c => c.id === catFilter);
-      if (!cat) return;
+      if (!cat) {
+        container.innerHTML = `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">운영 대상 업종이 아닙니다.</div>`;
+        return;
+      }
+
+      const MANAGED_CATEGORY_IDS = [
+        "waterproof-leak",
+        "window-caulking",
+        "elastic-coating"
+      ];
+
+      if (!MANAGED_CATEGORY_IDS.includes(cat.id)) {
+        container.innerHTML = `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">운영 대상 업종이 아닙니다.</div>`;
+        return;
+      }
 
       const associatedTasks = tasks.filter(t => t.categoryIds.includes(cat.id) && t.visible);
-      const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
+      if (associatedTasks.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">해당 업종의 작업명 데이터가 없습니다.</div>`;
+        return;
+      }
+
+      // 4단계 우선순위 구 목록 추출
+      const CATEGORY_TARGET_DISTRICTS = {
+        "waterproof-leak": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
+        "window-caulking": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
+        "elastic-coating": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"]
+      };
+
+      let districtIds = [];
+      if (cat.targetDistrictIds && cat.targetDistrictIds.length > 0) {
+        districtIds = cat.targetDistrictIds;
+      } else if (cat.managedDistrictIds && cat.managedDistrictIds.length > 0) {
+        districtIds = cat.managedDistrictIds;
+      } else if (CATEGORY_TARGET_DISTRICTS[cat.id]) {
+        districtIds = CATEGORY_TARGET_DISTRICTS[cat.id];
+      } else {
+        districtIds = regions.filter(r => r.level === 'district' && r.visible !== false).map(r => r.id);
+      }
+
+      const districts = districtIds.map(id => regions.find(r => r.id === id)).filter(Boolean);
+      if (districts.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">대상 구 설정이 없습니다.</div>`;
+        return;
+      }
 
       // 통계 변수 계산
       let targetDistrictsCount = districts.length;
