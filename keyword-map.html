@@ -166,7 +166,7 @@
     
     <!-- 2. 관리자 페이지 안내 배너 -->
     <div class="admin-banner">
-      <span>⚙️ 동네책자 지역 키워드 매핑 관리자 모드</span>
+      <span id="admin-banner-title">⚙️ 동네책자 지역 키워드 매핑 관리자 모드</span>
       <span style="font-size: 0.75rem; background-color: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px;">OPERATOR ONLY</span>
     </div>
 
@@ -343,17 +343,19 @@
     // 1. 헤더 마운트
     renderHeader();
 
-    // 2. 관리자 검증 체크 파라미터 (안전장치)
+    // 2. 관리자 검증 체크 및 라우팅 분기
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') !== 'true') {
+    const isAdmin = urlParams.get('admin') === 'true';
+    const catQueryParam = urlParams.get('cat');
+
+    if (!isAdmin) {
       alert("관리자 권한이 요구되는 페이지입니다.");
       window.location.href = "/";
     }
 
-    const catQueryParam = urlParams.get('cat');
     const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
 
-    // 청소업종 차단 정책
+    // 청소업종 차단 정책 및 리다이렉트
     if (catQueryParam === 'general-cleaning') {
       alert("종합청소 업종은 더 이상 신규 운영 대상이 아닙니다.");
       window.location.href = "/keyword-map.html?admin=true";
@@ -368,14 +370,25 @@
     const categorySelect = document.getElementById('filter-category');
     let activeStatFilter = 'all';
 
-    // 뷰 분기 및 타이틀 조립
-    if (catQueryParam) {
+    // 뷰 분기 및 타이틀 조립 (admin && cat 우선 분기)
+    if (isAdmin && catQueryParam) {
       document.getElementById('cat-specific-view').style.display = 'block';
       document.getElementById('admin-index-view').style.display = 'none';
 
       const activeCat = managedCats.find(c => c.id === catQueryParam);
-      document.getElementById('admin-title').textContent = `${activeCat.name} 동적키워드 구좌 관리맵`;
+      
+      // 업종별 상세 커스텀 제목 적용
+      let pageTitle = "";
+      if (activeCat.id === 'waterproof-leak') pageTitle = "방수/누수 동적키워드 구좌 관리맵";
+      else if (activeCat.id === 'window-caulking') pageTitle = "창틀코킹/창틀누수 동적키워드 구좌 관리맵";
+      else if (activeCat.id === 'elastic-coating') pageTitle = "탄성코트 동적키워드 구좌 관리맵";
+      else pageTitle = `${activeCat.name} 동적키워드 구좌 관리맵`;
+
+      document.getElementById('admin-title').textContent = pageTitle;
       document.getElementById('admin-desc').textContent = `[${activeCat.name}] 업종에 등록된 구 단위 광고 입점 현황 및 동별 동적키워드 세부 모니터링 화면입니다.`;
+      
+      // 상단 배너 역할 업데이트
+      document.getElementById('admin-banner-title').textContent = `⚙️ 관리자 키워드맵 [${activeCat.name}]`;
 
       categorySelect.innerHTML = '';
       const opt = document.createElement('option');
@@ -383,12 +396,15 @@
       opt.textContent = activeCat.name;
       categorySelect.appendChild(opt);
       categorySelect.value = activeCat.id;
-    } else {
+    } else if (isAdmin && !catQueryParam) {
       document.getElementById('admin-index-view').style.display = 'block';
       document.getElementById('cat-specific-view').style.display = 'none';
 
       document.getElementById('admin-title').textContent = "동네책자 키워드맵 관리자 인덱스";
       document.getElementById('admin-desc').textContent = "등록된 전체 활성 업종의 대상 구 개수와 광고 입점 구좌 현황을 요약 조회하고 제어하는 종합 관리자 홈입니다.";
+      
+      // 상단 배너 역할 업데이트
+      document.getElementById('admin-banner-title').textContent = "⚙️ 관리자 키워드맵 [전체 현황]";
 
       renderAdminIndex();
     }

@@ -47,10 +47,10 @@ export function renderHeader() {
   if (catParam === 'elastic-coating') catText = '탄성코트';
   else if (catParam === 'general-cleaning') catText = '종합청소';
   else if (catParam === 'waterproof-leak') catText = '방수/누수';
-  else if (catParam === 'window-caulking') catText = '창틀코킹';
+  else if (catParam === 'window-caulking') catText = '창틀코킹/창틀누수';
 
   const sloganHTML = isAdminPage
-    ? `<span style="color: #e67e22; font-weight: bold; font-size: 0.95rem;">⚙️ 관리자 키워드맵 ${catText ? `[${catText}]` : ''}</span>`
+    ? `<span style="color: #e67e22; font-weight: bold; font-size: 0.95rem;">⚙️ 관리자 키워드맵 ${catText ? `[${catText}]` : '[전체 현황]'}</span>`
     : `
       <style>
         .slogan-pc-text { display: inline; font-size: 0.95rem; }
