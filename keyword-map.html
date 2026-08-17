@@ -588,6 +588,35 @@
       const slotStatus = slotStatusSelect.value;
       const indexStatus = indexStatusSelect.value;
 
+      // 진단 디버그 로깅 출력
+      console.log("admin:", isAdmin);
+      console.log("cat:", catQueryParam);
+      console.log("renderMode:", catFilter === 'all' ? 'adminIndex' : 'categoryDetail');
+      console.log("currentCategoryId:", catFilter);
+      console.log("managedCategories:", managedCats.map(c => c.id));
+      const catObjLog = categories.find(c => c.id === catFilter);
+      console.log("currentCategory:", catObjLog);
+      if (catObjLog) {
+        const CATEGORY_TARGET_DISTRICTS_LOG = {
+          "waterproof-leak": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
+          "window-caulking": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
+          "elastic-coating": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"]
+        };
+        let distIdsLog = [];
+        if (catObjLog.targetDistrictIds && catObjLog.targetDistrictIds.length > 0) distIdsLog = catObjLog.targetDistrictIds;
+        else if (catObjLog.managedDistrictIds && catObjLog.managedDistrictIds.length > 0) distIdsLog = catObjLog.managedDistrictIds;
+        else if (CATEGORY_TARGET_DISTRICTS_LOG[catObjLog.id]) distIdsLog = CATEGORY_TARGET_DISTRICTS_LOG[catObjLog.id];
+        else distIdsLog = regions.filter(r => r.level === 'district' && r.visible !== false).map(r => r.id);
+        const distsLog = distIdsLog.map(id => regions.find(r => r.id === id)).filter(Boolean);
+        console.log("targetDistricts:", distsLog.length, distsLog.slice(0, 5));
+        const tasksLog = tasks.filter(t => t.categoryIds.includes(catObjLog.id) && t.visible);
+        console.log("categoryTasks:", tasksLog.length, tasksLog.map(t => t.id));
+        const slotsLog = adSlots.filter(s => s.status === 'active' && s.categoryId === catObjLog.id);
+        console.log("activeSlots:", slotsLog.length, slotsLog);
+      }
+      console.log("tableBody:", document.getElementById("admin-index-table-body"));
+      console.log("categoryRowsContainer:", container);
+
       if (catFilter === 'all') {
         container.innerHTML = `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">상단의 업종 선택 필터에서 특정 업종을 선택하시면 구 단위 광고 구좌 현황판이 활성화됩니다.</div>`;
         document.getElementById('stat-districts-count').textContent = "-";
@@ -893,6 +922,7 @@
         </div>
       `;
 
+      console.log("generatedRows:", renderedRowsCount);
       container.innerHTML = renderedRowsCount > 0 ? html : `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">필터 조건에 부합하는 키워드 매핑 구좌가 존재하지 않습니다.</div>`;
     }
 
