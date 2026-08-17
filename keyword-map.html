@@ -259,6 +259,10 @@
           <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">참여 업체</div>
           <div class="summary-value" id="total-businesses" style="color: #27ae60;">-</div>
         </div>
+        <div class="summary-card">
+          <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">생성 키워드 수</div>
+          <div class="summary-value" id="total-keywords-count" style="color: #8e44ad;">-</div>
+        </div>
       </section>
 
       <div class="keyword-table-wrap" style="overflow-x: auto; background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; width: 100%;">
@@ -266,12 +270,13 @@
           <thead>
             <tr>
               <th style="white-space: nowrap; text-align: left; padding: 12px 14px;">업종명</th>
-              <th style="white-space: nowrap; text-align: left; padding: 12px 14px;">업종 ID</th>
-              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">구 개수</th>
-              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">총 구좌</th>
+              <th style="white-space: nowrap; text-align: left; padding: 12px 14px;">categoryId</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">대상 구 수</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">총 판매 가능 구좌</th>
               <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">등록 구좌</th>
-              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">잔여</th>
-              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">업체</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">남은 구좌</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">등록 업체 수</th>
+              <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">생성 키워드 수</th>
               <th style="white-space: nowrap; text-align: center; padding: 12px 14px;">관리</th>
             </tr>
           </thead>
@@ -406,55 +411,137 @@
     }
 
     function renderAdminIndex() {
-      const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
-      const totalCats = managedCats.length;
-      const totalDists = districts.length;
-      const slotsLimitVal = totalCats * totalDists * 4;
+      try {
+        const CATEGORY_TARGET_DISTRICTS = {
+          "waterproof-leak": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
+          "window-caulking": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
+          "elastic-coating": ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"]
+        };
 
-      const activeAdSlots = adSlots.filter(s => s.status === 'active' && managedCats.some(c => c.id === s.categoryId));
-      const totalAdYesVal = activeAdSlots.length;
-      const totalAdNoVal = slotsLimitVal - totalAdYesVal;
+        const MANAGED_CATEGORY_IDS = [
+          "waterproof-leak",
+          "window-caulking",
+          "elastic-coating"
+        ];
 
-      const uniqueBizIds = new Set(activeAdSlots.map(s => s.businessId));
-      const totalBizVal = uniqueBizIds.size;
+        // 1. 데이터/얼로우리스트 검증
+        if (MANAGED_CATEGORY_IDS.length === 0) {
+          throw new Error("운영 업종 allowlist가 비어 있습니다.");
+        }
+        if (!categories || categories.length === 0) {
+          throw new Error("category 데이터에서 운영 업종을 찾을 수 없습니다.");
+        }
+        if (!regions || regions.length === 0) {
+          throw new Error("regions 데이터가 로드되지 않았습니다.");
+        }
+        if (!tasks || tasks.length === 0) {
+          throw new Error("task 데이터가 없습니다.");
+        }
+        if (!adSlots) {
+          throw new Error("adSlots 데이터가 없습니다.");
+        }
 
-      document.getElementById('total-categories-count').textContent = `${totalCats}개`;
-      document.getElementById('total-districts-count').textContent = `${totalDists}개`;
-      document.getElementById('total-slots-limit').textContent = `${slotsLimitVal}개`;
-      document.getElementById('total-ad-yes').textContent = `${totalAdYesVal}개`;
-      document.getElementById('total-ad-no').textContent = `${totalAdNoVal}개`;
-      document.getElementById('total-businesses').textContent = `${totalBizVal}개`;
+        const activeCats = managedCats.filter(c => MANAGED_CATEGORY_IDS.includes(c.id));
+        if (activeCats.length === 0) {
+          throw new Error("category 데이터에서 운영 업종을 찾을 수 없습니다.");
+        }
 
-      const tbody = document.getElementById('admin-index-table-body');
-      let tbodyHtml = '';
+        let totalCats = activeCats.length;
+        let uniqueDists = new Set();
+        let totalSlotsLimitVal = 0;
+        let totalAdYesVal = 0;
+        let totalBizIds = new Set();
+        let totalKeywordsVal = 0;
 
-      managedCats.forEach(cat => {
-        const catSlots = adSlots.filter(s => s.status === 'active' && s.categoryId === cat.id);
-        const catBizIds = new Set(catSlots.map(s => s.businessId));
+        const tbody = document.getElementById('admin-index-table-body');
+        let tbodyHtml = '';
 
-        const distsCount = totalDists;
-        const totalSlots = distsCount * 4;
-        const regSlots = catSlots.length;
-        const remSlots = totalSlots - regSlots;
-        const bizCount = catBizIds.size;
+        activeCats.forEach(cat => {
+          // 대상 구 구하기
+          let districtIds = [];
+          if (cat.targetDistrictIds && cat.targetDistrictIds.length > 0) {
+            districtIds = cat.targetDistrictIds;
+          } else if (cat.managedDistrictIds && cat.managedDistrictIds.length > 0) {
+            districtIds = cat.managedDistrictIds;
+          } else if (CATEGORY_TARGET_DISTRICTS[cat.id]) {
+            districtIds = CATEGORY_TARGET_DISTRICTS[cat.id];
+          } else {
+            districtIds = regions.filter(r => r.level === 'district' && r.visible !== false).map(r => r.id);
+          }
 
-        tbodyHtml += `
+          if (districtIds.length === 0) {
+            console.warn(`[경고] 업종 ${cat.id}에 대한 대상 구가 설정되어 있지 않습니다.`);
+          }
+
+          districtIds.forEach(id => uniqueDists.add(id));
+
+          const distsCount = districtIds.length;
+          const totalSlots = distsCount * 4;
+          totalSlotsLimitVal += totalSlots;
+
+          const catSlots = adSlots.filter(s => s.status === 'active' && s.categoryId === cat.id && districtIds.includes(s.purchaseRegionId));
+          const regSlots = catSlots.length;
+          totalAdYesVal += regSlots;
+
+          const remSlots = totalSlots - regSlots;
+
+          const catBizIds = new Set(catSlots.map(s => s.businessId));
+          catBizIds.forEach(id => totalBizIds.add(id));
+          const bizCount = catBizIds.size;
+
+          const associatedTasks = tasks.filter(t => t.categoryIds.includes(cat.id) && t.visible);
+          let catKeywordsCount = 0;
+          districtIds.forEach(distId => {
+            const subNeighborhoods = regions.filter(r => r.parentId === distId && r.visible !== false);
+            catKeywordsCount += (1 + subNeighborhoods.length) * associatedTasks.length;
+          });
+          totalKeywordsVal += catKeywordsCount;
+
+          tbodyHtml += `
+            <tr>
+              <td style="padding: 12px 14px; text-align: left;"><strong>${cat.name}</strong></td>
+              <td style="padding: 12px 14px; text-align: left; font-family: monospace;">${cat.id}</td>
+              <td style="padding: 12px 14px; text-align: center;"><strong>${distsCount}</strong>개</td>
+              <td style="padding: 12px 14px; text-align: center;">${totalSlots}개</td>
+              <td style="padding: 12px 14px; text-align: center; color: var(--primary); font-weight: bold;">${regSlots}개</td>
+              <td style="padding: 12px 14px; text-align: center; color: #e67e22; font-weight: bold;">${remSlots}개</td>
+              <td style="padding: 12px 14px; text-align: center; color: #27ae60; font-weight: bold;">${bizCount}개</td>
+              <td style="padding: 12px 14px; text-align: center;"><strong>${catKeywordsCount}</strong>개</td>
+              <td style="padding: 12px 14px; text-align: center;">
+                <a href="/keyword-map.html?cat=${cat.id}&admin=true" class="btn btn-accent" style="font-size: 0.75rem; padding: 4px 10px; text-decoration: none; color: white; display: inline-block;">관리</a>
+              </td>
+            </tr>
+          `;
+        });
+
+        document.getElementById('total-categories-count').textContent = `${totalCats}개`;
+        document.getElementById('total-districts-count').textContent = `${uniqueDists.size}개`;
+        document.getElementById('total-slots-limit').textContent = `${totalSlotsLimitVal}개`;
+        document.getElementById('total-ad-yes').textContent = `${totalAdYesVal}개`;
+        document.getElementById('total-ad-no').textContent = `${totalSlotsLimitVal - totalAdYesVal}개`;
+        document.getElementById('total-businesses').textContent = `${totalBizIds.size}개`;
+        document.getElementById('total-keywords-count').textContent = `${totalKeywordsVal}개`;
+
+        tbody.innerHTML = tbodyHtml;
+      } catch (err) {
+        console.error("[대시보드 초기화 에러]:", err);
+        const errMsg = `구동 에러: ${err.message}`;
+        document.getElementById('total-categories-count').textContent = "오류";
+        document.getElementById('total-districts-count').textContent = "오류";
+        document.getElementById('total-slots-limit').textContent = "오류";
+        document.getElementById('total-ad-yes').textContent = "오류";
+        document.getElementById('total-ad-no').textContent = "오류";
+        document.getElementById('total-businesses').textContent = "오류";
+        document.getElementById('total-keywords-count').textContent = "오류";
+        
+        document.getElementById('admin-index-table-body').innerHTML = `
           <tr>
-            <td style="padding: 12px 14px; text-align: left;"><strong>${cat.name}</strong></td>
-            <td style="padding: 12px 14px; text-align: left; font-family: monospace;">${cat.id}</td>
-            <td style="padding: 12px 14px; text-align: center;"><strong>${distsCount}</strong>개</td>
-            <td style="padding: 12px 14px; text-align: center;">${totalSlots}개</td>
-            <td style="padding: 12px 14px; text-align: center; color: var(--primary); font-weight: bold;">${regSlots}개</td>
-            <td style="padding: 12px 14px; text-align: center; color: #e67e22; font-weight: bold;">${remSlots}개</td>
-            <td style="padding: 12px 14px; text-align: center; color: #27ae60; font-weight: bold;">${bizCount}개</td>
-            <td style="padding: 12px 14px; text-align: center;">
-              <a href="/keyword-map.html?cat=${cat.id}&admin=true" class="btn btn-accent" style="font-size: 0.75rem; padding: 4px 10px; text-decoration: none; color: white; display: inline-block;">관리</a>
+            <td colspan="9" style="padding: 24px; text-align: center; color: red; font-weight: bold;">
+              ⚠️ ${errMsg}
             </td>
           </tr>
         `;
-      });
-
-      tbody.innerHTML = tbodyHtml;
+      }
     }
 
     const searchDistrict = document.getElementById('search-district');
