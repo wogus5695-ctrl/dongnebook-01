@@ -182,8 +182,7 @@
       <div class="form-group" style="margin: 0;">
         <label class="form-label" for="filter-category" style="font-size: 0.8rem; font-weight: bold;">업종 선택</label>
         <select id="filter-category" class="form-select" style="padding: 8px; font-size: 0.85rem;">
-          <option value="all">전체 업종</option>
-          <option value="general-cleaning">종합청소</option>
+          <option value="all">전체 현황</option>
           <option value="waterproof-leak">방수/누수</option>
           <option value="window-caulking">창틀코킹/창틀누수</option>
           <option value="elastic-coating">탄성코트</option>
@@ -390,11 +389,6 @@
       // 상단 배너 역할 업데이트
       document.getElementById('admin-banner-title').textContent = `⚙️ 관리자 키워드맵 [${activeCat.name}]`;
 
-      categorySelect.innerHTML = '';
-      const opt = document.createElement('option');
-      opt.value = activeCat.id;
-      opt.textContent = activeCat.name;
-      categorySelect.appendChild(opt);
       categorySelect.value = activeCat.id;
     } else if (isAdmin && !catQueryParam) {
       document.getElementById('admin-index-view').style.display = 'block';
@@ -405,6 +399,8 @@
       
       // 상단 배너 역할 업데이트
       document.getElementById('admin-banner-title').textContent = "⚙️ 관리자 키워드맵 [전체 현황]";
+
+      categorySelect.value = 'all';
 
       renderAdminIndex();
     }
@@ -772,8 +768,15 @@
       container.innerHTML = renderedRowsCount > 0 ? html : `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">필터 조건에 부합하는 키워드 매핑 구좌가 존재하지 않습니다.</div>`;
     }
 
-    // 4. 이벤트 바인딩
-    categorySelect.addEventListener('change', renderKeywordMap);
+    // 4. 이벤트 바인딩 (URL 전환형 내비게이션으로 동작)
+    categorySelect.addEventListener('change', () => {
+      const val = categorySelect.value;
+      if (val === 'all') {
+        window.location.href = '/keyword-map.html?admin=true';
+      } else {
+        window.location.href = `/keyword-map.html?cat=${val}&admin=true`;
+      }
+    });
     searchDistrict.addEventListener('input', renderKeywordMap);
     searchNeighborhood.addEventListener('input', renderKeywordMap);
     searchTask.addEventListener('input', renderKeywordMap);
