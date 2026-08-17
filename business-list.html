@@ -391,64 +391,77 @@
           }
         }
 
-        // 데이터 오류 감지 조건
-        let hasError = false;
+        // 데이터 상태 판정
+        let statusState = "정상"; // 정상, 확인 필요, 미연결, 이전 데이터, 기간 미설정
         let errorReasons = [];
         
-        if (!biz.phone || biz.phone.trim() === "" || biz.phone === "추후 입력") {
-          hasError = true;
-          errorReasons.push("전화번호 없음");
+        // 1. 전화번호 검증
+        if (!biz.phone || biz.phone.trim() === "" || biz.phone === "추후 입력" || biz.phone === "null") {
+          errorReasons.push("전화번호 미입력 또는 확인 필요");
         }
-        if (!biz.kakaoUrl || biz.kakaoUrl.trim() === "" || biz.kakaoUrl === "#") {
-          hasError = true;
-          errorReasons.push("카카오 URL 없음");
+        // 2. 카카오 URL 검증
+        if (!biz.kakaoUrl || biz.kakaoUrl.trim() === "" || biz.kakaoUrl === "#" || biz.kakaoUrl === "null") {
+          errorReasons.push("카카오 채널 주소 미입력");
         }
-        if (!biz.websiteUrl || biz.websiteUrl.trim() === "") {
-          hasError = true;
-          errorReasons.push("홈페이지 URL 없음");
+        // 3. 홈페이지 URL 검증
+        if (!biz.websiteUrl || biz.websiteUrl.trim() === "" || biz.websiteUrl === "null" || biz.websiteUrl === "추후 입력") {
+          errorReasons.push("홈페이지 주소 미입력");
         }
-        if (!biz.image || biz.image.trim() === "") {
-          hasError = true;
-          errorReasons.push("이미지 없음");
-        }
-        if (slotsOfBiz.length === 0) {
-          hasError = true;
-          errorReasons.push("연결 구좌 없음");
+        // 4. 이미지 존재 여부 검증
+        if (!biz.image || biz.image.trim() === "" || biz.image === "null") {
+          errorReasons.push("업체 로고 이미지 미등록");
         }
         
-        // 슬롯 레벨 데이터 오류 검증 및 통계 누적
+        // 구좌 관련 검증
+        if (slotsOfBiz.length === 0) {
+          statusState = "미연결";
+        } else {
+          // MIGRATED 구좌만 보유하고 있는지 판정
+          const hasOnlyMigrated = slotsOfBiz.every(s => s.status === 'migrated');
+          if (hasOnlyMigrated) {
+            statusState = "이전 데이터";
+          }
+        }
+
+        // 슬롯 단위 검증
+        let hasNoPeriod = false;
         filteredSlots.forEach(s => {
           if (s.slotNumber === undefined || s.slotNumber === null) {
-            hasError = true;
-            if (!errorReasons.includes("slotNumber 없음")) errorReasons.push("slotNumber 없음");
+            errorReasons.push("구좌 번호(slotNumber) 누락");
           }
           if (!s.status) {
-            hasError = true;
-            if (!errorReasons.includes("status 없음")) errorReasons.push("status 없음");
+            errorReasons.push("구좌 상태(status) 누락");
           }
-          
           const regionObj = regions.find(r => r.id === s.purchaseRegionId);
           if (!regionObj) {
-            hasError = true;
-            if (!errorReasons.includes("구 단위 지역 매칭 실패")) errorReasons.push("구 단위 지역 매칭 실패");
+            errorReasons.push("구 단위 지역 매칭 실패");
           } else {
-            const subDongCount = regionObj.childRegionIds ? regionObj.childRegionIds.length : 0;
             const associatedTasks = tasks.filter(t => t.categoryIds.includes(s.categoryId) && t.visible);
             if (associatedTasks.length === 0) {
-              hasError = true;
-              if (!errorReasons.includes("대표 랜딩 생성 실패")) errorReasons.push("대표 랜딩 생성 실패");
+              errorReasons.push("대표 랜딩 생성 실패 (작업명 데이터 없음)");
             }
+          }
+          
+          // 기간 미설정 체크 (startDate/endDate 누락/N/A)
+          if (!s.startDate || s.startDate === "N/A" || s.startDate === "null" || !s.endDate || s.endDate === "N/A" || s.endDate === "null" || s.startDate === "기간 미설정" || s.endDate === "기간 미설정") {
+            hasNoPeriod = true;
           }
         });
 
-        if (hasError) {
-          errorBizCount++;
+        // 최종 상태 판정 확정
+        if (errorReasons.length > 0) {
+          statusState = "확인 필요";
+        } else if (statusState === "정상" && hasNoPeriod) {
+          statusState = "기간 미설정";
         }
 
-        // 통계 연산
+        // 통계 지표 누적
         totalBizCount++;
         if (biz.status === "active") {
           activeBizCount++;
+        }
+        if (statusState === "확인 필요") {
+          errorBizCount++;
         }
 
         filteredSlots.forEach(s => {
@@ -471,7 +484,6 @@
 
         // 렌더링용 변수 셋업
         const defaultLogo = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80";
-        const logoImage = biz.image || defaultLogo;
 
         const bizStatusText = biz.status ? biz.status.toUpperCase() : "UNKNOWN";
         let bizStatusBadgeClass = "badge-status";
@@ -590,6 +602,26 @@
           });
         }
 
+        // 이미지 fallback 논리 적용
+        const categoryDefaultImages = {
+          "general-cleaning": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80",
+          "waterproof-leak": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=600&q=80",
+          "window-caulking": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80",
+          "elastic-coating": "/assets/thumbs/elastic-coating-bareumspace.jpg"
+        };
+        const commonPlaceholderImage = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=600&q=80";
+
+        const firstCatId = filteredSlots[0] ? filteredSlots[0].categoryId : (biz.categoryIds ? biz.categoryIds[0] : null);
+        const catDefaultImg = categoryDefaultImages[firstCatId] || commonPlaceholderImage;
+        const logoImage = biz.image && biz.image !== "null" && biz.image !== "추후 입력" ? biz.image : catDefaultImg;
+
+        const logoHtml = `
+          <img src="${logoImage}" alt="${biz.brandName}" style="width: 100%; height: 100%; object-fit: cover;" 
+               onerror="this.onerror=null; this.src='${catDefaultImg}'; this.addEventListener('error', function(){
+                 this.parentNode.innerHTML='<div style=&quot;width:100%; height:100%; background:#f2f3f4; color:#7f8c8d; display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:bold; text-align:center;&quot;>이미지 미등록</div>';
+               });">
+        `;
+
         // 홈페이지/카카오채널/전화번호 예외 분기 처리
         const displayWebsite = biz.websiteUrl && biz.websiteUrl !== "추후 입력" && biz.websiteUrl !== "N/A" && biz.websiteUrl !== "null"
           ? `<a href="${biz.websiteUrl}" target="_blank" style="text-decoration: underline; color: var(--primary); font-weight: bold;">열기 ↗</a>`
@@ -606,9 +638,45 @@
           displayPhone = `<a href="tel:${biz.phone}" style="color: var(--primary); font-weight: bold;">${biz.phone}</a>`;
         }
 
-        const errorStatusBadge = hasError 
-          ? `<span style="color: #c0392b; font-weight: bold; background-color: #fce4d6; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">⚠️ 확인 필요 (${errorReasons.join(', ')})</span>`
-          : `<span style="color: #27ae60; font-weight: bold; background-color: #d4efdf; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">✅ 정상</span>`;
+        // 데이터 상태 배지 구조화
+        let errorStatusBadge = "";
+        if (statusState === "확인 필요") {
+          errorStatusBadge = `
+            <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
+              <div><span style="color: #c0392b; font-weight: bold; background-color: #fadbd8; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; display: inline-block;">⚠️ 확인 필요 (${errorReasons.length}건)</span></div>
+              <ul style="margin: 2px 0 0 0; padding-left: 16px; font-size: 0.75rem; color: #c0392b; line-height: 1.4; text-align: left; list-style-type: disc;">
+                ${errorReasons.map(r => `<li>${r}</li>`).join('')}
+              </ul>
+            </div>
+          `;
+        } else if (statusState === "기간 미설정") {
+          errorStatusBadge = `
+            <div style="margin-top: 4px; display: flex; flex-direction: column; gap: 4px;">
+              <div><span style="color: #8e44ad; font-weight: bold; background-color: #ebdef0; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; display: inline-block;">⏳ 기간 미설정</span></div>
+              <ul style="margin: 2px 0 0 0; padding-left: 16px; font-size: 0.75rem; color: #8e44ad; line-height: 1.4; text-align: left; list-style-type: disc;">
+                <li>시작일/종료일 미설정</li>
+              </ul>
+            </div>
+          `;
+        } else if (statusState === "미연결") {
+          errorStatusBadge = `
+            <div style="margin-top: 4px;">
+              <span style="color: #7f8c8d; font-weight: bold; background-color: #eaeded; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; display: inline-block;">🔌 미연결</span>
+            </div>
+          `;
+        } else if (statusState === "이전 데이터") {
+          errorStatusBadge = `
+            <div style="margin-top: 4px;">
+              <span style="color: #d35400; font-weight: bold; background-color: #fdebd0; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; display: inline-block;">📜 이전 데이터 (MIGRATED)</span>
+            </div>
+          `;
+        } else {
+          errorStatusBadge = `
+            <div style="margin-top: 4px;">
+              <span style="color: #27ae60; font-weight: bold; background-color: #d4efdf; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; display: inline-block;">✅ 정상</span>
+            </div>
+          `;
+        }
 
         html += `
           <div class="biz-admin-card" style="display: flex; flex-direction: column; gap: 16px;">
@@ -618,7 +686,7 @@
               <!-- 좌측: 로고 및 기본정보 -->
               <div class="biz-left" style="max-width: 180px; gap: 6px;">
                 <div class="biz-logo-frame" style="width: 100px; height: 100px;">
-                  <img src="${logoImage}" alt="${biz.brandName}" style="width: 100%; height: 100%; object-fit: cover;">
+                  ${logoHtml}
                 </div>
                 <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin: 4px 0 0 0;">${biz.brandName}</h3>
                 <div style="display: flex; gap: 4px; margin-top: 2px;">
