@@ -126,6 +126,76 @@
     .slots-table tr:last-child td {
       border-bottom: none;
     }
+    
+    /* 어드민 대시보드 요약 그리드 */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+      font-family: var(--font-family);
+    }
+    .dash-card {
+      background-color: white;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 105px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.01);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .dash-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    }
+    .dash-label {
+      font-size: 0.72rem;
+      font-weight: bold;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-align: left;
+    }
+    .dash-value {
+      font-size: 1.5rem;
+      font-weight: 900;
+      line-height: 1.1;
+      text-align: left;
+    }
+    .dash-desc {
+      font-size: 0.65rem;
+      color: #7f8c8d;
+      margin-top: 6px;
+      line-height: 1.3;
+      text-align: left;
+    }
+    
+    /* 각 카드별 왼쪽 테두리 두께 및 색상 매핑 */
+    .card-total { border-left: 4px solid #34495e; background-color: #f8f9fa; }
+    .card-total .dash-value { color: #2c3e50; }
+    
+    .card-active { border-left: 4px solid #27ae60; background-color: #f4fbf7; }
+    .card-active .dash-value { color: #27ae60; }
+    
+    .card-contracted { border-left: 4px solid #2980b9; background-color: #f4fafc; }
+    .card-contracted .dash-value { color: #2980b9; }
+    
+    .card-regions { border-left: 4px solid #16a085; background-color: #f2faf8; }
+    .card-regions .dash-value { color: #16a085; }
+    
+    .card-keywords { border-left: 4px solid #8e44ad; background-color: #faf4fc; }
+    .card-keywords .dash-value { color: #8e44ad; }
+    
+    /* 기간 미설정 / 확인 필요 리스크 강조 (0개일 때는 중립 회색, 1개 이상이면 색상 켜짐) */
+    .card-no-period { border-left: 4px solid #bdc3c7; background-color: #fbfbfc; }
+    .card-no-period.warn-active { border-left: 4px solid #e67e22; background-color: #fef9f3; }
+    .card-no-period.warn-active .dash-value { color: #e67e22; }
+    
+    .card-error { border-left: 4px solid #bdc3c7; background-color: #fbfbfc; }
+    .card-error.warn-active { border-left: 4px solid #c0392b; background-color: #fdf2f2; }
+    .card-error.warn-active .dash-value { color: #c0392b; }
   </style>
 </head>
 <body>
@@ -141,47 +211,75 @@
       <span style="font-size: 0.75rem; background-color: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px;">OPERATOR MODE</span>
     </div>
 
-    <div style="margin-bottom: 20px; font-family: var(--font-family);">
-      <h1 style="font-size: 1.5rem; font-weight: 900; color: var(--secondary); margin-bottom: 6px;">입점 파트너 및 광고 계약 현황</h1>
-      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-        등록된 입점 업체의 정보(전화, 카톡, 홈페이지)와 연결된 광고 구좌의 상태 및 유효 기간을 모니터링하는 페이지입니다.
+    <div style="margin-bottom: 24px; font-family: var(--font-family); text-align: left;">
+      <h1 style="font-size: 1.6rem; font-weight: 900; color: var(--secondary); margin-bottom: 6px;">입점 파트너 및 광고 계약 현황</h1>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+        등록 업체별 연락처, 광고 구좌, 계약 상태, 노출 범위, 데이터 확인 항목을 관리하는 관리자용 페이지입니다.
       </p>
     </div>
 
-    <!-- 요약 통계 카드 섹션 -->
-    <section class="summary-box" style="font-family: var(--font-family); grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 24px;">
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 업체 수</div>
-        <div class="summary-value" id="stat-total-businesses">-</div>
+    <!-- 현재 보기 기준 표시기 -->
+    <div style="margin-bottom: 16px; font-family: var(--font-family); font-size: 0.85rem; color: var(--text-dark); background-color: #f1f2f6; padding: 10px 16px; border-radius: var(--border-radius); border-left: 4px solid var(--secondary); display: flex; align-items: center; justify-content: space-between; text-align: left;">
+      <div>
+        <span style="font-weight: bold; color: var(--text-muted); margin-right: 8px;">현재 보기 기준:</span>
+        <span id="current-filter-labels" style="font-weight: 800; color: var(--secondary);">전체 현황</span>
       </div>
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">활성 업체 수</div>
-        <div class="summary-value" id="stat-active-businesses" style="color: #27ae60;">-</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted);">
+        (필터 조건과 실시간 연동됨)
       </div>
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">계약 구좌 수</div>
-        <div class="summary-value" id="stat-contracted-slots" style="color: var(--primary);">-</div>
+    </div>
+
+    <!-- 요약 통계 카드 대시보드 그리드 -->
+    <section class="dashboard-grid">
+      <!-- 1. 등록 업체 -->
+      <div class="dash-card card-total">
+        <div class="dash-label">등록 업체</div>
+        <div class="dash-value" id="stat-total-businesses">-</div>
+        <div class="dash-desc">현재 조건에 맞는 업체</div>
       </div>
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">노출 지역 단위 수</div>
-        <div class="summary-value" id="stat-exposure-regions" style="color: #2980b9;">-</div>
+      <!-- 2. 활성 업체 -->
+      <div class="dash-card card-active">
+        <div class="dash-label">활성 업체</div>
+        <div class="dash-value" id="stat-active-businesses">-</div>
+        <div class="dash-desc">ACTIVE 상태 업체</div>
       </div>
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">생성 키워드 수</div>
-        <div class="summary-value" id="stat-total-keywords" style="color: #27ae60;">-</div>
+      <!-- 3. 계약 구좌 -->
+      <div class="dash-card card-contracted">
+        <div class="dash-label">계약 구좌</div>
+        <div class="dash-value" id="stat-contracted-slots">-</div>
+        <div class="dash-desc">실제 계약된 광고 구좌</div>
       </div>
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">기간 미설정 구좌 수</div>
-        <div class="summary-value" id="stat-no-period-slots" style="color: #8e44ad;">-</div>
+      <!-- 4. 노출 지역 단위 -->
+      <div class="dash-card card-regions">
+        <div class="dash-label">노출 지역 단위</div>
+        <div class="dash-value" id="stat-exposure-regions">-</div>
+        <div class="dash-desc">구 및 하위 동/면/읍 합산</div>
       </div>
-      <div class="summary-card">
-        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">확인 필요 업체 수</div>
-        <div class="summary-value" id="stat-error-businesses" style="color: #e67e22;">-</div>
+      <!-- 5. 생성 키워드 -->
+      <div class="dash-card card-keywords">
+        <div class="dash-label">생성 키워드</div>
+        <div class="dash-value" id="stat-total-keywords">-</div>
+        <div class="dash-desc">지역 × 작업명 조합</div>
+      </div>
+      <!-- 6. 기간 미설정 -->
+      <div class="dash-card card-no-period" id="card-no-period">
+        <div class="dash-label">기간 미설정</div>
+        <div class="dash-value" id="stat-no-period-slots">-</div>
+        <div class="dash-desc">시작일/종료일 확인 필요</div>
+      </div>
+      <!-- 7. 확인 필요 -->
+      <div class="dash-card card-error" id="card-error">
+        <div class="dash-label">확인 필요</div>
+        <div class="dash-value" id="stat-error-businesses">-</div>
+        <div class="dash-desc">연락처·링크·데이터 점검 필요</div>
       </div>
     </section>
 
-    <!-- 3. 필터 영역 -->
-    <section class="filter-panel" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+    <!-- 3. 필터 영역 안내 문구 및 컨테이너 -->
+    <div style="font-family: var(--font-family); font-size: 0.8rem; font-weight: bold; color: var(--secondary); margin-bottom: 8px; text-align: left; display: flex; align-items: center; gap: 6px;">
+      💡 <span>현재 필터 조건에 맞는 업체와 연결 광고 구좌만 표시됩니다.</span>
+    </div>
+    <section class="filter-panel" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 28px;">
       <div class="form-group" style="margin: 0;">
         <label class="form-label" for="filter-company-name" style="font-size: 0.8rem; font-weight: bold;">업체명 검색</label>
         <input type="text" id="filter-company-name" class="form-input" placeholder="예: 바름공간" style="padding: 8px; font-size: 0.85rem;">
@@ -753,14 +851,76 @@
         `;
       });
 
+      // 현재 보기 기준 레이블 구성
+      let filterLabels = [];
+      
+      // 1. 업체명 검색어
+      if (searchName) {
+        filterLabels.push(`검색어: "${searchName}"`);
+      }
+      
+      // 2. 업종
+      if (catVal === 'all') {
+        filterLabels.push('전체 업종');
+      } else {
+        const catObj = categories.find(c => c.id === catVal);
+        filterLabels.push(catObj ? catObj.name : catVal);
+      }
+      
+      // 3. 지역
+      if (regVal === 'all') {
+        filterLabels.push('전체 지역');
+      } else {
+        const regObj = regions.find(r => r.id === regVal);
+        filterLabels.push(regObj ? regObj.displayName : regVal);
+      }
+      
+      // 4. 상태
+      if (statusVal === 'all') {
+        filterLabels.push('전체 상태');
+      } else {
+        filterLabels.push(statusVal.toUpperCase());
+      }
+      
+      // 5. 옵션 배지
+      if (isExpiringCheck) {
+        filterLabels.push('만료 임박(7일)');
+      }
+      if (isMigratedShow) {
+        filterLabels.push('이전(MIGRATED) 포함');
+      }
+      if (isNoSlotsShow) {
+        filterLabels.push('구좌 없는 업체 포함');
+      }
+      
+      document.getElementById('current-filter-labels').textContent = filterLabels.join(' · ');
+
       // 대시보드 통계 수치 주입
       document.getElementById('stat-total-businesses').textContent = `${totalBizCount}개`;
       document.getElementById('stat-active-businesses').textContent = `${activeBizCount}개`;
       document.getElementById('stat-contracted-slots').textContent = `${contractedSlotsCount}개`;
       document.getElementById('stat-exposure-regions').textContent = `${exposureRegionsCount}개`;
       document.getElementById('stat-total-keywords').textContent = `${totalKeywordsCount}개`;
-      document.getElementById('stat-no-period-slots').textContent = `${noPeriodSlotsCount}개`;
-      document.getElementById('stat-error-businesses').textContent = `${errorBizCount}개`;
+
+      // 기간 미설정 수치 주입 및 리스크 강조 토글
+      const noPeriodEl = document.getElementById('stat-no-period-slots');
+      noPeriodEl.textContent = `${noPeriodSlotsCount}개`;
+      const noPeriodCard = document.getElementById('card-no-period');
+      if (noPeriodSlotsCount > 0) {
+        noPeriodCard.classList.add('warn-active');
+      } else {
+        noPeriodCard.classList.remove('warn-active');
+      }
+
+      // 확인 필요 수치 주입 및 리스크 강조 토글
+      const errorEl = document.getElementById('stat-error-businesses');
+      errorEl.textContent = `${errorBizCount}개`;
+      const errorCard = document.getElementById('card-error');
+      if (errorBizCount > 0) {
+        errorCard.classList.add('warn-active');
+      } else {
+        errorCard.classList.remove('warn-active');
+      }
 
       container.innerHTML = html || `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">검색 및 필터 조건에 부합하는 입점 업체가 존재하지 않습니다.</div>`;
     }
