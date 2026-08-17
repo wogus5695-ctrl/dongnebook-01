@@ -101,6 +101,31 @@
       margin-top: 12px;
       flex-wrap: wrap;
     }
+    .slots-table-wrap {
+      overflow-x: auto;
+      margin-top: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+    }
+    .slots-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+    .slots-table th, .slots-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    .slots-table th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      color: var(--text-dark);
+    }
+    .slots-table tr:last-child td {
+      border-bottom: none;
+    }
   </style>
 </head>
 <body>
@@ -123,35 +148,58 @@
       </p>
     </div>
 
+    <!-- 요약 통계 카드 섹션 -->
+    <section class="summary-box" style="font-family: var(--font-family); grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 24px;">
+      <div class="summary-card">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">등록 업체 수</div>
+        <div class="summary-value" id="stat-total-businesses">-</div>
+      </div>
+      <div class="summary-card">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">활성 업체 수</div>
+        <div class="summary-value" id="stat-active-businesses" style="color: #27ae60;">-</div>
+      </div>
+      <div class="summary-card">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">활성 광고 구좌 수</div>
+        <div class="summary-value" id="stat-active-slots" style="color: var(--primary);">-</div>
+      </div>
+      <div class="summary-card">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">만료 임박 구좌 수</div>
+        <div class="summary-value" id="stat-expiring-slots" style="color: #c0392b;">-</div>
+      </div>
+      <div class="summary-card">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">기간 미설정 구좌 수</div>
+        <div class="summary-value" id="stat-no-period-slots" style="color: #8e44ad;">-</div>
+      </div>
+      <div class="summary-card">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold;">데이터 확인 필요 수</div>
+        <div class="summary-value" id="stat-error-businesses" style="color: #e67e22;">-</div>
+      </div>
+    </section>
+
     <!-- 3. 필터 영역 -->
-    <section class="filter-panel">
+    <section class="filter-panel" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
       <div class="form-group" style="margin: 0;">
-        <label class="form-label" for="filter-category" style="font-size: 0.8rem;">업종</label>
-        <select id="filter-category" class="form-select" style="padding: 8px;">
+        <label class="form-label" for="filter-company-name" style="font-size: 0.8rem; font-weight: bold;">업체명 검색</label>
+        <input type="text" id="filter-company-name" class="form-input" placeholder="예: 바름공간" style="padding: 8px; font-size: 0.85rem;">
+      </div>
+
+      <div class="form-group" style="margin: 0;">
+        <label class="form-label" for="filter-category" style="font-size: 0.8rem; font-weight: bold;">업종</label>
+        <select id="filter-category" class="form-select" style="padding: 8px; font-size: 0.85rem;">
           <option value="all">전체 업종</option>
-          <option value="general-cleaning">종합청소</option>
-          <option value="waterproof-leak">방수/누수</option>
-          <option value="window-caulking">창틀코킹/창틀누수</option>
         </select>
       </div>
 
       <div class="form-group" style="margin: 0;">
-        <label class="form-label" for="filter-task" style="font-size: 0.8rem;">작업명</label>
-        <select id="filter-task" class="form-select" style="padding: 8px;">
-          <option value="all">전체 작업</option>
-        </select>
-      </div>
-
-      <div class="form-group" style="margin: 0;">
-        <label class="form-label" for="filter-region" style="font-size: 0.8rem;">구 단위 지역</label>
-        <select id="filter-region" class="form-select" style="padding: 8px;">
+        <label class="form-label" for="filter-region" style="font-size: 0.8rem; font-weight: bold;">구 단위 지역</label>
+        <select id="filter-region" class="form-select" style="padding: 8px; font-size: 0.85rem;">
           <option value="all">전체 지역</option>
         </select>
       </div>
 
       <div class="form-group" style="margin: 0;">
-        <label class="form-label" for="filter-status" style="font-size: 0.8rem;">광고 상태</label>
-        <select id="filter-status" class="form-select" style="padding: 8px;">
+        <label class="form-label" for="filter-status" style="font-size: 0.8rem; font-weight: bold;">광고 상태</label>
+        <select id="filter-status" class="form-select" style="padding: 8px; font-size: 0.85rem;">
           <option value="all">전체 상태</option>
           <option value="active">active (진행중)</option>
           <option value="pending">pending (대기)</option>
@@ -161,10 +209,14 @@
         </select>
       </div>
 
-      <div class="form-group" style="margin: 0; display: flex; align-items: flex-end; padding-bottom: 4px;">
-        <label class="form-checkbox" style="font-size: 0.8rem; margin: 0; display: flex; align-items: center; gap: 6px;">
-          <input type="checkbox" id="filter-expiring" style="width:16px; height:16px; margin:0;">
+      <div class="form-group" style="margin: 0; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; padding-bottom: 4px;">
+        <label class="form-checkbox" style="font-size: 0.85rem; margin: 0; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="checkbox" id="filter-expiring" style="width:16px; height:16px; margin:0; cursor: pointer;">
           <span>7일 이내 만료/만료됨 감지</span>
+        </label>
+        <label class="form-checkbox" style="font-size: 0.85rem; margin: 0; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+          <input type="checkbox" id="filter-migrated" style="width:16px; height:16px; margin:0; cursor: pointer;">
+          <span>이전/마이그레이션 구좌 보기</span>
         </label>
       </div>
     </section>
@@ -203,28 +255,24 @@
       window.location.href = "/";
     }
 
+    const companyNameInput = document.getElementById('filter-company-name');
     const categorySelect = document.getElementById('filter-category');
-    const taskSelect = document.getElementById('filter-task');
     const regionSelect = document.getElementById('filter-region');
     const statusSelect = document.getElementById('filter-status');
     const expiringCheckbox = document.getElementById('filter-expiring');
+    const migratedCheckbox = document.getElementById('filter-migrated');
 
     const container = document.getElementById('businesses-list-container');
 
-    // 업종 선택 필터 동적 채우기 (managed: true인 항목만 노출)
+    // 업종 선택 필터 동적 채우기 (managed: true인 항목만 노출, general-cleaning 제외)
     const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
     categorySelect.innerHTML = '<option value="all">전체 업종</option>' +
       managedCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
-    // 3. 작업명 및 지역 선택 드롭다운 초기화
+    // 3. 지역 선택 드롭다운 초기화
     function initDropdowns() {
-      // 작업명
-      const activeTasks = tasks.filter(t => t.visible);
-      taskSelect.innerHTML = '<option value="all">전체 작업</option>' + 
-        activeTasks.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-
       // 구 단위 지역
-      const districts = regions.filter(r => r.level === 'district');
+      const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
       regionSelect.innerHTML = '<option value="all">전체 지역</option>' + 
         districts.map(d => `<option value="${d.id}">${d.displayName}</option>`).join('');
     }
@@ -241,126 +289,300 @@
 
     // 5. 입점 파트너 리스트 여과 및 렌더링
     function renderBusinesses() {
+      const searchName = companyNameInput.value.trim().toLowerCase();
       const catVal = categorySelect.value;
-      const taskVal = taskSelect.value;
       const regVal = regionSelect.value;
       const statusVal = statusSelect.value;
       const isExpiringCheck = expiringCheckbox.checked;
+      const isMigratedShow = migratedCheckbox.checked;
 
       const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+
+      // 통계 지표 변수
+      let totalBizCount = 0;
+      let activeBizCount = 0;
+      let activeSlotsCount = 0;
+      let expiringSlotsCount = 0;
+      let noPeriodSlotsCount = 0;
+      let errorBizCount = 0;
+
       let html = "";
 
-      // 6. 모든 등록 파트너를 돌며 해당 업체의 광고 구좌(adSlots)를 매칭하여 출력
+      // 1개 업체당 1개 카드를 생성하기 위한 루프
       businesses.forEach(biz => {
-        // 해당 업체의 광고 구좌(adSlots) 모두 수집
+        // 업체명 검색 필터링
+        if (searchName && !biz.brandName.toLowerCase().includes(searchName)) {
+          return;
+        }
+
+        // 해당 업체의 전체 구좌(adSlots) 수집
         const slotsOfBiz = adSlots.filter(slot => slot.businessId === biz.id);
-        
-        // 만약 구좌가 없는 일반 업체라면 가상의 1개 플랫 구조로 매칭
-        const displaySlots = slotsOfBiz.length > 0 ? slotsOfBiz : [{
-          id: "no-slot-" + biz.id,
-          status: "none",
-          categoryId: biz.categoryIds[0],
-          taskId: biz.taskIds[0],
-          purchaseRegionId: biz.serviceRegionIds[0],
-          startDate: "N/A",
-          endDate: "N/A"
-        }];
 
-        displaySlots.forEach(slot => {
-          // 1. 업종 필터링
-          if (catVal !== 'all' && slot.categoryId !== catVal) return;
-          // 2. 작업명 필터링
-          if (taskVal !== 'all' && slot.taskId !== taskVal) return;
-          // 3. 지역 필터링
-          if (regVal !== 'all') {
-            if (slot.purchaseRegionId !== regVal) return;
-          }
-          // 4. 광고 상태 필터링
-          if (statusVal !== 'all' && slot.status !== statusVal) return;
+        // 광고 상태/구좌 필터링 조건 적용
+        let filteredSlots = [...slotsOfBiz];
 
-          // 5. 만료 예정 필터링 (7일 이내 만료이거나 만료 상태 감지)
-          if (isExpiringCheck && slot.endDate !== "N/A") {
+        // 기본적으로 MIGRATED 상태인 구좌는 제외 (토글 체크 시에만 노출)
+        if (!isMigratedShow) {
+          filteredSlots = filteredSlots.filter(s => s.status !== 'migrated');
+        }
+
+        // 업종 필터링
+        if (catVal !== 'all') {
+          filteredSlots = filteredSlots.filter(s => s.categoryId === catVal);
+        }
+
+        // 지역 필터링
+        if (regVal !== 'all') {
+          filteredSlots = filteredSlots.filter(s => s.purchaseRegionId === regVal);
+        }
+
+        // 구좌 상태 필터링
+        if (statusVal !== 'all') {
+          filteredSlots = filteredSlots.filter(s => s.status === statusVal);
+        }
+
+        // 만료 예정 필터링 (7일 이내 만료이거나 만료 상태 감지)
+        if (isExpiringCheck) {
+          filteredSlots = filteredSlots.filter(slot => {
+            if (!slot.endDate || slot.endDate === "N/A" || slot.endDate === "기간 미설정") return false;
             const endDateObj = new Date(slot.endDate);
             const diffTime = endDateObj - CURRENT_DATE;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            // 7일 이내 혹은 이미 마이너스(만료) 상태일 때만 합격
-            if (diffDays > 7) return;
+            return diffDays <= 7;
+          });
+        }
+
+        // 만약 구좌를 가지고 있는 업체인데 필터링 후 남은 구좌가 0개라면 이 업체는 노출 제외
+        if (slotsOfBiz.length > 0 && filteredSlots.length === 0) {
+          return;
+        }
+
+        // 데이터 오류 감지 조건
+        let hasError = false;
+        let errorReasons = [];
+        if (!biz.phone || biz.phone.trim() === "") {
+          hasError = true;
+          errorReasons.push("전화번호 없음");
+        }
+        if (!biz.kakaoUrl || biz.kakaoUrl.trim() === "" || biz.kakaoUrl === "#") {
+          hasError = true;
+          errorReasons.push("카카오 URL 없음");
+        }
+        if (!biz.websiteUrl || biz.websiteUrl.trim() === "") {
+          hasError = true;
+          errorReasons.push("홈페이지 URL 없음");
+        }
+        
+        // 슬롯 레벨 데이터 오류 검증
+        filteredSlots.forEach(s => {
+          if (s.slotNumber === undefined || s.slotNumber === null) {
+            hasError = true;
+            if (!errorReasons.includes("slotNumber 없음")) errorReasons.push("slotNumber 없음");
+          }
+          if (!s.status) {
+            hasError = true;
+            if (!errorReasons.includes("status 없음")) errorReasons.push("status 없음");
+          }
+        });
+
+        if (hasError) {
+          errorBizCount++;
+        }
+
+        // 통계 연산
+        totalBizCount++;
+        if (biz.status === "active" && filteredSlots.some(s => s.status === "active")) {
+          activeBizCount++;
+        }
+
+        filteredSlots.forEach(s => {
+          if (s.status === "active") activeSlotsCount++;
+          
+          // 만료 예정 계산
+          if (s.endDate && s.endDate !== "N/A") {
+            const endDateObj = new Date(s.endDate);
+            const diffTime = endDateObj - CURRENT_DATE;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (diffDays <= 7) expiringSlotsCount++;
           }
 
-          // 이름 파싱
-          const categoryObj = categories.find(c => c.id === slot.categoryId);
-          const catName = categoryObj ? categoryObj.name : slot.categoryId;
-
-          const taskObj = tasks.find(t => t.id === slot.taskId);
-          const taskName = taskObj ? taskObj.name : slot.taskId;
-
-          const regionObj = regions.find(r => r.id === slot.purchaseRegionId);
-          const regName = regionObj ? regionObj.displayName : slot.purchaseRegionId;
-          const subDongCount = regionObj && regionObj.childRegionIds ? regionObj.childRegionIds.length : 0;
-
-          // 대표 랜딩 URL 조립
-          const landingUrl = `/landing.html?reg=${encodeURIComponent(regName)}&cat=${slot.categoryId}&task=${slot.taskId}`;
-
-          // 상태 배지 조립
-          let statusBadgeClass = "badge-status";
-          switch(slot.status) {
-            case "active": statusBadgeClass += " status-active"; break;
-            case "pending": statusBadgeClass += " status-pending"; break;
-            case "paused": statusBadgeClass += " status-paused"; break;
-            case "expired": statusBadgeClass += " status-expired"; break;
-            case "rejected": statusBadgeClass += " status-rejected"; break;
-            default: statusBadgeClass += " status-rejected";
+          // 기간 미설정 계산
+          if (!s.startDate || s.startDate === "N/A" || !s.endDate || s.endDate === "N/A") {
+            noPeriodSlotsCount++;
           }
+        });
 
-          const defaultLogo = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80";
-          const logoImage = biz.image || defaultLogo;
+        // 렌더링용 변수 셋업
+        const defaultLogo = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=200&q=80";
+        const logoImage = biz.image || defaultLogo;
 
-          html += `
-            <div class="biz-admin-card">
-              <!-- 6. 좌측: 로고 및 업체 타이틀 -->
-              <div class="biz-left">
-                <div class="biz-logo-frame">
+        const bizStatusText = biz.status ? biz.status.toUpperCase() : "UNKNOWN";
+        let bizStatusBadgeClass = "badge-status";
+        if (biz.status === "active") bizStatusBadgeClass += " status-active";
+        else if (biz.status === "pending") bizStatusBadgeClass += " status-pending";
+        else if (biz.status === "paused") bizStatusBadgeClass += " status-paused";
+        else bizStatusBadgeClass += " status-expired";
+
+        // 소속 업종 목록 추출
+        const bizCats = biz.categoryIds ? biz.categoryIds.map(cid => {
+          const c = categories.find(cat => cat.id === cid);
+          return c ? c.name : cid;
+        }).join(", ") : "미지정";
+
+        // 구좌 상세 테이블 로우 HTML 빌드
+        let slotsTableRowsHtml = "";
+        if (filteredSlots.length === 0) {
+          slotsTableRowsHtml = `
+            <tr>
+              <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 16px;">
+                연결된 광고 구좌가 없거나 필터 조건에 부합하는 구좌가 없습니다.
+              </td>
+            </tr>
+          `;
+        } else {
+          filteredSlots.forEach(slot => {
+            const categoryObj = categories.find(c => c.id === slot.categoryId);
+            const catName = categoryObj ? categoryObj.name : (slot.categoryId || "미설정");
+
+            const regionObj = regions.find(r => r.id === slot.purchaseRegionId);
+            const regDisplayName = regionObj ? regionObj.displayName : (slot.purchaseRegionId || "미설정");
+            const regNameOnly = regionObj ? regionObj.displayName.split(' ').pop() : "미설정";
+
+            const subDongCount = regionObj && regionObj.childRegionIds ? regionObj.childRegionIds.length : 0;
+            const associatedTasks = tasks.filter(t => t.categoryIds.includes(slot.categoryId) && t.visible);
+            const taskText = associatedTasks.length > 0 ? `전체 작업명 ${associatedTasks.length}개` : "전체 작업명 포함";
+
+            const keywordsCount = (1 + subDongCount) * associatedTasks.length;
+
+            const slotStatusText = slot.status ? slot.status.toUpperCase() : "UNKNOWN";
+            let slotStatusBadgeClass = "badge-status";
+            if (slot.status === "active") slotStatusBadgeClass += " status-active";
+            else if (slot.status === "pending") slotStatusBadgeClass += " status-pending";
+            else if (slot.status === "paused") slotStatusBadgeClass += " status-paused";
+            else if (slot.status === "expired") slotStatusBadgeClass += " status-expired";
+            else if (slot.status === "migrated") slotStatusBadgeClass += " status-paused";
+            else slotStatusBadgeClass += " status-rejected";
+
+            // 대표 랜딩 URL 포맷팅
+            const firstTask = associatedTasks[0] || { id: slot.categoryId };
+            const landingUrl = `/landing.html?reg=${encodeURIComponent(regDisplayName)}&cat=${slot.categoryId}&task=${firstTask.id}`;
+
+            const displayStartDate = slot.startDate && slot.startDate !== "N/A" ? slot.startDate : "기간 미설정";
+            const displayEndDate = slot.endDate && slot.endDate !== "N/A" ? slot.endDate : "기간 미설정";
+            const slotNumText = slot.slotNumber ? `${slot.slotNumber}번` : "미지정";
+
+            slotsTableRowsHtml += `
+              <tr>
+                <td><strong>${catName}</strong></td>
+                <td>${regNameOnly}</td>
+                <td style="text-align: center;">${slotNumText}</td>
+                <td style="text-align: center;"><span class="${slotStatusBadgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${slotStatusText}</span></td>
+                <td>${regNameOnly} 및 하위 동 ${subDongCount}개</td>
+                <td>${taskText}</td>
+                <td style="text-align: center; font-weight: bold;">${keywordsCount}개</td>
+                <td style="text-align: center;">${displayStartDate}</td>
+                <td style="text-align: center;">${displayEndDate}</td>
+                <td style="text-align: center;">
+                  <button class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px;" onclick="window.copyLandingUrl('${landingUrl}')">복사</button>
+                  <a href="${landingUrl}" target="_blank" class="btn btn-primary" style="font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; text-decoration: none; color: white;">이동</a>
+                </td>
+              </tr>
+            `;
+          });
+        }
+
+        // 홈페이지/오픈채팅/데이터상태 분기 처리
+        const displayWebsite = biz.websiteUrl && biz.websiteUrl !== "추후 입력" && biz.websiteUrl !== "N/A"
+          ? `<a href="${biz.websiteUrl}" target="_blank" style="text-decoration: underline; color: var(--primary);">${biz.websiteUrl}</a>`
+          : "미설정";
+
+        const displayKakao = biz.kakaoUrl && biz.kakaoUrl !== "#"
+          ? `<a href="${biz.kakaoUrl}" target="_blank" style="color: #d35400; text-decoration: underline;">오픈채팅 주소 ↗</a>`
+          : "미설정";
+
+        const errorStatusBadge = hasError 
+          ? `<span style="color: #c0392b; font-weight: bold; background-color: #fce4d6; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">⚠️ 확인 필요 (${errorReasons.join(', ')})</span>`
+          : `<span style="color: #27ae60; font-weight: bold; background-color: #d4efdf; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem;">✅ 정상</span>`;
+
+        html += `
+          <div class="biz-admin-card" style="display: flex; flex-direction: column; gap: 16px;">
+            <!-- 상단 요약 영역 -->
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; border-bottom: 1.5px solid var(--border-color); padding-bottom: 16px; width: 100%;">
+              
+              <!-- 좌측: 로고 및 기본정보 -->
+              <div class="biz-left" style="max-width: 180px; gap: 6px;">
+                <div class="biz-logo-frame" style="width: 100px; height: 100px;">
                   <img src="${logoImage}" alt="${biz.brandName}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin: 0;">${biz.brandName}</h3>
-                <span class="${statusBadgeClass}">${slot.status.toUpperCase()}</span>
-              </div>
-
-              <!-- 7. 우측: 상세 정보 테이블 형태 구성 -->
-              <div class="biz-right">
-                <div>
-                  <div class="data-row"><strong>업체 고유 ID</strong>: ${biz.id}</div>
-                  <div class="data-row"><strong>매칭 업종</strong>: ${catName}</div>
-                  <div class="data-row"><strong>매칭 작업명</strong>: ${taskName}</div>
-                  <div class="data-row"><strong>구 단위 지역</strong>: ${regName} (${subDongCount}개 동 자동상속)</div>
-                  <div class="data-row"><strong>전화번호</strong>: <a href="tel:${biz.phone}" style="color: var(--primary); font-weight:bold;">${biz.phone}</a></div>
+                <h3 style="font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin: 4px 0 0 0;">${biz.brandName}</h3>
+                <div style="display: flex; gap: 4px; margin-top: 2px;">
+                  <span class="${bizStatusBadgeClass}" style="font-size: 0.7rem; padding: 2px 6px;">${bizStatusText}</span>
                 </div>
-                <div>
-                  <div class="data-row"><strong>카카오 링크</strong>: <a href="${biz.kakaoUrl}" target="_blank" style="color: #d35400; text-decoration: underline;">오픈채팅 주소 ↗</a></div>
-                  <div class="data-row"><strong>홈페이지</strong>: ${biz.websiteUrl && biz.websiteUrl !== "추후 입력" ? `<a href="${biz.websiteUrl}" target="_blank" style="text-decoration: underline; color: var(--primary);">${biz.websiteUrl}</a>` : 'N/A'}</div>
-                  <div class="data-row"><strong>광고 시작일</strong>: ${slot.startDate}</div>
-                  <div class="data-row"><strong>광고 종료일</strong>: <span style="font-weight:bold; color:${slot.status === 'expired' ? '#c0392b' : 'inherit'}">${slot.endDate}</span></div>
-                  <div class="data-row" style="margin-top: 6px;">
-                    <strong>랜딩 액션</strong>: 
-                    <button class="btn btn-outline" style="font-size:0.75rem; padding: 3px 8px; border-radius: 4px;" onclick="window.copyLandingUrl('${landingUrl}')">🔗 대표 URL 복사</button>
-                    <a href="${landingUrl}" target="_blank" class="btn btn-primary" style="font-size:0.75rem; padding: 4px 8px; border-radius: 4px; text-decoration:none; color:white;">미리보기 ↗</a>
-                  </div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+                  등록 구좌: <strong>${slotsOfBiz.length}개</strong><br>
+                  운영 업종: ${bizCats}
                 </div>
               </div>
 
-              <!-- 8. 추후 어드민 확장용 기능 플레이스홀더 -->
-              <div style="border-left: 1px dashed var(--border-color); padding-left: 16px; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
-                <span style="font-size: 0.7rem; color: var(--text-muted); text-align: center;">어드민 기능 (준비 중)</span>
-                <div class="action-btn-group">
-                  <!-- 추후 수정/일시중지/만료수동처리 UI 주입 스코프 -->
-                  <button class="btn btn-outline" style="font-size: 0.72rem; padding: 6px; cursor: not-allowed; opacity: 0.5;" disabled>정보 수정</button>
-                  <button class="btn btn-outline" style="font-size: 0.72rem; padding: 6px; cursor: not-allowed; opacity: 0.5;" disabled>일시 중지</button>
+              <!-- 중앙: 상세 메타 정보 -->
+              <div style="flex: 2; min-width: 280px; display: flex; flex-direction: column; gap: 6px; justify-content: center;">
+                <div class="data-row"><strong>업체 고유 ID</strong>: <span style="font-family: monospace;">${biz.id}</span></div>
+                <div class="data-row"><strong>전화번호</strong>: <a href="tel:${biz.phone || ''}" style="color: var(--primary); font-weight: bold;">${biz.phone || "미설정"}</a></div>
+                <div class="data-row"><strong>카카오 링크</strong>: ${displayKakao}</div>
+                <div class="data-row"><strong>홈페이지</strong>: ${displayWebsite}</div>
+                <div class="data-row"><strong>데이터 상태</strong>: ${errorStatusBadge}</div>
+              </div>
+
+              <!-- 우측: 관리 액션 비활성화 존 -->
+              <div style="flex: 1; min-width: 180px; border-left: 1px dashed var(--border-color); padding-left: 16px; display: flex; flex-direction: column; justify-content: center; gap: 4px;">
+                <span style="font-size: 0.7rem; color: var(--text-muted); text-align: center; font-weight: bold;">⚙️ 관리자 작업 지령</span>
+                <span style="font-size: 0.65rem; color: #7f8c8d; text-align: center; margin-bottom: 6px;">(정보 수정 및 광고 일시정지 준비 중)</span>
+                <div class="action-btn-group" style="justify-content: center; margin: 0;">
+                  <button class="btn btn-outline" style="font-size: 0.7rem; padding: 4px 8px; cursor: not-allowed; opacity: 0.5;" disabled>정보 수정</button>
+                  <button class="btn btn-outline" style="font-size: 0.7rem; padding: 4px 8px; cursor: not-allowed; opacity: 0.5;" disabled>일시 정지</button>
                 </div>
+              </div>
+
+            </div>
+
+            <!-- 하단: 광고 구좌 상세 테이블 영역 -->
+            <div style="width: 100%;">
+              <div style="font-size: 0.8rem; font-weight: bold; color: var(--secondary); margin-bottom: 8px; display: flex; align-items: center; gap: 4px;">
+                📋 연결된 광고 구좌 내역 (필터 매칭된 구좌: ${filteredSlots.length}개 / 전체 구좌: ${slotsOfBiz.length}개)
+              </div>
+              <div class="slots-table-wrap">
+                <table class="slots-table">
+                  <thead>
+                    <tr>
+                      <th>업종</th>
+                      <th>구 단위 지역</th>
+                      <th style="text-align: center;">구좌 번호</th>
+                      <th style="text-align: center;">상태</th>
+                      <th>포함 지역</th>
+                      <th>포함 작업명</th>
+                      <th style="text-align: center;">생성 키워드 수</th>
+                      <th style="text-align: center;">시작일</th>
+                      <th style="text-align: center;">종료일</th>
+                      <th style="text-align: center;">대표 랜딩</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${slotsTableRowsHtml}
+                  </tbody>
+                </table>
               </div>
             </div>
-          `;
-        });
+          </div>
+        `;
       });
+
+      // 대시보드 통계 수치 주입
+      document.getElementById('stat-total-businesses').textContent = `${totalBizCount}개`;
+      document.getElementById('stat-active-businesses').textContent = `${activeBizCount}개`;
+      document.getElementById('stat-active-slots').textContent = `${activeSlotsCount}개`;
+      document.getElementById('stat-expiring-slots').textContent = `${expiringSlotsCount}개`;
+      document.getElementById('stat-no-period-slots').textContent = `${noPeriodSlotsCount}개`;
+      document.getElementById('stat-error-businesses').textContent = `${errorBizCount}개`;
 
       container.innerHTML = html || `<div style="text-align:center; padding: 48px; color: var(--text-muted); font-family: var(--font-family);">검색 및 필터 조건에 부합하는 입점 업체가 존재하지 않습니다.</div>`;
     }
@@ -370,11 +592,12 @@
     renderBusinesses();
 
     // 이벤트 리스너 바인딩
+    companyNameInput.addEventListener('input', renderBusinesses);
     categorySelect.addEventListener('change', renderBusinesses);
-    taskSelect.addEventListener('change', renderBusinesses);
     regionSelect.addEventListener('change', renderBusinesses);
     statusSelect.addEventListener('change', renderBusinesses);
     expiringCheckbox.addEventListener('change', renderBusinesses);
+    migratedCheckbox.addEventListener('change', renderBusinesses);
   </script>
 </body>
 </html>
