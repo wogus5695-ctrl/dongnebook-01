@@ -371,7 +371,6 @@
     // 뷰 분기 및 타이틀 조립
     if (catQueryParam) {
       document.getElementById('cat-specific-view').style.display = 'block';
-      document.getElementById('cat-specific-view-stats').style.display = 'block';
       document.getElementById('admin-index-view').style.display = 'none';
 
       const activeCat = managedCats.find(c => c.id === catQueryParam);
@@ -387,7 +386,6 @@
     } else {
       document.getElementById('admin-index-view').style.display = 'block';
       document.getElementById('cat-specific-view').style.display = 'none';
-      document.getElementById('cat-specific-view-stats').style.display = 'none';
 
       document.getElementById('admin-title').textContent = "동네책자 키워드맵 관리자 인덱스";
       document.getElementById('admin-desc').textContent = "등록된 전체 활성 업종의 대상 구 개수와 광고 입점 구좌 현황을 요약 조회하고 제어하는 종합 관리자 홈입니다.";
