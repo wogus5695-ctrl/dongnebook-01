@@ -921,10 +921,14 @@
 
             // sitemap 포함 여부
             const isSitemapIncluded = cat.sitemapInclude !== false && t.sitemapInclude !== false && t.visible !== false && regObj.visible !== false && distSlots.length > 0;
-            const sitemapText = isSitemapIncluded ? '<span style="color: green; font-weight: bold;">포함 예정</span>' : '<span style="color: #64748b;">제외</span>';
+            const sitemapText = isSitemapIncluded 
+              ? '<span style="color: green; font-weight: bold;">포함 예정</span>' 
+              : '<span style="color: #64748b;">sitemap 미반영</span>';
 
             // noindex 여부
-            const noindexText = isSitemapIncluded ? '<span style="color: green;">index</span>' : '<span style="color: #ef4444; font-weight: bold;">noindex</span>';
+            const noindexText = distSlots.length > 0 
+              ? '<span style="color: green; font-weight: bold;">index 예정</span>' 
+              : '<span style="color: #ef4444; font-weight: bold;">noindex 의심 (업체 미매칭)</span>';
 
             const subCopyBtnId = `sub-copy-btn-${dist.id}-${subIndex}`;
 
