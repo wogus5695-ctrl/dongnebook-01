@@ -867,20 +867,98 @@
         const copyBtnId = `copy-btn-${dist.id}`;
         const panelId = `panel-${dist.id}`;
 
-        let expandedKeywordsHtml = '';
-        expandedKeywordsHtml += `<div style="margin-bottom: 8px;"><strong>🏢 구 단위 키워드:</strong><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">`;
-        associatedTasks.forEach(t => {
-          expandedKeywordsHtml += `<span style="background-color: #ebf5fb; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${dist.displayName.split(' ').pop()} ${t.name}</span>`;
-        });
-        expandedKeywordsHtml += `</div></div>`;
+        let expandedKeywordsHtml = `
+          <div style="margin-bottom: 12px; font-size: 0.8rem; background-color: #f8f9fa; border: 1px solid #e2e8f0; padding: 12px; border-radius: var(--border-radius); display: flex; flex-wrap: wrap; gap: 16px;">
+            <div><strong>포함 지역 수:</strong> ${1 + subNeighborhoods.length}개</div>
+            <div><strong>작업명 수:</strong> ${associatedTasks.length}개</div>
+            <div><strong>생성 키워드 수:</strong> ${keywordsCount}개</div>
+            <div><strong>등록 업체 수:</strong> ${distSlots.length}개 (중복제외: ${new Set(distSlots.map(s => s.businessId)).size}개)</div>
+            <div><strong>남은 구좌 수:</strong> ${remainingSlots}개</div>
+            <div><strong>sitemap 포함 예정 URL 수:</strong> ${distSlots.length > 0 ? (1 + subNeighborhoods.length) * associatedTasks.length : 0}개</div>
+            <div><strong>noindex 의심 URL 수:</strong> ${distSlots.length === 0 ? (1 + subNeighborhoods.length) * associatedTasks.length : 0}개</div>
+          </div>
+          <div style="overflow-x: auto; width: 100%;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; background-color: white; border: 1px solid var(--border-color);">
+              <thead>
+                <tr style="background-color: #f1f5f9; border-bottom: 1px solid #cbd5e1;">
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">동적키워드</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">requestedRegion</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">salesDistrict</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">작업명</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">landing URL</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">예상 title</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">예상 H1</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">매칭 업체</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">sitemap</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">noindex</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">내부링크</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1;">FAQ</th>
+                  <th style="padding: 8px; border: 1px solid #cbd5e1; text-align: center;">액션</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
 
-        expandedKeywordsHtml += `<div><strong>📍 동 단위 키워드:</strong><div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">`;
-        subNeighborhoods.forEach(neigh => {
+        const allTargetRegions = [dist, ...subNeighborhoods];
+        let subIndex = 0;
+        allTargetRegions.forEach(regObj => {
+          const displayKeywordRegion = regObj.level === "neighborhood"
+            ? (regObj.neighborhood || regObj.keywordName || regObj.displayName.split(' ').pop())
+            : (regObj.district || regObj.keywordName || regObj.displayName.split(' ').pop());
+
           associatedTasks.forEach(t => {
-            expandedKeywordsHtml += `<span style="background-color: #fdfefe; border: 1px solid #ebedef; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem;">${neigh.displayName.split(' ').pop()} ${t.name}</span>`;
+            const tKeyword = t.keyword || t.name;
+            const combinedKeyword = `${displayKeywordRegion} ${tKeyword}`;
+            const targetLandingPath = `/landing.html?reg=${encodeURIComponent(regObj.displayName)}&cat=${cat.id}&task=${t.id}`;
+            const fullTargetUrl = `${window.location.origin}${targetLandingPath}`;
+            
+            // 매칭 업체
+            const matchedBizNames = distSlots.map(s => {
+              const b = businesses.find(x => x.id === s.businessId);
+              return b ? b.brandName : '';
+            }).filter(Boolean);
+            const matchedBizText = matchedBizNames.length > 0 ? Array.from(new Set(matchedBizNames)).join(', ') : '없음';
+
+            // sitemap 포함 여부
+            const isSitemapIncluded = cat.sitemapInclude !== false && t.sitemapInclude !== false && t.visible !== false && regObj.visible !== false && distSlots.length > 0;
+            const sitemapText = isSitemapIncluded ? '<span style="color: green; font-weight: bold;">포함 예정</span>' : '<span style="color: #64748b;">제외</span>';
+
+            // noindex 여부
+            const noindexText = isSitemapIncluded ? '<span style="color: green;">index</span>' : '<span style="color: #ef4444; font-weight: bold;">noindex</span>';
+
+            const subCopyBtnId = `sub-copy-btn-${dist.id}-${subIndex}`;
+
+            expandedKeywordsHtml += `
+              <tr style="border-bottom: 1px solid #e2e8f0; height: 32px;">
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: bold;">${combinedKeyword}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; color: #475569;">${regObj.displayName}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; color: #475569;">${dist.displayName}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; color: #475569;">${t.name}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-family: monospace; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${targetLandingPath}">${targetLandingPath}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; color: #64748b;">${displayKeywordRegion} ${tKeyword} 업체 찾기 | 동네책자</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; color: #64748b;">${displayKeywordRegion} ${tKeyword} 업체 찾기</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: bold; color: var(--primary);">${matchedBizText}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; text-align: center;">${sitemapText}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; text-align: center;">${noindexText}</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; text-align: center; color: green;">정상</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; text-align: center; color: green;">정상</td>
+                <td style="padding: 6px 8px; border: 1px solid #cbd5e1; text-align: center;">
+                  <div style="display: flex; gap: 4px; justify-content: center;">
+                    <a href="${targetLandingPath}" target="_blank" class="btn btn-accent" style="font-size: 0.65rem; padding: 2px 4px; text-decoration: none; color: white;">이동</a>
+                    <button id="${subCopyBtnId}" class="btn btn-outline" style="font-size: 0.65rem; padding: 2px 4px;" onclick="copyToClipboard('${fullTargetUrl}', '${subCopyBtnId}')">복사</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+            subIndex++;
           });
         });
-        expandedKeywordsHtml += `</div></div>`;
+
+        expandedKeywordsHtml += `
+              </tbody>
+            </table>
+          </div>
+        `;
 
         const remainingText = remainingSlots === 0 ? '<span style="color:red; font-weight:bold;">마감</span>' : `${remainingSlots}개`;
 
