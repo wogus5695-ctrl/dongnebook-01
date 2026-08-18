@@ -220,13 +220,41 @@
     let isValid = true;
     let fallbackMsg = "";
 
-    const exactRegion = regions.find(r => r.displayName === regParam || (r.fullName && r.fullName === regParam));
-    const fallbackRegion = !exactRegion
-      ? regions
-          .filter(r => regParam && regParam.includes(r.displayName))
-          .sort((a, b) => b.displayName.length - a.displayName.length)[0]
+    const normalize = (str) => {
+      if (!str) return "";
+      return decodeURIComponent(str).replace(/\s+/g, " ").trim();
+    };
+
+    const normalizedReg = normalize(regParam);
+    const regionParts = normalizedReg.split(" ");
+    const lastRegionName = regionParts[regionParts.length - 1];
+
+    const exactRegion = regions.find(r =>
+      normalize(r.displayName) === normalizedReg ||
+      (r.fullName && normalize(r.fullName) === normalizedReg)
+    );
+
+    const neighborhoodRegion = !exactRegion && lastRegionName
+      ? regions.find(r =>
+          r.level === "neighborhood" &&
+          (
+            normalize(r.displayName) === lastRegionName ||
+            normalize(r.neighborhood) === lastRegionName ||
+            (r.keywordName && normalize(r.keywordName) === lastRegionName) ||
+            normalizedReg.endsWith(normalize(r.neighborhood))
+          ) &&
+          normalizedReg.includes(normalize(r.district || ""))
+        )
       : null;
-    const currentRegion = exactRegion || fallbackRegion;
+
+    const districtRegion = !exactRegion && !neighborhoodRegion
+      ? regions.find(r =>
+          r.level === "district" &&
+          normalizedReg.includes(normalize(r.displayName))
+        )
+      : null;
+
+    const currentRegion = exactRegion || neighborhoodRegion || districtRegion;
     const currentCat = activeCategories.find(c => c.id === catParam);
     const currentTask = tasks.find(t => t.id === taskParam);
 
@@ -281,7 +309,10 @@
       }
 
       const regionName = currentRegion.displayName;
-      const keywordRegionName = currentRegion.keywordName || currentRegion.district || regionName.split(' ').pop();
+      const displayKeywordRegion = currentRegion.level === "neighborhood"
+        ? (currentRegion.neighborhood || currentRegion.keywordName || regionName.split(' ').pop())
+        : (currentRegion.district || currentRegion.keywordName || regionName.split(' ').pop());
+      const keywordRegionName = displayKeywordRegion;
       const taskKeyword = currentTask.keyword || currentTask.name;
       const taskDisplayName = currentTask.displayName || currentTask.name;
       const taskName = taskDisplayName;
