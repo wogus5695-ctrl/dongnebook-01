@@ -1,7 +1,7 @@
 export function CompanyCard(listing, context = {}) {
-  // "추천", "검증", "1위", "우수", "최고" 사용 금지 규정 준수
-  // 허용된 3대 배지 중 기본값으로 "광고/제휴 등록" 적용
-  const badgeText = listing.badgeText || "광고/제휴 등록";
+  // \"추천\", \"검증\", \"1위\", \"우수\", \"최고\" 사용 금지 규정 준수
+  // 허용된 3대 배지 중 기본값으로 \"광고/제휴 포함\" 적용
+  const badgeText = listing.badgeText || "광고/제휴 포함";
   
   // 데이터 객체 내 hashtags가 명시되어 있으면 우선적으로 사용하고, 없을 시 기존 작업명 리스트(tags) 사용
   const finalTags = listing.hashtags && listing.hashtags.length > 0
