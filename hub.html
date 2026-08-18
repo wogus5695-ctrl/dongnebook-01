@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>지역 기반 시공/수리 카테고리 허브 | 동네책자</title>
-  <meta name="description" content="종합청소, 방수/누수, 창틀코킹, 하수구막힘 등 전문 시공 수리 분야의 지역별 입점 광고 업체를 확인하고 직거래로 신속하게 상담해보세요.">
-  <meta name="robots" content="noindex, nofollow">
+  <title>지역별 업체 찾기 | 동네책자</title>
+  <meta name="description" content="동네책자에서 각 지역별 시공·수리 전문 파트너 업체를 찾아보세요.">
+  <meta name="robots" content="index, follow">
   <link rel="stylesheet" href="/src/css/main.css">
   <style>
     .task-card-grid {
@@ -67,9 +67,13 @@
 
   <main class="container">
     
-    <!-- 1. Hero 섹션 (초기 수집 시 크롤러 감점을 없애기 위한 No-JS 정적 H1 바인딩 플레이스홀더 대체) -->
+    <!-- Breadcrumb -->
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; font-family: var(--font-family); margin-top: 16px;">
+      홈 &gt; <span id="bread-category" style="font-weight: bold; color: var(--primary);">시공·수리 허브</span>
+    </div>
+
+    <!-- 1. Hero 섹션 -->
     <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 24px;">
-      <!-- H1 단 1회 지정하며 JS 동작 전에도 카테고리 인덱서 작동 -->
       <h1 class="section-title" id="hub-h1" style="font-size: 1.6rem; color: var(--secondary);">
         서울·경기 시공·수리 업체 찾기
       </h1>
@@ -99,7 +103,7 @@
       </div>
     </section>
 
-    <!-- 4. 입점 업체 섹션 (카테고리 매칭 필터링) -->
+    <!-- 4. 입점 업체 섹션 (소비자 참고용 기본 업체 소개) -->
     <section class="section" style="padding: 24px 0;">
       <h2 style="font-size: 1.2rem; margin-bottom: 4px;">지정 분야 입점 광고 업체</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">해당 시공 분야를 전문으로 제공하는 제휴 광고 등록 파트너입니다.</p>
@@ -109,7 +113,7 @@
       </div>
     </section>
 
-    <!-- 5 & 6. 작업 정보 & 예상 비용 안내 섹션 (No-JS FCP를 위한 카테고리별 정적 가이드 데이터 대체 탑재) -->
+    <!-- 5 & 6. 작업 정보 & 예상 비용 안내 섹션 -->
     <section class="section" style="padding: 12px 0;">
       <div class="guide-box">
         <h2 style="font-size: 1.25rem; color: var(--secondary); margin-bottom: 16px;" id="guide-section-title">시공 상식 & 가이드</h2>
@@ -151,6 +155,14 @@
       </div>
     </section>
 
+    <!-- 9. 관련 업종 허브 링크 섹션 -->
+    <section class="section" style="border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 24px;">
+      <h2 style="font-size: 1.15rem; margin-bottom: 12px;">관련 시공 분야 바로가기</h2>
+      <div id="hub-related-categories" class="region-links-wrapper">
+        <!-- JS 동적 로드 -->
+      </div>
+    </section>
+
     <!-- 7. 광고주 CTA 배너 -->
     <section class="section text-center" style="background-color: var(--primary-light); border-radius: var(--border-radius); padding: 28px; border: 1.5px dashed var(--primary); margin-top: 32px;">
       <h2 style="font-size: 1.2rem; color: var(--primary); margin-bottom: 8px;" id="hub-ad-title">이 카테고리에서 업체를 운영 중이신가요?</h2>
@@ -183,22 +195,26 @@
     const urlParams = new URLSearchParams(window.location.search);
     let activeCatId = urlParams.get('cat') || activeCategories[0].id;
 
+    const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
+
     // 만약 admin=true 인 경우 즉시 관리자 지면으로 우회 분기
     if (urlParams.get('admin') === 'true') {
-      const targetCat = activeCatId === 'general-cleaning' ? '' : `&cat=${activeCatId}`;
+      const targetCat = !OPERATED_CATEGORIES.includes(activeCatId) ? '' : `&cat=${activeCatId}`;
       window.location.href = `/keyword-map.html?admin=true${targetCat}`;
     }
 
-    // general-cleaning 혹은 비운영 대상 예외 처리
-    if (activeCatId === 'general-cleaning') {
+    let activeCat = activeCategories.find(c => c.id === activeCatId);
+
+    // 카테고리 유효성 필터 및 미운영 예외 처리
+    if (!activeCat || !OPERATED_CATEGORIES.includes(activeCatId)) {
       const mainEl = document.querySelector('main.container');
       if (mainEl) {
         mainEl.innerHTML = `
           <div style="max-width: 600px; margin: 80px auto; padding: 40px 24px; background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); text-align: center; font-family: var(--font-family); box-shadow: var(--shadow-sm);">
-            <div style="font-size: 3rem; margin-bottom: 20px;">🧹</div>
-            <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--secondary); margin-bottom: 12px;">종합청소 서비스 종료</h2>
+            <div style="font-size: 3rem; margin-bottom: 20px;">🛠️</div>
+            <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--secondary); margin-bottom: 12px;">서비스 비활성화</h2>
             <p style="font-size: 0.9rem; color: var(--text-dark); line-height: 1.6; margin-bottom: 24px;">
-              종합청소 업종은 더 이상 동네책자에서 운영되지 않습니다.<br>
+              요청하신 업종 서비스는 더 이상 동네책자에서 운영되지 않거나 준비 중입니다.<br>
               방수/누수, 창틀코킹, 탄성코트 등 타 분야 시공 서비스를 이용해 주시기 바랍니다.
             </p>
             <a href="/" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px 20px; text-decoration: none; display: inline-block;">홈으로 돌아가기</a>
@@ -206,113 +222,39 @@
         `;
       }
     } else {
-      let activeCat = activeCategories.find(c => c.id === activeCatId) || activeCategories[0];
-      const mainEl = document.querySelector('main.container');
-      if (mainEl) {
-        mainEl.innerHTML = `
-          <div style="max-width: 600px; margin: 80px auto; padding: 40px 24px; background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); text-align: center; font-family: var(--font-family); box-shadow: var(--shadow-sm);">
-            <div style="font-size: 3rem; margin-bottom: 20px;">🛠️</div>
-            <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--secondary); margin-bottom: 12px;">${activeCat.name} 대표 페이지 준비 중</h2>
-            <p style="font-size: 0.9rem; color: var(--text-dark); line-height: 1.6; margin-bottom: 24px;">
-              ${activeCat.name} 업종 대표 페이지는 준비 중입니다.<br>
-              현재 업체 확인은 지역별 랜딩 페이지를 통해 제공됩니다.
-            </p>
-            <a href="/" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px 20px; text-decoration: none; display: inline-block;">홈으로 돌아가기</a>
-          </div>
-        `;
-      }
-    }
-
-    // 2. 카테고리별 H1 매핑 테이블 지정 (검색 로봇 JS 해석 전/후 일치 처리)
-    const hubH1Map = {
-      "general-cleaning": "서울·경기 종합청소 업체 찾기",
-      "waterproof-leak": "서울·경기 방수·누수 업체 찾기",
-      "window-caulking": "서울·경기 창틀코킹·창틀누수 업체 찾기",
-      "drain-clog": "서울·경기 하수구막힘 업체 찾기"
-    };
-
-    // 카테고리 특화 5대 FAQ 데이터 셋업
-    const categoryFaqs = {
-      "general-cleaning": [
-        { q: "입주청소와 이사청소의 차이점은 무엇인가요?", a: "입주청소는 신축 건물에서 발생하는 공사 미세먼지, 시멘트 가루, 새집증후군 유해물질을 전문적으로 제거하는 공정입니다. 반면 이사청소는 기존 거주자가 남긴 찌든 때, 기름때, 곰팡이와 생활 오염 흔적을 정화하는 데 집중합니다." },
-        { q: "유리창청소나 외벽청소 시 비가 오면 어떻게 되나요?", a: "유리창 및 외벽청소는 빗물 잔상이나 로프 작업 시의 안전사고 우려로 인해 우천 시 시공이 불가능합니다. 예약 당일 강우 예보가 있다면 담당 업체 사장님과 일정을 사전 조정하게 됩니다." },
-        { q: "청소 시 사용되는 세제는 안전한가요?", a: "최근 대다수의 입점 업체 사장님들은 영유아나 반려동물이 있는 가정의 안전을 위하여 친환경 에코 세제 및 고온 스팀 방식을 사용하고 있습니다. 구체적인 안전 스펙은 파트너의 공식 사이트에서 확인하실 수 있습니다." },
-        { q: "화재청소 등 특수 청소 견적은 어떻게 산출되나요?", a: "화재청소는 매연과 그을음의 침투 깊이, 유독가스 냄새 제거 여부, 폐기물의 성상에 따라 특수 세제와 인력 투입이 달라지므로 반드시 현장 정밀 진단 후 개별 산정됩니다." },
-        { q: "준공청소 작업 시 마루 코팅이나 왁싱도 포함되나요?", a: "기본 준공청소에는 바닥 세척 먼지 제거만 포함되는 경우가 대부분입니다. 광택과 오염 방지를 위한 바닥 왁스 코팅은 옵션 사항이므로 업체 상담 시 함께 신청해야 조율이 편리합니다." }
-      ],
-      "waterproof-leak": [
-        { q: "옥상 우레탄 방수 시공 순서와 기간은 어떻게 되나요?", a: "1단계 바닥 연삭(그라인딩) -> 2단계 프라이머(하도) -> 3단계 우레탄 실란트 균열 메꿈 -> 4단계 우레탄 방수재(중도) -> 5단계 코팅(상도) 순서로 진행됩니다. 하자와 건조 시간을 지키기 위해 일반적으로 3~5일이 소요됩니다." },
-        { q: "누수 탐지 공사는 아파트 아래층 피해 보상과 연계되나요?", a: "네, 배관 파손 누수 확인 시 공사 내역 및 증빙 자료를 활용하여 아래층 도배 등의 피해 처리를 지원받을 수 있습니다. 손해사정 또는 일상생활배상책임 보험 적용 서류 발행이 필요한 경우 사전에 입점 업체 사장님과 조율하시기 바랍니다." },
-        { q: "지붕 방수와 옥상 방수의 시공법 차이는 무엇인가요?", a: "옥상은 주로 우레탄 도막 방수를 적용하는 반면, 경사가 있는 칼라강판 지붕이나 싱글 지붕의 경우 방수 시트 부착 또는 강판 개량 공사로 지붕 누수를 원천 차단하는 공법을 활용합니다." },
-        { q: "배관 누수와 빗물 누수를 구별하는 자가진단법이 있나요?", a: "비가 올 때만 천장이나 창틀 벽면이 젖는다면 빗물 누수(창틀 실리콘 크랙 또는 외벽 크랙)일 확률이 매우 높고, 계절/기후와 무관하게 수도계량기 별침이 돌거나 지속적으로 아래층에 물이 떨어진다면 수도/난방 배관 누수일 가능성이 큽니다." },
-        { q: "누수 부위를 찾아내기 위한 첨단 장비는 어떤 것들이 있나요?", a: "미세 소리를 청취하는 청음식 탐지기, 배관에 가스를 주입해 추적하는 가스 탐지기, 벽면 수분분포를 체크하는 열화상 카메라 등이 동원되어 굴착 면적을 최소화합니다." }
-      ],
-      "window-caulking": [
-        { q: "창틀 실리콘 코킹 공사의 수명은 보통 몇 년인가요?", a: "기후 조건과 시공 품질에 따라 다르지만 보통 고급 창호 전용 실리콘을 사용할 경우 5년에서 최대 10년까지 지속됩니다. 삭아서 빗물이 흐르는 상태라면 노후 실리콘을 완전 걷어내고 재시공해야 수명이 유지됩니다." },
-        { q: "기존의 노후 실리콘을 제거하지 않고 덧방을 쳐도 되나요?", a: "매우 부적합한 시공법입니다. 들뜬 실리콘 위에 덧바를 경우 내부 틈새로 들어온 물 때문에 다시 박리되므로 귀찮더라도 기존 코킹을 칼로 완전히 오려낸 후 프라이머 도포 및 재코킹을 수행해야 합니다." },
-        { q: "아파트 고층 아파트인데 로프 탑승 시 민원이 발생하나요?", a: "아파트 관리사무소에 외부 로프 시공 일정을 사전에 공지하고 주민 안전선을 설정해야 합니다. 입점 업체 사장님이 통상적으로 일정 공지 가이드라인을 잘 안내해 주십니다." },
-        { q: "샷시 내부 실리콘과 외부 실리콘은 성분이 다른가요?", a: "내부는 냄새가 적고 건조가 빠른 실내용 수성/바이오 실리콘이 쓰이지만, 외부 창틀 코킹에는 자외선과 온도차 균열에 매우 강한 외벽 전용 비초산성 우레탄계/실리콘 실란트를 사용해야 빗물 누수를 버틸 수 있습니다." },
-        { q: "비가 새는 부위가 안방 창틀 1개뿐인데 단독 부분 시공이 가능한가요?", a: "네 가능합니다. 다만 전체 동시 시공에 비해 개별 방문 로프 세팅비가 고정적으로 들어가므로, 가급적 이웃 세대와 공동 구매 방식으로 묶어서 상담하시면 비용을 아낄 수 있습니다." }
-      ],
-      "drain-clog": [
-        { q: "변기가 막혔을 때 뚫는 시공 단가는 어떤 기준으로 정해지나요?", a: "단순 휴지나 대변 막힘은 관통기만으로 저렴하게 처리되지만, 플라스틱 장난감, 칫솔, 의치 등이 깊이 들어간 경우 변기 탈거 공사 또는 석션 흡입 차량 장비 동원이 필요하여 비용 차이가 발생할 수 있습니다." },
-        { q: "싱크대 하부 호스 역류의 주된 원인은 무엇인가요?", a: "조리 과정에서 흘려보낸 돼지고기/소고기 기름이 배관 내부에서 응고되어 비누처럼 굳었기 때문입니다. 이 상태에서는 일반 약제 분사만으로 해결되지 않으므로 물리적인 기계 세척이 필요합니다." },
-        { q: "고압 세척 공사는 일반 스프링 통풍 작업과 어떻게 다른가요?", a: "스프링은 기름 덩어리에 작은 구멍만 내어 즉각 배수만 시키기 때문에 곧 재발합니다. 고압세척은 노즐에서 나오는 초고압 수류로 배관 벽면 전체를 깎아내어 새 배관 상태로 복원하는 근본적인 공법입니다." },
-        { q: "아파트 횡주관이나 빌라 공용 배관이 막혔을 때 책임 소재는 어떻게 되나요?", a: "특정 개별 세대 전용관이 아닌 건물 전체 세대가 공유하는 메인 오수관/하수관 막힘은 장기수선충당금이나 입주민 공동 회비로 처리하는 것이 관리 규약 상 통상적입니다." },
-        { q: "배관 내시경 장비 촬영은 필수로 신청해야 하나요?", a: "반복적으로 하수구가 막히는 경우라면 배관의 구배(기울기) 불량이나 파손, 기름 덩어리 적체 구간을 모니터로 직접 확인하며 뚫어야 실패가 없습니다. 과도한 중복 비용 지출을 줄여주는 장점이 있습니다." }
-      ]
-    };
-
-    // 3. 탭 렌더링
-    const tabsBox = document.getElementById('hub-tabs');
-    if (tabsBox) {
-      tabsBox.innerHTML = activeCategories.map(cat => {
-        const isActive = cat.id === activeCatId;
-        return `
-          <button class="btn ${isActive ? 'btn-primary' : 'btn-outline'}" 
-                  style="width: auto; white-space: nowrap; font-size: 0.85rem; padding: 8px 16px;" 
-                  onclick="window.location.href='/hub.html?cat=${cat.id}'">
-            ${cat.name}
-          </button>
-        `;
-      }).join('');
-    }
-
-    // 4. 정보 바인딩 & SEO 업데이트
-    function renderHubPage() {
-      // 2. 카테고리별 H1/SEO 매핑 테이블 지정
+      // 카테고리별 H1 및 매핑 정보
       const hubSeoMap = {
-        "general-cleaning": {
-          h1: "서울·경기 종합청소 업체 찾기",
-          title: "서울·경기 종합청소 업체 찾기 | 동네책자",
-          description: "외벽청소, 유리창청소, 준공청소, 후드청소 등 지역 기반 청소 업체 정보를 확인할 수 있습니다."
-        },
         "waterproof-leak": {
-          h1: "서울·경기 방수·누수 업체 찾기",
-          title: "서울·경기 방수·누수 업체 찾기 | 동네책자",
-          description: "외벽방수, 옥상방수, 빗물누수, 외벽누수 등 지역 기반 방수·누수 상담 가능 업체를 확인할 수 있습니다."
+          h1: "방수·누수 지역별 업체 찾기",
+          title: "방수·누수 지역별 업체 찾기 | 동네책자",
+          description: "서울·경기 주요 지역의 방수·누수 상담 가능 업체 페이지를 지역별로 확인해보세요."
         },
         "window-caulking": {
-          h1: "서울·경기 창틀코킹·창틀누수 업체 찾기",
-          title: "서울·경기 창틀코킹·창틀누수 업체 찾기 | 동네책자",
-          description: "창틀코킹, 창틀누수, 창틀실리콘, 샷시실리콘 등 지역 기반 상담 가능 업체를 확인할 수 있습니다."
+          h1: "창틀코킹·창틀누수 지역별 업체 찾기",
+          title: "창틀코킹·창틀누수 지역별 업체 찾기 | 동네책자",
+          description: "서울·경기 주요 지역의 창틀코킹·창틀누수 상담 가능 업체 페이지를 지역별로 확인해보세요."
+        },
+        "elastic-coating": {
+          h1: "탄성코트 지역별 업체 찾기",
+          title: "탄성코트 지역별 업체 찾기 | 동네책자",
+          description: "서울·경기 주요 지역의 탄성코트 상담 가능 업체 페이지를 지역별로 확인해보세요."
         }
       };
 
       const currentSeo = hubSeoMap[activeCat.id] || {
-        h1: "서울·경기 시공·수리 업체 찾기",
-        title: "서울·경기 시공·수리 업체 찾기 | 동네책자",
-        description: "우리 동네 전문 업체를 편리하게 찾아보세요."
+        h1: "시공·수리 지역별 업체 찾기",
+        title: "시공·수리 지역별 업체 찾기 | 동네책자",
+        description: "서울·경기 주요 지역의 시공·수리 상담 가능 업체 페이지를 지역별로 확인해보세요."
       };
 
-      // SEO 변경 사항 적용
+      // 2. SEO 메타 설정 및 캐노니컬 삽입
       updateSeoMeta({
         title: currentSeo.title,
         description: currentSeo.description,
-        h1Text: currentSeo.h1
+        h1Text: currentSeo.h1,
+        noindex: false
       });
 
-      // 캐노니컬 태그 동적 삽입
       let canonicalLink = document.querySelector("link[rel='canonical']");
       if (!canonicalLink) {
         canonicalLink = document.createElement('link');
@@ -321,26 +263,43 @@
       }
       canonicalLink.href = `https://dongnebook-01.vercel.app/hub.html?cat=${activeCat.id}`;
 
-      document.getElementById('hub-subtitle').textContent = `${activeCat.name} 업종에 등록된 세부 작업을 확인하시고 상담 연결 가능한 동네 업체를 찾아보세요.`;
+      document.getElementById('bread-category').textContent = `${activeCat.name} 허브`;
+      document.getElementById('hub-subtitle').textContent = currentSeo.description;
       document.getElementById('guide-section-title').textContent = `${activeCat.name} 시공 상식 & 가이드`;
       document.getElementById('hub-faq-title').textContent = `${activeCat.name} 자주 묻는 질문 (FAQ)`;
       document.getElementById('hub-ad-title').textContent = `이 카테고리에서 업체를 운영 중이신가요?`;
       document.getElementById('hub-ad-cta-btn').href = `/apply.html?cat=${activeCat.id}`;
 
-      // 가이드 콘텐츠 채우기 (정보성 콘텐츠)
+      // 카테고리 특화 5대 FAQ 데이터
+      const categoryFaqs = {
+        "waterproof-leak": [
+          { q: "옥상 우레탄 방수 시공 순서와 기간은 어떻게 되나요?", a: "1단계 바닥 연삭(그라인딩) -> 2단계 프라이머(하도) -> 3단계 우레탄 실란트 균열 메꿈 -> 4단계 우레탄 방수재(중도) -> 5단계 코팅(상도) 순서로 진행됩니다. 하자와 건조 시간을 지키기 위해 일반적으로 3~5일이 소요됩니다." },
+          { q: "누수 탐지 공사는 아파트 아래층 피해 보상과 연계되나요?", a: "네, 배관 파손 누수 확인 시 공사 내역 및 증빙 자료를 활용하여 아래층 도배 등의 피해 처리를 지원받을 수 있습니다. 손해사정 또는 일상생활배상책임 보험 적용 서류 발행이 필요한 경우 사전에 입점 업체 사장님과 조율하시기 바랍니다." },
+          { q: "지붕 방수와 옥상 방수의 시공법 차이는 무엇인가요?", a: "옥상은 주로 우레탄 도막 방수를 적용하는 반면, 경사가 있는 칼라강판 지붕이나 싱글 지붕의 경우 방수 시트 부착 또는 강판 개량 공사로 지붕 누수를 원천 차단하는 공법을 활용합니다." },
+          { q: "배관 누수와 빗물 누수를 구별하는 자가진단법이 있나요?", a: "비가 올 때만 천장이나 창틀 벽면이 젖는다면 빗물 누수(창틀 실리콘 크랙 또는 외벽 크랙)일 확률이 매우 높고, 계절/기후와 무관하게 수도계량기 별침이 돌거나 지속적으로 아래층에 물이 떨어진다면 수도/난방 배관 누수일 가능성이 큽니다." },
+          { q: "누수 부위를 찾아내기 위한 첨단 장비는 어떤 것들이 있나요?", a: "미세 소리를 청취하는 청음식 탐지기, 배관에 가스를 주입해 추적하는 가스 탐지기, 벽면 수분분포를 체크하는 열화상 카메라 등이 동원되어 굴착 면적을 최소화합니다." }
+        ],
+        "window-caulking": [
+          { q: "창틀 실리콘 코킹 공사의 수명은 보통 몇 년인가요?", a: "기후 조건과 시공 품질에 따라 다르지만 보통 고급 창호 전용 실리콘을 사용할 경우 5년에서 최대 10년까지 지속됩니다. 삭아서 빗물이 흐르는 상태라면 노후 실리콘을 완전 걷어내고 재시공해야 수명이 유지됩니다." },
+          { q: "기존의 노후 실리콘을 제거하지 않고 덧방을 쳐도 되나요?", a: "매우 부적합한 시공법입니다. 들뜬 실리콘 위에 덧바를 경우 내부 틈새로 들어온 물 때문에 다시 박리되므로 귀찮더라도 기존 코킹을 칼로 완전히 오려낸 후 프라이머 도포 및 재코킹을 수행해야 합니다." },
+          { q: "아파트 고층 아파트인데 로프 탑승 시 민원이 발생하나요?", a: "아파트 관리사무소에 외부 로프 시공 일정을 사전에 공지하고 주민 안전선을 설정해야 합니다. 입점 업체 사장님이 통상적으로 일정 공지 가이드라인을 잘 안내해 주십니다." },
+          { q: "샷시 내부 실리콘과 외부 실리콘은 성분이 다른가요?", a: "내부는 냄새가 적고 건조가 빠른 실내용 수성/바이오 실리콘이 쓰이지만, 외부 창틀 코킹에는 자외선과 온도차 균열에 매우 강한 외벽 전용 비초산성 우레탄계/실리콘 실란트를 사용해야 빗물 누수를 버틸 수 있습니다." },
+          { q: "비가 새는 부위가 안방 창틀 1개뿐인데 단독 부분 시공이 가능한가요?", a: "네 가능합니다. 다만 전체 동시 시공에 비해 개별 방문 로프 세팅비가 고정적으로 들어가므로, 가급적 이웃 세대와 공동 구매 방식으로 묶어서 상담하시면 비용을 아낄 수 있습니다." }
+        ],
+        "elastic-coating": [
+          { q: "탄성코트 시공 범위는 보통 어디까지인가요?", a: "주로 베란다, 세탁실, 다용도실, 대피공간 등 결로와 곰팡이가 자주 발생하는 발코니 구역을 대상으로 시공이 진행됩니다." },
+          { q: "탄성코트 상담 전 어떤 사진을 준비하면 좋나요?", a: "시공 위치 사진, 벽면 상태, 곰팡이 흔적, 기존 페인트 들뜸 여부를 확인할 수 있는 사진을 준비하면 업체가 상황을 파악하는 데 큰 도움이 됩니다." },
+          { q: "베란다와 세탁실 탄성코트 상담 기준이 다른가요?", a: "네, 베란다와 세탁실은 시공 면적, 환기 조건, 곰팡이 오염도 및 추가 보양 필요성에 따라 공정 및 자재 소요량이 달라지므로 공간별 세부 조건에 따라 상담 기준이 세분화될 수 있습니다." },
+          { q: "기존 벽면에 곰팡이가 있으면 바로 상담 가능한가요?", a: "네, 바로 상담 가능합니다. 곰팡이가 있는 벽면은 향균 하도 공정 및 살균 제거 작업이 필수로 선행되므로, 벽면 상태 사진을 전송해 주시면 보다 원활한 점검을 도와드릴 수 있습니다." },
+          { q: "전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?", a: "업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다." }
+        ]
+      };
+
+      // 가이드 가사 교정
       const selectStandards = document.getElementById('select-standards-list');
       const preCheck = document.getElementById('pre-check-list');
 
-      if (activeCat.id === 'general-cleaning') {
-        selectStandards.innerHTML = `
-          <li>✔️ 단순히 최저가만 제시하는 업체보다 청소 진행 범위(창틀, 전등갓, 하수구 개방 등)를 상세히 명시하는 곳을 찾으세요.</li>
-          <li>✔️ 마루 손상이나 가전 훼손에 대비하여 영업배상책임보험 가입 여부를 사전에 파악하면 안전합니다.</li>
-        `;
-        preCheck.innerHTML = `
-          <li>✔️ 시공 당일에는 쓰레기 봉투(대형)를 사전 제공해야 원활히 정리됩니다.</li>
-          <li>✔️ 빌트인 가전 내부나 외부 유리창 창틀 외벽은 기본 시공에서 제외될 수 있으니 미리 합의하십시오.</li>
-        `;
-      } else if (activeCat.id === 'waterproof-leak') {
+      if (activeCat.id === 'waterproof-leak') {
         selectStandards.innerHTML = `
           <li>✔️ 첨단 가스/청음식 탐지 기기 없이 무작정 벽을 깨자고 유도하는 곳은 지양해야 합니다.</li>
           <li>✔️ 공사 부위에 대해 1년 이상의 확실한 하자보수(A/S) 확약 증빙을 발행해 줄 수 있는 공식 브랜드를 찾으세요.</li>
@@ -358,21 +317,21 @@
           <li>✔️ 실리콘 시공 당일 외벽 콘크리트 및 창틀 면에 습기가 없어야 하므로 맑은 날을 사전에 잡으셔야 합니다.</li>
           <li>✔️ 작업 중 베란다 안쪽 적재물이 로프 작업자 시야 방해가 되지 않도록 베란다 정리를 추천합니다.</li>
         `;
-      } else {
+      } else if (activeCat.id === 'elastic-coating') {
         selectStandards.innerHTML = `
-          <li>✔️ 막힘 해결 실패 시 0원 약속을 하거나, 근본 원인을 파악하기 위해 배관 내시경 카메라 촬영 장비를 능숙하게 다루는 업체를 고르세요.</li>
-          <li>✔️ 무리하게 배관을 깨뜨리는 압력 방식 대신 배관 안을 세척하는 스케일링 방식을 적극 권장합니다.</li>
+          <li>✔️ 벽면 곰팡이와 기존 페인트 들뜸을 꼼꼼히 긁어내고 하도/밑작업을 철저히 하는 업체를 선택해야 시공 하자가 없습니다.</li>
+          <li>✔️ 친환경 인증 자재 여부와 시공 후 충분한 환기 수칙을 명확하게 안내해 주는 전문가를 권장합니다.</li>
         `;
         preCheck.innerHTML = `
-          <li>✔️ 하수구 배수 역류 시 가구 집기에 오염이 확산되지 않도록 주변 물건을 신속하게 대피시키세요.</li>
-          <li>✔️ 공용관 막힘인지 세대 전용관 문제인지에 따라 수리 비용 주체가 다르므로 관리실에 사전 통보해 두는 것이 좋습니다.</li>
+          <li>✔️ 시공 당일 베란다 창틀 주변 적재물이나 세탁기 주변 장애물을 사전에 이동시켜야 보양 작업이 신속해집니다.</li>
+          <li>✔️ 겨울철이나 우천 시에는 건조에 필요한 온/습도 유지를 위한 사전 안내를 따르시기 바랍니다.</li>
         `;
       }
 
       document.getElementById('price-guide-standard').textContent = activeCat.priceGuide.standard;
       document.getElementById('price-guide-note').textContent = activeCat.priceGuide.note;
 
-      // 5대 FAQ 로드
+      // 5대 FAQ 렌더링
       const faqContainer = document.getElementById('hub-faq-container');
       if (faqContainer) {
         const faqs = categoryFaqs[activeCat.id] || [];
@@ -384,7 +343,6 @@
         `).join('');
       }
 
-      // 5대 FAQ 아코디언 핸들링 스크립트 연결
       document.querySelectorAll('#hub-faq-container .faq-q').forEach(question => {
         question.addEventListener('click', () => {
           const item = question.parentNode;
@@ -392,33 +350,68 @@
         });
       });
 
-      // 5. 세부 작업 카드 목록 렌더링
+      // 3. 세부 작업 바로가기 목록 렌더링
       const subTasks = tasks.filter(t => t.categoryIds.includes(activeCat.id) && t.visible);
       const tasksGrid = document.getElementById('hub-tasks-grid');
       if (tasksGrid) {
         tasksGrid.innerHTML = subTasks.map(t => `
-          <div class="task-click-card" onclick="window.location.href='/landing.html?reg=${encodeURIComponent('서울 강남구')}&cat=${activeCat.id}&task=${t.id}'">
+          <div class="task-click-card" onclick="window.location.href='/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=${activeCat.id}&task=${t.id}'">
             ${t.name}
           </div>
         `).join('');
       }
 
-      // 6. 지역 목록 로드
+      // 4. 지역 및 세부 작업 롱테일 내부링크 로드 (HTML 크롤러 최적화)
       const regGrid = document.getElementById('hub-regions-grid');
       if (regGrid) {
-        const subRegs = regions.filter(r => (r.level === 'district' || r.level === 'city') && r.visible);
-        regGrid.innerHTML = `
-          <div class="region-links-wrapper" style="justify-content: center;">
-            ${subRegs.map(reg => `
-              <a href="/landing.html?reg=${encodeURIComponent(reg.displayName)}&cat=${activeCat.id}" class="region-bubble">
-                ${reg.displayName}
-              </a>
-            `).join('')}
-          </div>
-        `;
+        const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
+        let regionLinksHtml = '';
+        districts.forEach(dist => {
+          regionLinksHtml += `
+            <div style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; background-color: var(--bg-card);">
+              <h3 style="font-size: 1rem; color: var(--secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; font-weight: 800;">
+                📍 ${dist.displayName.split(' ').pop()} 지역
+              </h3>
+              
+              <!-- 구 단위 세부 링크 -->
+              <div style="margin-bottom: 12px;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">구 단위 바로가기:</div>
+                <div class="region-links-wrapper">
+                  ${subTasks.map(t => {
+                    const tKeyword = t.keyword || t.name;
+                    const path = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${activeCat.id}&task=${t.id}`;
+                    return `<a href="${path}" class="region-bubble" style="border-color: var(--primary);">${dist.displayName.split(' ').pop()} ${tKeyword}</a>`;
+                  }).join('')}
+                </div>
+              </div>
+          `;
+
+          // 하위 동 단위 세부 링크
+          const subDongs = regions.filter(r => r.parentId === dist.id && r.level === 'neighborhood' && r.visible !== false);
+          if (subDongs.length > 0) {
+            regionLinksHtml += `
+              <div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">하위 동/동네별 바로가기:</div>
+                <div class="region-links-wrapper">
+                  ${subDongs.flatMap(dong => 
+                    subTasks.map(t => {
+                      const tKeyword = t.keyword || t.name;
+                      const path = `/landing.html?reg=${encodeURIComponent(dong.displayName)}&cat=${activeCat.id}&task=${t.id}`;
+                      const dongShort = dong.neighborhood || dong.displayName.split(' ').pop();
+                      return `<a href="${path}" class="region-bubble">${dongShort} ${tKeyword}</a>`;
+                    })
+                  ).join('')}
+                </div>
+              </div>
+            `;
+          }
+          regionLinksHtml += `</div>`;
+        });
+
+        regGrid.innerHTML = regionLinksHtml;
       }
 
-      // 7. 입점 업체 필터링 후 렌더링
+      // 5. 입점 업체 필터링 후 렌더링
       const filteredBiz = businesses.filter(b => b.categoryIds.includes(activeCat.id) && b.status === 'active' && b.visible);
       const listingsGrid = document.getElementById('hub-listings-grid');
       if (listingsGrid) {
@@ -457,10 +450,18 @@
           `;
         }
       }
-    }
 
-    // 모든 카테고리 허브가 임시 보류/종료 상태이므로 상세 렌더러는 호출하지 않습니다.
-    // renderHubPage();
+      // 6. 관련 업종 허브 링크 렌더링
+      const relatedCatsBox = document.getElementById('hub-related-categories');
+      if (relatedCatsBox) {
+        const otherCats = activeCategories.filter(c => c.id !== activeCat.id && OPERATED_CATEGORIES.includes(c.id));
+        relatedCatsBox.innerHTML = otherCats.map(c => `
+          <a href="/hub.html?cat=${c.id}" class="region-bubble" style="border-color: var(--secondary);">
+            ${c.name} 바로가기
+          </a>
+        `).join('');
+      }
+    }
   </script>
 </body>
 </html>
