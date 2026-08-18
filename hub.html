@@ -350,65 +350,116 @@
         });
       });
 
-      // 3. 세부 작업 바로가기 목록 렌더링
+      // 3. 세부 작업 바로가기 목록 렌더링 (HTML 크롤러 최적화 a 태그)
       const subTasks = tasks.filter(t => t.categoryIds.includes(activeCat.id) && t.visible);
       const tasksGrid = document.getElementById('hub-tasks-grid');
       if (tasksGrid) {
-        tasksGrid.innerHTML = subTasks.map(t => `
-          <div class="task-click-card" onclick="window.location.href='/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=${activeCat.id}&task=${t.id}'">
-            ${t.name}
-          </div>
-        `).join('');
+        tasksGrid.innerHTML = subTasks.map(t => {
+          const path = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=${activeCat.id}&task=${t.id}`;
+          return `
+            <a href="${path}" class="task-click-card" style="text-decoration: none; display: block;">
+              ${t.name}
+            </a>
+          `;
+        }).join('');
       }
 
-      // 4. 지역 및 세부 작업 롱테일 내부링크 로드 (HTML 크롤러 최적화)
+      // 4. 지역 및 세부 작업 롱테일 내부링크 로드 (HTML 크롤러 최적화 및 details/summary 구조)
       const regGrid = document.getElementById('hub-regions-grid');
       if (regGrid) {
         const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
+        const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
         let regionLinksHtml = '';
+
         districts.forEach(dist => {
+          // Check which slots match this district
+          const distSlots = adSlots.filter(slot => {
+            if (slot.status !== "active") return false;
+            if (slot.categoryId !== activeCat.id) return false;
+            if (slot.startDate !== null && CURRENT_DATE < new Date(slot.startDate)) return false;
+            if (slot.endDate !== null && CURRENT_DATE > new Date(slot.endDate)) return false;
+            return slot.purchaseRegionId === dist.id;
+          });
+
+          // Only render district block if there are active matching slots/businesses
+          const hasDistrictActiveAd = distSlots.some(slot => {
+            const biz = businesses.find(b => b.id === slot.businessId);
+            return biz && biz.visible && biz.status === "active";
+          });
+
+          if (!hasDistrictActiveAd) return;
+
+          // For the district itself, only render tasks that are covered by active adSlots
+          const activeDistrictLinks = [];
+          subTasks.forEach(t => {
+            const hasTaskAd = distSlots.some(slot => {
+              const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === t.id;
+              if (!taskMatches) return false;
+              const biz = businesses.find(b => b.id === slot.businessId);
+              return biz && biz.visible && biz.status === "active";
+            });
+
+            if (hasTaskAd) {
+              const tKeyword = t.keyword || t.name;
+              const path = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${activeCat.id}&task=${t.id}`;
+              activeDistrictLinks.push({ path, text: `${dist.displayName.split(' ').pop()} ${tKeyword}` });
+            }
+          });
+
+          // For each subDong, only render tasks covered by active adSlots
+          const activeDongLinks = [];
+          const subDongs = regions.filter(r => r.parentId === dist.id && r.level === 'neighborhood' && r.visible !== false);
+          
+          subDongs.forEach(dong => {
+            subTasks.forEach(t => {
+              const hasTaskAd = distSlots.some(slot => {
+                const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === t.id;
+                if (!taskMatches) return false;
+                const biz = businesses.find(b => b.id === slot.businessId);
+                return biz && biz.visible && biz.status === "active";
+              });
+
+              if (hasTaskAd) {
+                const tKeyword = t.keyword || t.name;
+                const path = `/landing.html?reg=${encodeURIComponent(dong.displayName)}&cat=${activeCat.id}&task=${t.id}`;
+                const dongShort = dong.neighborhood || dong.displayName.split(' ').pop();
+                activeDongLinks.push({ path, text: `${dongShort} ${tKeyword}` });
+              }
+            });
+          });
+
+          // Render details / summary block
+          const distShort = dist.displayName.split(' ').pop();
           regionLinksHtml += `
-            <div style="margin-bottom: 24px; border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; background-color: var(--bg-card);">
-              <h3 style="font-size: 1rem; color: var(--secondary); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; font-weight: 800;">
-                📍 ${dist.displayName.split(' ').pop()} 지역
-              </h3>
+            <details open style="margin-bottom: 20px; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; background-color: var(--bg-card); display: block; width: 100%; box-sizing: border-box;">
+              <summary style="font-size: 1.05rem; color: var(--secondary); font-weight: 800; cursor: pointer; padding: 4px; outline: none; list-style: none;">
+                📍 ${distShort} 지역 바로가기 (클릭 시 접기/펼치기)
+              </summary>
               
               <!-- 구 단위 세부 링크 -->
-              <div style="margin-bottom: 12px;">
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">구 단위 바로가기:</div>
-                <div class="region-links-wrapper">
-                  ${subTasks.map(t => {
-                    const tKeyword = t.keyword || t.name;
-                    const path = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${activeCat.id}&task=${t.id}`;
-                    return `<a href="${path}" class="region-bubble" style="border-color: var(--primary);">${dist.displayName.split(' ').pop()} ${tKeyword}</a>`;
-                  }).join('')}
+              ${activeDistrictLinks.length > 0 ? `
+                <div style="margin-top: 14px; margin-bottom: 12px;">
+                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">구 단위 바로가기:</div>
+                  <div class="region-links-wrapper">
+                    ${activeDistrictLinks.map(link => `<a href="${link.path}" class="region-bubble" style="border-color: var(--primary);">${link.text}</a>`).join('')}
+                  </div>
                 </div>
-              </div>
-          `;
+              ` : ''}
 
-          // 하위 동 단위 세부 링크
-          const subDongs = regions.filter(r => r.parentId === dist.id && r.level === 'neighborhood' && r.visible !== false);
-          if (subDongs.length > 0) {
-            regionLinksHtml += `
-              <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">하위 동/동네별 바로가기:</div>
-                <div class="region-links-wrapper">
-                  ${subDongs.flatMap(dong => 
-                    subTasks.map(t => {
-                      const tKeyword = t.keyword || t.name;
-                      const path = `/landing.html?reg=${encodeURIComponent(dong.displayName)}&cat=${activeCat.id}&task=${t.id}`;
-                      const dongShort = dong.neighborhood || dong.displayName.split(' ').pop();
-                      return `<a href="${path}" class="region-bubble">${dongShort} ${tKeyword}</a>`;
-                    })
-                  ).join('')}
+              <!-- 동 단위 세부 링크 -->
+              ${activeDongLinks.length > 0 ? `
+                <div style="margin-top: 12px;">
+                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">하위 동/동네별 바로가기:</div>
+                  <div class="region-links-wrapper">
+                    ${activeDongLinks.map(link => `<a href="${link.path}" class="region-bubble">${link.text}</a>`).join('')}
+                  </div>
                 </div>
-              </div>
-            `;
-          }
-          regionLinksHtml += `</div>`;
+              ` : ''}
+            </details>
+          `;
         });
 
-        regGrid.innerHTML = regionLinksHtml;
+        regGrid.innerHTML = regionLinksHtml || `<div style="text-align: center; color: var(--text-muted); padding: 20px;">이 업종에 활성화된 매칭 지역 링크가 없습니다.</div>`;
       }
 
       // 5. 입점 업체 필터링 후 렌더링
