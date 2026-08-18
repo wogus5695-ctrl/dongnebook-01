@@ -33,9 +33,15 @@ function generateSitemap() {
     });
   });
 
-  // (카테고리 허브 페이지들은 준비 중이므로 sitemap에서 전면 배제합니다)
-
+  // 3. 업종별 공개 HTML 허브 페이지 추가
   const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
+  OPERATED_CATEGORIES.forEach(catId => {
+    urls.push({
+      loc: `/hub.html?cat=${catId}`,
+      changefreq: "daily",
+      priority: "0.8"
+    });
+  });
 
   // 4. 활성 광고 매칭 롱테일 랜딩 페이지들 (adSlots 기준 매칭)
   const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
