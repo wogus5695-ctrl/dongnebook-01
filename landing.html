@@ -563,53 +563,48 @@
       if (faqList) {
         if (seoData) {
           faqList.innerHTML = seoData.faq.map(f => `
-            <div class="faq-item">
-              <div class="faq-q">Q. ${f.q}</div>
-              <div class="faq-a">A. ${f.a}</div>
-            </div>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${f.q}</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. ${f.a}</p>
+              </div>
+            </details>
           `).join('');
         } else {
           faqList.innerHTML = `
-            <div class="faq-item">
-              <div class="faq-q">Q. ${regionName}에서 ${taskName} 상담은 어떻게 진행되나요?</div>
-              <div class="faq-a">
-                A. 이 페이지에 등록된 상담 가능 업체의 상세 카드 영역에 기재된 직접 전화 통화, 카카오톡 채널 상담 및 제공되는 개별 홈페이지 링크를 클릭하여 부담 없이 직거래로 문의하실 수 있습니다. 상세 공사 환경이나 문제 상태를 사전 구두 전달하시면 사장님들과의 실시간 상담 진행이 원활해집니다.
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${regionName}에서 ${taskName} 상담은 어떻게 진행되나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 페이지에 등록된 업체 정보를 확인한 뒤 전화 또는 카카오톡으로 상담을 요청할 수 있습니다. 현장 위치와 작업 내용을 함께 전달하면 상담이 더 빠르게 진행될 수 있습니다.</p>
               </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">Q. ${taskName} 상담 전 어떤 사진을 준비하면 좋나요?</div>
-              <div class="faq-a">
-                A. 수리가 필요한 현장 전체 전경 사진, 문제 오염이나 크랙/누수 균열, 배수관 막힘 등이 발생한 상세 부위 접사 사진, 그리고 고소 작업 필요 여부를 알 수 있는 건물 외부 층수 조감 사진을 찍어두고 상담 시 전송해 주시면 보다 빠른 가견적을 획득하시는 데 매우 유리합니다.
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${taskName} 상담 전 어떤 사진을 준비하면 좋나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 작업이 필요한 위치, 문제 부위, 주변 환경을 확인할 수 있는 사진을 준비하면 업체가 상황을 파악하는 데 도움이 됩니다.</p>
               </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">Q. 고층 건물이나 외부 작업도 상담이 가능한가요?</div>
-              <div class="faq-a">
-                A. 네, 가능합니다. 다만 층수 도달 난이도에 따른 고소 스카이차/로프 장비 탑승 필요성, 현장 주변 주정차 차량 대피 구역 등 접근 편의성에 따라 실제 시공 여부가 다르게 판독될 수 있으므로, 입점 파트너에게 무상 유선 상담을 시도하여 안전 규격을 반드시 사전 체크해 보셔야 합니다.
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${regionName} 내 동 단위 지역도 상담 가능한가요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 등록 업체의 광고 구좌와 상담 가능 지역에 따라 ${regionName} 내 하위 지역도 함께 상담 범위에 포함될 수 있습니다.</p>
               </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">Q. 업체 정보는 어떤 기준으로 표시되나요?</div>
-              <div class="faq-a">
-                A. 동네책자에는 광고/제휴 등록 절차를 정식 수동 승인 통과한 입점 업체 정보가 포함될 수 있습니다. 소비자와 입점 등록 업체 간에 발생하는 실질적인 모든 상담, 도급 계약 및 사후 무상 AS 보증 책임은 해당 입금 당사자 간에 직접 이루어지므로 투명한 비교 검토를 권장합니다.
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. 등록된 업체 정보는 어떻게 확인할 수 있나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 업체 카드에서 주요 작업, 상담 가능 지역, 전화 문의, 카카오 문의, 공식 홈페이지 정보를 확인할 수 있습니다.</p>
               </div>
-            </div>
-            <div class="faq-item">
-              <div class="faq-q">Q. 여러 업체를 비교해서 문의할 수 있나요?</div>
-              <div class="faq-a">
-                A. 그렇습니다. 본 페이지에 정렬되는 여러 등록 파트너들의 주 시공 카테고리, 포트폴리오 특징, 전화 상담 대응력 및 기재된 링크를 통해 신뢰도를 개별적으로 꼼꼼하게 대조해 본 뒤 원하는 곳들을 고르셔서 동시에 대안 견적을 비교 문의하실 수 있습니다.
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. 전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다.</p>
               </div>
-            </div>
+            </details>
           `;
         }
       }
-
-      document.querySelectorAll('#landing-faq-list .faq-q').forEach(question => {
-        question.addEventListener('click', () => {
-          const item = question.parentNode;
-          item.classList.toggle('active');
-        });
-      });
     }
 
     initLandingPage();
