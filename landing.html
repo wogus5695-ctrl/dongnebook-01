@@ -220,7 +220,13 @@
     let isValid = true;
     let fallbackMsg = "";
 
-    const currentRegion = regions.find(r => r.displayName === regParam || (regParam && regParam.includes(r.displayName)));
+    const exactRegion = regions.find(r => r.displayName === regParam || (r.fullName && r.fullName === regParam));
+    const fallbackRegion = !exactRegion
+      ? regions
+          .filter(r => regParam && regParam.includes(r.displayName))
+          .sort((a, b) => b.displayName.length - a.displayName.length)[0]
+      : null;
+    const currentRegion = exactRegion || fallbackRegion;
     const currentCat = activeCategories.find(c => c.id === catParam);
     const currentTask = tasks.find(t => t.id === taskParam);
 
@@ -366,7 +372,9 @@
 
       // 4. 업체 매칭 필터링 (adSlots 구좌 기반)
       const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
-      const targetReg = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || currentRegion;
+      const salesDistrict = currentRegion.level === "district"
+        ? currentRegion
+        : regions.find(r => r.id === currentRegion.parentId);
 
       const activeSlots = adSlots.filter(slot => {
         if (slot.status !== "active") return false;
@@ -384,11 +392,9 @@
           if (CURRENT_DATE > end) return false;
         }
 
-        // 지역 매칭 분기
-        if (targetReg.level === "district") {
-          return slot.purchaseRegionId === targetReg.id;
-        } else if (targetReg.level === "neighborhood") {
-          return slot.purchaseRegionId === targetReg.parentId;
+        // 지역 매칭 분기 (salesDistrict 구 단위 매칭)
+        if (salesDistrict) {
+          return slot.purchaseRegionId === salesDistrict.id;
         }
 
         return false;
@@ -478,8 +484,8 @@
         stickyApplyBtn.style.display = 'none';
 
         document.getElementById('fallback-nearby-btn').onclick = () => {
-          const nearbySlug = currentRegion.nearbyRegions[0] || regions[0].slug;
-          const targetReg = regions.find(r => r.slug === nearbySlug) || regions[0];
+          const nearbyId = (currentRegion.nearbyRegionIds && currentRegion.nearbyRegionIds[0]) || (salesDistrict && salesDistrict.nearbyRegionIds && salesDistrict.nearbyRegionIds[0]) || regions[0].id;
+          const targetReg = regions.find(r => r.id === nearbyId) || regions[0];
           window.location.href = `/landing.html?reg=${encodeURIComponent(targetReg.displayName)}&cat=${catParam}&task=${taskParam}`;
         };
       }
