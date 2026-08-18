@@ -212,31 +212,79 @@
     // 1. URL 쿼리 파라미터 획득
     const activeCategories = categories.filter(c => c.visible !== false);
     const urlParams = new URLSearchParams(window.location.search);
-    const regParam = urlParams.get('reg') || '서울 강남구';
-    const catParam = urlParams.get('cat') || activeCategories[0].id;
-    const taskParam = urlParams.get('task') || 'window-caulking-task';
+    const regParam = urlParams.get('reg');
+    const catParam = urlParams.get('cat');
+    const taskParam = urlParams.get('task');
 
-    const currentCat = activeCategories.find(c => c.id === catParam) || activeCategories[0];
-    const currentTask = tasks.find(t => t.id === taskParam) || tasks.find(t => t.categoryId === currentCat.id) || tasks[0];
-    const currentRegion = regions.find(r => r.displayName === regParam || regParam.includes(r.displayName)) || regions[0];
+    let isValid = true;
+    let fallbackMsg = "";
+
+    const currentRegion = regions.find(r => r.displayName === regParam || (regParam && regParam.includes(r.displayName)));
+    const currentCat = activeCategories.find(c => c.id === catParam);
+    const currentTask = tasks.find(t => t.id === taskParam);
+
+    if (!regParam || !catParam || !taskParam) {
+      isValid = false;
+      fallbackMsg = "동네책자 업체 찾기";
+    } else if (!currentRegion) {
+      isValid = false;
+      fallbackMsg = "유효하지 않은 지역입니다.";
+    } else if (!currentCat) {
+      isValid = false;
+      fallbackMsg = "유효하지 않은 업종입니다.";
+    } else if (!currentTask) {
+      isValid = false;
+      fallbackMsg = "유효하지 않은 작업명입니다.";
+    }
 
     // 2. 동적 콘텐츠 치환 및 SEO 주입
     function initLandingPage() {
-      const regionName = regParam;
-      const keywordRegionName = regionName.split(' ').pop();
-      const taskName = currentTask.name;
+      if (!isValid) {
+        // noindex 처리 및 에러 안내 화면 노출
+        updateSeoMeta({
+          title: fallbackMsg,
+          description: "요청하신 페이지 정보를 찾을 수 없습니다. 올바른 조건으로 다시 선택하여 접근해주시기 바랍니다.",
+          h1Text: fallbackMsg,
+          noindex: true
+        });
+        
+        document.getElementById('landing-h1').textContent = fallbackMsg;
+        document.getElementById('landing-subtitle').textContent = "올바른 URL 파라미터로 다시 접근해주시기 바랍니다.";
+        document.getElementById('landing-listings-grid').innerHTML = "";
+        document.getElementById('landing-fallback').style.display = 'block';
+        document.getElementById('landing-fallback').innerHTML = `
+          <div class="fallback-box" style="border: 2px dashed #c0392b; background-color: #fdf2f2; padding: 40px 20px; font-family: var(--font-family);">
+            <h3 style="color: #c0392b; font-size: 1.2rem; margin-bottom: 10px;">⚠️ ${fallbackMsg}</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">요청하신 카테고리, 지역 혹은 작업명이 존재하지 않거나 비활성화 상태입니다.</p>
+            <a href="/" class="btn btn-primary" style="margin-top: 16px; display: inline-block; text-decoration: none; font-size: 0.85rem; padding: 10px 20px;">메인페이지로 이동</a>
+          </div>
+        `;
+        const guideSection = document.getElementById('guide-info-section');
+        if (guideSection) guideSection.style.display = 'none';
+        const faqSection = document.getElementById('landing-faq-list');
+        if (faqSection) faqSection.parentNode.style.display = 'none';
+        const stickyBar = document.getElementById('landing-sticky-bar');
+        if (stickyBar) stickyBar.style.display = 'none';
+        return;
+      }
+
+      const regionName = currentRegion.displayName;
+      const keywordRegionName = currentRegion.keywordName || currentRegion.district || regionName.split(' ').pop();
+      const taskKeyword = currentTask.keyword || currentTask.name;
+      const taskDisplayName = currentTask.displayName || currentTask.name;
+      const taskName = taskDisplayName;
       const catName = currentCat.name;
 
-      // H1 구조 유지
-      document.getElementById('landing-h1').textContent = `${keywordRegionName} ${taskName} 업체 찾기`;
-      document.getElementById('landing-faq-title').textContent = `${keywordRegionName} ${taskName} 자주 묻는 질문 (FAQ)`;
+      // H1 구조 및 동적 키워드 동기화
+      document.getElementById('landing-h1').textContent = `${keywordRegionName} ${taskKeyword} 업체 찾기`;
+      document.getElementById('landing-faq-title').textContent = `${keywordRegionName} ${taskKeyword} 자주 묻는 질문 (FAQ)`;
 
       // 섹션명 변경
       document.getElementById('listings-main-title').textContent = `${keywordRegionName} 인근 상담 가능 업체`;
 
       // B2C 중립 정보 아코디언 헤더 및 텍스트 갱신 (details/summary 대응)
-      document.getElementById('info-section1-title').textContent = `${keywordRegionName} ${taskName}이 필요한 경우`;
-      document.getElementById('info-section3-desc').textContent = `${taskName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
+      document.getElementById('info-section1-title').textContent = `${keywordRegionName} ${taskDisplayName}이 필요한 경우`;
+      document.getElementById('info-section3-desc').textContent = `${taskDisplayName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
 
       // 작업명별 문맥 동적 적용
       let flowText = "";
@@ -249,59 +297,44 @@
       } else if (catParam === 'waterproof-leak') {
         flowText = `옥상, 외벽, 베란다 누수는 균열 위치, 방수층 상태, 빗물 유입 경로에 따라 점검 방식이 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현장 조건에 맞는 상담을 받아보는 것이 좋습니다.`;
       } else {
-        flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskName}이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
+        flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskDisplayName}이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
       }
       document.getElementById('info-section1-desc').textContent = flowText;
 
       // 소형 B2B 띠 배너 제목 동적 치환
-      document.getElementById('mini-ad-title').textContent = `이 지역에서 ${taskName} 업체를 운영 중이신가요?`;
+      document.getElementById('mini-ad-title').textContent = `이 지역에서 ${taskDisplayName} 업체를 운영 중이신가요?`;
       document.getElementById('mini-ad-apply-link').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
 
       // H1 바로 아래 소비자 중심 맞춤형 보조 문구
-      let helperSubtitle = "";
-      if (catParam === 'general-cleaning') {
-        helperSubtitle = `건물 외부 유리, 상가 유리, 고층 창문 청소가 필요하다면 ${keywordRegionName} 인근 상담 가능 업체를 확인해보세요.`;
-      } else if (catParam === 'window-caulking') {
-        helperSubtitle = `비 오는 날 창틀 주변으로 물이 스며든다면 ${keywordRegionName} 인근 창틀누수 상담 가능 업체를 확인해보세요.`;
-      } else if (catParam === 'drain-clog') {
-        helperSubtitle = `싱크대, 변기, 배수구 막힘이 발생했다면 ${keywordRegionName} 인근 하수구막힘 상담 가능 업체를 확인해보세요.`;
-      } else if (catParam === 'waterproof-leak') {
-        helperSubtitle = `옥상 누수나 방수층 손상이 의심된다면 ${keywordRegionName} 인근 방수 상담 가능 업체를 확인해보세요.`;
-      } else {
-        helperSubtitle = `${keywordRegionName} 인근에서 ${taskName} 상담 가능한 업체 정보를 확인해보세요.`;
-      }
-      document.getElementById('landing-subtitle').textContent = helperSubtitle;
+      document.getElementById('landing-subtitle').textContent = `${keywordRegionName}에서 ${taskDisplayName} 상담 가능한 업체 정보를 확인해보세요.`;
 
       // 브레드크럼
       document.getElementById('bread-region').textContent = keywordRegionName;
       document.getElementById('bread-category').textContent = catName;
-      document.getElementById('bread-task').textContent = taskName;
-
-      // 브레드크럼
-      document.getElementById('bread-region').textContent = keywordRegionName;
-      document.getElementById('bread-category').textContent = catName;
-      document.getElementById('bread-task').textContent = taskName;
-
-      // SEO 최적화 적용
-      updateSeoMeta({
-        title: `${keywordRegionName} ${taskName} 업체 찾기 | 동네책자`,
-        description: `${keywordRegionName}에서 ${taskName} 상담 가능한 업체 정보를 확인하고, 지역 키워드 광고 입점도 신청할 수 있습니다.`
-      });
+      document.getElementById('bread-task').textContent = taskDisplayName;
 
       // Canonical 및 Open Graph 설정
       const pageUrl = `https://dongnebook-01.vercel.app/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
       
-      let canonLink = document.querySelector("link[rel='canonical']");
-      if (!canonLink) {
-        canonLink = document.createElement('link');
-        canonLink.rel = 'canonical';
-        document.head.appendChild(canonLink);
-      }
-      canonLink.href = pageUrl;
+      const ogImages = {
+        "elastic-coating": "/assets/thumbs/neocoat.jpg",
+        "window-caulking": "/assets/thumbs/rainguard.jpg",
+        "waterproof-leak": "/assets/thumbs/rainguard.jpg"
+      };
+      const catOgImage = ogImages[catParam] || "/assets/thumbs/elastic-coating-bareumspace.jpg";
 
-      // Open Graph 주입
-      document.querySelector("meta[property='og:title']").setAttribute('content', `${keywordRegionName} ${taskName} 업체 찾기 | 동네책자`);
-      document.querySelector("meta[property='og:description']").setAttribute('content', `${keywordRegionName}에서 ${taskName} 해결을 위해 입점된 전문 광고 업체의 전화/카톡 정보를 바로 안내받으세요.`);
+      // SEO 및 OG 메타 동적 갱신 주입
+      updateSeoMeta({
+        title: `${keywordRegionName} ${taskKeyword} 업체 찾기 | 동네책자`,
+        description: `${keywordRegionName}에서 ${taskKeyword} 상담 가능한 업체를 확인하고 전화·카카오톡으로 문의하세요.`,
+        h1Text: `${keywordRegionName} ${taskKeyword} 업체 찾기`,
+        canonical: pageUrl,
+        ogTitle: `${keywordRegionName} ${taskKeyword} 업체 찾기 | 동네책자`,
+        ogDescription: `${keywordRegionName}에서 ${taskKeyword} 상담 가능한 업체를 확인하고 전화·카카오톡으로 문의하세요.`,
+        ogUrl: pageUrl,
+        ogImage: catOgImage,
+        noindex: false
+      });
 
       // CTA 링크 정보 수정
       const convertBtn = document.getElementById('convert-apply-btn');
