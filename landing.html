@@ -493,7 +493,7 @@
             badgeText: biz.badge,
             thumbnail: biz.image
           };
-          return CompanyCard(listObj, { regionName, taskName });
+          return CompanyCard(listObj, { regionName: keywordRegionName, taskName: taskKeyword });
         }).join('');
 
         const primaryPhone = matched[0].phone;
@@ -580,7 +580,7 @@
 
       const tasksWrapper = document.getElementById('related-tasks-wrapper');
       if (tasksWrapper) {
-        const related = tasks.filter(t => t.categoryId === catParam && t.id !== taskParam && t.visible !== false).slice(0, 8);
+        const related = tasks.filter(t => t.categoryIds.includes(catParam) && t.id !== taskParam && t.visible !== false).slice(0, 8);
         const relatedHeader = tasksWrapper.previousElementSibling;
 
         if (related.length === 0) {
