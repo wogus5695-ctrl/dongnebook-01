@@ -481,28 +481,81 @@
       // 5. 관련 지역 및 관련 작업 내부 링크 동적 빌딩
       const nearbyWrapper = document.getElementById('nearby-links-wrapper');
       if (nearbyWrapper) {
-        nearbyWrapper.innerHTML = currentRegion.nearbyRegions.map(regSlug => {
-          const foundR = regions.find(r => r.slug === regSlug);
-          let labelText = regSlug;
-          if (foundR) {
-            labelText = foundR.district || foundR.city || foundR.displayName;
-          }
+        let nearbyList = [];
+
+        // 구 단위 또는 동 단위에 따른 하위 동/형제 동 추출
+        if (currentRegion.level === "district") {
+          // 1) 해당 구의 하위 동 5~8개 수집
+          const childNeighborhoods = regions.filter(r => r.parentId === currentRegion.id && r.level === "neighborhood" && r.visible !== false);
+          nearbyList.push(...childNeighborhoods.slice(0, 8));
+
+          // 2) 인접 구 또는 같은 시/도의 다른 구 2~4개 수집
+          const nearbyDistricts = regions.filter(r => 
+            r.level === "district" && 
+            r.id !== currentRegion.id && 
+            r.visible !== false &&
+            (currentRegion.nearbyRegionIds ? currentRegion.nearbyRegionIds.includes(r.id) : r.province === currentRegion.province)
+          );
+          nearbyList.push(...nearbyDistricts.slice(0, 4));
+        } else if (currentRegion.level === "neighborhood") {
+          // 1) 형제 동(같은 구 내 다른 동) 5~8개 수집
+          const siblingNeighborhoods = regions.filter(r => r.parentId === currentRegion.parentId && r.id !== currentRegion.id && r.level === "neighborhood" && r.visible !== false);
+          nearbyList.push(...siblingNeighborhoods.slice(0, 8));
+
+          // 2) 다른 인접 구 2~4개 수집
+          const parentDistrict = regions.find(r => r.id === currentRegion.parentId);
+          const nearbyDistricts = regions.filter(r => 
+            r.level === "district" && 
+            r.visible !== false &&
+            (parentDistrict && parentDistrict.nearbyRegionIds ? parentDistrict.nearbyRegionIds.includes(r.id) : r.province === currentRegion.province)
+          );
+          nearbyList.push(...nearbyDistricts.slice(0, 4));
+        }
+
+        // 자기 자신 및 중복 제거
+        nearbyList = nearbyList.filter((regObj, index, self) => 
+          regObj.displayName !== regionName &&
+          self.findIndex(r => r.id === regObj.id) === index
+        );
+
+        // 빈 상태 방지: 만약 수집된 지역이 3개 미만이면 상위 지역의 다른 구/동 추가
+        if (nearbyList.length < 3) {
+          const fallbackRegions = regions.filter(r => r.id !== currentRegion.id && r.visible !== false && r.province === currentRegion.province);
+          nearbyList.push(...fallbackRegions.slice(0, 8));
+        }
+
+        // 최종 렌더링
+        nearbyWrapper.innerHTML = nearbyList.map(regObj => {
+          const regKeyword = regObj.keywordName || regObj.neighborhood || regObj.district || regObj.displayName.split(' ').pop();
           return `
-            <a href="/landing.html?reg=${encodeURIComponent(foundR ? foundR.displayName : regSlug)}&cat=${catParam}&task=${taskParam}" class="region-bubble">
-              ${labelText} ${taskName}
+            <a href="/landing.html?reg=${encodeURIComponent(regObj.displayName)}&cat=${catParam}&task=${taskParam}" class="region-bubble">
+              ${regKeyword} ${taskKeyword}
             </a>
           `;
-        }).slice(0, 6).join('');
+        }).join('');
       }
 
       const tasksWrapper = document.getElementById('related-tasks-wrapper');
       if (tasksWrapper) {
-        const related = tasks.filter(t => t.categoryId === catParam && t.id !== taskParam).slice(0, 4);
-        tasksWrapper.innerHTML = related.map(t => `
-          <a href="/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${t.id}" class="region-bubble" style="border-color: var(--primary);">
-            ${regionName} ${t.name}
-          </a>
-        `).join('');
+        const related = tasks.filter(t => t.categoryId === catParam && t.id !== taskParam && t.visible !== false).slice(0, 8);
+        const relatedHeader = tasksWrapper.previousElementSibling;
+
+        if (related.length === 0) {
+          tasksWrapper.style.display = 'none';
+          if (relatedHeader) relatedHeader.style.display = 'none';
+        } else {
+          tasksWrapper.style.display = 'flex';
+          if (relatedHeader) relatedHeader.style.display = 'block';
+
+          tasksWrapper.innerHTML = related.map(t => {
+            const tKeyword = t.keyword || t.name;
+            return `
+              <a href="/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${t.id}" class="region-bubble" style="border-color: var(--primary);">
+                ${keywordRegionName} ${tKeyword}
+              </a>
+            `;
+          }).join('');
+        }
       }
 
       // 6. FAQ 생성
