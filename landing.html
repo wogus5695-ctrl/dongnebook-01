@@ -224,6 +224,8 @@
     const currentCat = activeCategories.find(c => c.id === catParam);
     const currentTask = tasks.find(t => t.id === taskParam);
 
+    const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
+
     if (!regParam || !catParam || !taskParam) {
       isValid = false;
       fallbackMsg = "동네책자 업체 찾기";
@@ -233,6 +235,9 @@
     } else if (!currentCat) {
       isValid = false;
       fallbackMsg = "유효하지 않은 업종입니다.";
+    } else if (!OPERATED_CATEGORIES.includes(catParam)) {
+      isValid = false;
+      fallbackMsg = "운영 제외 업종입니다.";
     } else if (!currentTask) {
       isValid = false;
       fallbackMsg = "유효하지 않은 작업명입니다.";

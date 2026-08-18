@@ -35,12 +35,18 @@ function generateSitemap() {
 
   // (카테고리 허브 페이지들은 준비 중이므로 sitemap에서 전면 배제합니다)
 
+  const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
+
   // 4. 활성 광고 매칭 롱테일 랜딩 페이지들 (adSlots 기준 매칭)
   const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
   regions.forEach(region => {
+    if (region.visible === false) return;
+
     tasks.forEach(task => {
+      if (task.visible === false || task.sitemapInclude === false) return;
+
       const category = activeCategories.find(c => task.categoryIds.includes(c.id));
-      if (!category || !task.visible) return;
+      if (!category || !OPERATED_CATEGORIES.includes(category.id) || category.sitemapInclude === false) return;
 
       // 해당 지역, 카테고리, 작업에 할당된 active 광고 구좌(adSlot)가 있는지 확인
       const hasActiveListing = adSlots.some(slot => {
