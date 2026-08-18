@@ -205,6 +205,7 @@
     import { adSlots } from '/src/data/adSlots.js';
     import { CompanyCard } from '/src/components/CompanyCard.js';
     import { updateSeoMeta } from '/src/components/SeoMeta.js';
+    import { resolveSeoTemplate } from '/src/data/seoTemplates.js';
 
     renderHeader();
     renderFooter();
@@ -275,6 +276,9 @@
       const taskName = taskDisplayName;
       const catName = currentCat.name;
 
+      // 업종별 SEO 템플릿 로드 및 매칭 치환
+      const seoData = resolveSeoTemplate(catParam, keywordRegionName, taskDisplayName);
+
       // H1 구조 및 동적 키워드 동기화
       document.getElementById('landing-h1').textContent = `${keywordRegionName} ${taskKeyword} 업체 찾기`;
       document.getElementById('landing-faq-title').textContent = `${keywordRegionName} ${taskKeyword} 자주 묻는 질문 (FAQ)`;
@@ -282,31 +286,40 @@
       // 섹션명 변경
       document.getElementById('listings-main-title').textContent = `${keywordRegionName} 인근 상담 가능 업체`;
 
-      // B2C 중립 정보 아코디언 헤더 및 텍스트 갱신 (details/summary 대응)
-      document.getElementById('info-section1-title').textContent = `${keywordRegionName} ${taskDisplayName}이 필요한 경우`;
-      document.getElementById('info-section3-desc').textContent = `${taskDisplayName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
+      // 가이드 메인 타이틀 변경
+      document.getElementById('guide-info-main-title').textContent = `${keywordRegionName} ${taskDisplayName} 상담 전 참고 정보`;
 
-      // 작업명별 문맥 동적 적용
-      let flowText = "";
-      if (catParam === 'general-cleaning') {
-        flowText = `상가 전면 유리, 사무실 창문, 건물 외부 유리는 먼지, 빗물 자국, 배기가스 오염이 쌓이면 내부 청결감과 매장 인상에 영향을 줄 수 있습니다. ${keywordRegionName}처럼 상가와 업무시설이 많은 지역에서는 정기적인 유리창청소 문의가 발생할 수 있습니다.`;
-      } else if (catParam === 'window-caulking') {
-        flowText = `비가 온 뒤 창틀 주변 벽지, 몰딩, 바닥 쪽으로 물이 스며든다면 창틀 실리콘 노후화, 외벽 균열, 샷시 주변 틈새 등을 함께 확인해야 할 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현장 사진 기반 상담을 받아볼 수 있습니다.`;
-      } else if (catParam === 'drain-clog') {
-        flowText = `싱크대, 변기, 배수구 막힘은 사용 환경, 배관 구조, 이물질 유입 여부에 따라 원인이 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체에 증상과 사진을 전달하면 상담이 더 빠르게 진행될 수 있습니다.`;
-      } else if (catParam === 'waterproof-leak') {
-        flowText = `옥상, 외벽, 베란다 누수는 균열 위치, 방수층 상태, 빗물 유입 경로에 따라 점검 방식이 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현장 조건에 맞는 상담을 받아보는 것이 좋습니다.`;
+      // B2C 중립 정보 아코디언 헤더 및 텍스트 갱신 (details/summary 대응)
+      const accordionContainer = document.querySelector('.guide-accordion-container');
+      if (accordionContainer && seoData) {
+        accordionContainer.innerHTML = seoData.infoSections.map(sec => `
+          <details class="guide-accordion" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 12px;">
+            <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.9rem;">${sec.title}</summary>
+            <div class="guide-content" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+              <p>${sec.desc}</p>
+            </div>
+          </details>
+        `).join('');
       } else {
-        flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskDisplayName}이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
+        document.getElementById('info-section1-title').textContent = `${keywordRegionName} ${taskDisplayName}이 필요한 경우`;
+        document.getElementById('info-section3-desc').textContent = `${taskDisplayName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
+
+        // 작업명별 문맥 동적 적용
+        let flowText = "";
+        if (catParam === 'general-cleaning') {
+          flowText = `상가 전면 유리, 사무실 창문, 건물 외부 유리는 먼지, 빗물 자국, 배기가스 오염이 쌓이면 내부 청결감과 매장 인상에 영향을 줄 수 있습니다. ${keywordRegionName}처럼 상가와 업무시설이 많은 지역에서는 정기적인 유리창청소 문의가 발생할 수 있습니다.`;
+        } else {
+          flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskDisplayName}이 필요한 상황은 현장 구조와 오염도, 누수 범위, 막힘 원인에 따라 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
+        }
+        document.getElementById('info-section1-desc').textContent = flowText;
       }
-      document.getElementById('info-section1-desc').textContent = flowText;
 
       // 소형 B2B 띠 배너 제목 동적 치환
       document.getElementById('mini-ad-title').textContent = `이 지역에서 ${taskDisplayName} 업체를 운영 중이신가요?`;
       document.getElementById('mini-ad-apply-link').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
 
       // H1 바로 아래 소비자 중심 맞춤형 보조 문구
-      document.getElementById('landing-subtitle').textContent = `${keywordRegionName}에서 ${taskDisplayName} 상담 가능한 업체 정보를 확인해보세요.`;
+      document.getElementById('landing-subtitle').textContent = seoData ? seoData.heroDescription : `${keywordRegionName}에서 ${taskDisplayName} 상담 가능한 업체 정보를 확인해보세요.`;
 
       // 브레드크럼
       document.getElementById('bread-region').textContent = keywordRegionName;
@@ -495,38 +508,47 @@
       // 6. FAQ 생성
       const faqList = document.getElementById('landing-faq-list');
       if (faqList) {
-        faqList.innerHTML = `
-          <div class="faq-item">
-            <div class="faq-q">Q. ${regionName}에서 ${taskName} 상담은 어떻게 진행되나요?</div>
-            <div class="faq-a">
-              A. 이 페이지에 등록된 상담 가능 업체의 상세 카드 영역에 기재된 직접 전화 통화, 카카오톡 채널 상담 및 제공되는 개별 홈페이지 링크를 클릭하여 부담 없이 직거래로 문의하실 수 있습니다. 상세 공사 환경이나 문제 상태를 사전 구두 전달하시면 사장님들과의 실시간 상담 진행이 원활해집니다.
+        if (seoData) {
+          faqList.innerHTML = seoData.faq.map(f => `
+            <div class="faq-item">
+              <div class="faq-q">Q. ${f.q}</div>
+              <div class="faq-a">A. ${f.a}</div>
             </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Q. ${taskName} 상담 전 어떤 사진을 준비하면 좋나요?</div>
-            <div class="faq-a">
-              A. 수리가 필요한 현장 전체 전경 사진, 문제 오염이나 크랙/누수 균열, 배수관 막힘 등이 발생한 상세 부위 접사 사진, 그리고 고소 작업 필요 여부를 알 수 있는 건물 외부 층수 조감 사진을 찍어두고 상담 시 전송해 주시면 보다 빠른 가견적을 획득하시는 데 매우 유리합니다.
+          `).join('');
+        } else {
+          faqList.innerHTML = `
+            <div class="faq-item">
+              <div class="faq-q">Q. ${regionName}에서 ${taskName} 상담은 어떻게 진행되나요?</div>
+              <div class="faq-a">
+                A. 이 페이지에 등록된 상담 가능 업체의 상세 카드 영역에 기재된 직접 전화 통화, 카카오톡 채널 상담 및 제공되는 개별 홈페이지 링크를 클릭하여 부담 없이 직거래로 문의하실 수 있습니다. 상세 공사 환경이나 문제 상태를 사전 구두 전달하시면 사장님들과의 실시간 상담 진행이 원활해집니다.
+              </div>
             </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Q. 고층 건물이나 외부 작업도 상담이 가능한가요?</div>
-            <div class="faq-a">
-              A. 네, 가능합니다. 다만 층수 도달 난이도에 따른 고소 스카이차/로프 장비 탑승 필요성, 현장 주변 주정차 차량 대피 구역 등 접근 편의성에 따라 실제 시공 여부가 다르게 판독될 수 있으므로, 입점 파트너에게 무상 유선 상담을 시도하여 안전 규격을 반드시 사전 체크해 보셔야 합니다.
+            <div class="faq-item">
+              <div class="faq-q">Q. ${taskName} 상담 전 어떤 사진을 준비하면 좋나요?</div>
+              <div class="faq-a">
+                A. 수리가 필요한 현장 전체 전경 사진, 문제 오염이나 크랙/누수 균열, 배수관 막힘 등이 발생한 상세 부위 접사 사진, 그리고 고소 작업 필요 여부를 알 수 있는 건물 외부 층수 조감 사진을 찍어두고 상담 시 전송해 주시면 보다 빠른 가견적을 획득하시는 데 매우 유리합니다.
+              </div>
             </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Q. 업체 정보는 어떤 기준으로 표시되나요?</div>
-            <div class="faq-a">
-              A. 동네책자에는 광고/제휴 등록 절차를 정식 수동 승인 통과한 입점 업체 정보가 포함될 수 있습니다. 소비자와 입점 등록 업체 간에 발생하는 실질적인 모든 상담, 도급 계약 및 사후 무상 AS 보증 책임은 해당 입금 당사자 간에 직접 이루어지므로 투명한 비교 검토를 권장합니다.
+            <div class="faq-item">
+              <div class="faq-q">Q. 고층 건물이나 외부 작업도 상담이 가능한가요?</div>
+              <div class="faq-a">
+                A. 네, 가능합니다. 다만 층수 도달 난이도에 따른 고소 스카이차/로프 장비 탑승 필요성, 현장 주변 주정차 차량 대피 구역 등 접근 편의성에 따라 실제 시공 여부가 다르게 판독될 수 있으므로, 입점 파트너에게 무상 유선 상담을 시도하여 안전 규격을 반드시 사전 체크해 보셔야 합니다.
+              </div>
             </div>
-          </div>
-          <div class="faq-item">
-            <div class="faq-q">Q. 여러 업체를 비교해서 문의할 수 있나요?</div>
-            <div class="faq-a">
-              A. 그렇습니다. 본 페이지에 정렬되는 여러 등록 파트너들의 주 시공 카테고리, 포트폴리오 특징, 전화 상담 대응력 및 기재된 링크를 통해 신뢰도를 개별적으로 꼼꼼하게 대조해 본 뒤 원하는 곳들을 고르셔서 동시에 대안 견적을 비교 문의하실 수 있습니다.
+            <div class="faq-item">
+              <div class="faq-q">Q. 업체 정보는 어떤 기준으로 표시되나요?</div>
+              <div class="faq-a">
+                A. 동네책자에는 광고/제휴 등록 절차를 정식 수동 승인 통과한 입점 업체 정보가 포함될 수 있습니다. 소비자와 입점 등록 업체 간에 발생하는 실질적인 모든 상담, 도급 계약 및 사후 무상 AS 보증 책임은 해당 입금 당사자 간에 직접 이루어지므로 투명한 비교 검토를 권장합니다.
+              </div>
             </div>
-          </div>
-        `;
+            <div class="faq-item">
+              <div class="faq-q">Q. 여러 업체를 비교해서 문의할 수 있나요?</div>
+              <div class="faq-a">
+                A. 그렇습니다. 본 페이지에 정렬되는 여러 등록 파트너들의 주 시공 카테고리, 포트폴리오 특징, 전화 상담 대응력 및 기재된 링크를 통해 신뢰도를 개별적으로 꼼꼼하게 대조해 본 뒤 원하는 곳들을 고르셔서 동시에 대안 견적을 비교 문의하실 수 있습니다.
+              </div>
+            </div>
+          `;
+        }
       }
 
       document.querySelectorAll('#landing-faq-list .faq-q').forEach(question => {
