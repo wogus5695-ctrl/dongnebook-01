@@ -195,7 +195,31 @@ export default function handler(req, res) {
     }
     </script>
   `;
-  html = html.replace('</head>', `${ogMetaTags}\n</head>`);
+  
+  let faqSchema = '';
+  if (seoData && seoData.faq && seoData.faq.length > 0) {
+    faqSchema = `
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        ${seoData.faq.map(f => `
+        {
+          "@type": "Question",
+          "name": "${f.q.replace(/"/g, '\\"')}",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "${f.a.replace(/"/g, '\\"')}"
+          }
+        }`).join(',')}
+      ]
+    }
+    </script>
+    `;
+  }
+
+  html = html.replace('</head>', `${ogMetaTags}\n${faqSchema}\n</head>`);
 
   // 3. 브레드크럼 치환
   html = html.replace('<span id="bread-region">서울</span>', `<span id="bread-region">${keywordRegionName}</span>`);
