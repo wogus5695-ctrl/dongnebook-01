@@ -31,7 +31,7 @@ export function CompanyCard(listing, context = {}) {
     <article class="company-card ${listing.isAd ? 'is-ad' : ''}" id="company-card-${listing.id}" style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
       
       <!-- 1. 대표 이미지 영역 ( object-fit: cover 적용 및 고정 비율 ) -->
-      <div class="card-thumb-wrapper" style="width: 100%; height: 160px; overflow: hidden; position: relative;">
+      <div class="card-thumb-wrapper" style="width: 100%; overflow: hidden; position: relative;">
         <img src="${cardImage}" alt="${imageAlt}" class="card-thumb" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
 

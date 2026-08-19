@@ -114,6 +114,15 @@
   transition: transform var(--transition-smooth), border-color var(--transition-smooth);
 }
 
+.card-thumb-wrapper {
+  height: 180px; /* Mobile */
+}
+@media (min-width: 768px) {
+  .card-thumb-wrapper {
+    height: 200px; /* PC */
+  }
+}
+
 .company-card.is-ad {
   border-color: var(--ad-card-border);
   background-color: hsl(35, 100%, 99%);
