@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { categories } from '../../data/categories.js';
+import { categories, OPERATED_CATEGORIES } from '../../data/categories.js';
 import { tasks } from '../../data/tasks.js';
 import { regions } from '../../data/regions.js';
 import { businesses } from '../../data/businesses.js';
@@ -35,7 +35,6 @@ function generateSitemap() {
   });
 
   // 3. 업종별 공개 HTML 허브 페이지 추가
-  const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
   OPERATED_CATEGORIES.forEach(catId => {
     urls.push({
       loc: `/hub.html?cat=${catId}`,

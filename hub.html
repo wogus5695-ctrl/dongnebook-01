@@ -80,7 +80,7 @@
   <script type="module">
     import { renderHeader } from '/src/components/Header.js';
     import { renderFooter } from '/src/components/Footer.js';
-    import { categories } from '/src/data/categories.js';
+    import { categories, OPERATED_CATEGORIES } from '/src/data/categories.js';
     import { tasks } from '/src/data/tasks.js';
     import { regions } from '/src/data/regions.js';
     import { businesses } from '/src/data/businesses.js';
@@ -96,7 +96,6 @@
     const urlParams = new URLSearchParams(window.location.search);
     let activeCatId = urlParams.get('cat') || activeCategories[0].id;
 
-    const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
 
     // 만약 admin=true 인 경우 즉시 관리자 지면으로 우회 분기
     if (urlParams.get('admin') === 'true') {

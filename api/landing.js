@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { categories } from '../src/data/categories.js';
+import { categories, OPERATED_CATEGORIES } from '../src/data/categories.js';
 import { tasks } from '../src/data/tasks.js';
 import { regions } from '../src/data/regions.js';
 import { businesses } from '../src/data/businesses.js';
@@ -52,7 +52,6 @@ export default function handler(req, res) {
   const currentRegion = exactRegion || neighborhoodRegion || districtRegion;
   const currentCat = activeCategories.find(c => c.id === catParam);
   const currentTask = tasks.find(t => t.id === taskParam);
-  const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
   const taskBelongsToCat = currentTask && currentTask.categoryIds.includes(catParam);
 
   // 1. 유효하지 않은 조합 시 Soft-404 방지를 위해 HTTP 404 반환
