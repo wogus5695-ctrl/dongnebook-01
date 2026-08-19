@@ -91,7 +91,7 @@ export default function handler(req, res) {
   const catName = currentCat.name;
 
   // SEO 템플릿 처리
-  const seoData = resolveSeoTemplate(catParam, keywordRegionName, taskDisplayName);
+  const seoData = resolveSeoTemplate(catParam, keywordRegionName, taskDisplayName, taskParam);
 
   // 4. 업체 리스트업 섹션 매칭 및 렌더링
   const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");

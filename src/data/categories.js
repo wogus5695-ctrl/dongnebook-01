@@ -84,7 +84,36 @@ export const categories = [
           q: "전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?",
           a: "업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다."
         }
-      ]
+      ],
+      tasks: {
+        "rain-leak": {
+          heroDescription: "{region}에서 외벽 균열이나 옥상 크랙으로 인한 빗물 누수가 의심된다면 전문 {task} 업체를 통해 상담을 받아보세요.",
+          infoSections: [
+            {
+              title: "{region} {task}의 대표 증상 및 원인",
+              desc: "비가 올 때 천장 벽면 물자국, 벽지 습기 및 미세 누수 증상이 나타나며 외벽 마감 균열 또는 방수층 노후가 원인입니다."
+            },
+            {
+              title: "상담 전 확인사항",
+              desc: "누수가 시작되는 시점, 옥상이나 외벽 등의 의심 위치, 현장 사진을 미리 정리해 주시는 것이 좋습니다."
+            },
+            {
+              title: "작업 방식 및 비용 결정 요인",
+              desc: "외벽 로프 시공, 크랙 보수, 부분/전체 우레탄 방수 도포 등의 공정이 필요하며 장비 접근성에 따라 비용이 결정됩니다."
+            }
+          ],
+          faq: [
+            {
+              q: "{region}에서 {task} 상담 시 현장 방문이 필수인가요?",
+              a: "정확한 빗물 침투 경로 파악을 위해 육안 정밀 검사 및 장비 계측이 수반되는 현장 실사가 적극 권장됩니다."
+            },
+            {
+              q: "빗물누수 공사 후 하자 보증 기간은 보통 어떻게 되나요?",
+              a: "업체 시공 스펙에 따라 상이하나, 통상적으로 옥상 우레탄 및 외벽 크랙 보수 후 1년에서 3년의 무상 하자 보수 보증이 제공됩니다."
+            }
+          ]
+        }
+      }
     }
   },
   {
@@ -148,7 +177,36 @@ export const categories = [
           q: "전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?",
           a: "업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다."
         }
-      ]
+      ],
+      tasks: {
+        "window-leak": {
+          heroDescription: "{region}에서 비 오는 날 창틀 주변으로 물이 스며들거나 실리콘 노후가 의심된다면 {task} 상담 가능 업체를 확인해보세요.",
+          infoSections: [
+            {
+              title: "{region} {task}의 대표 증상 및 원인",
+              desc: "비가 올 때 창틀 주변의 물 유입, 모서리 물 맺힘, 벽지 변색 등이 발생한다면 노후 실리콘 들뜸이나 옹벽 균열이 원인일 수 있습니다."
+            },
+            {
+              title: "상담 전 확인사항",
+              desc: "누수 위치, 빗물 유입 시점, 건물 층수와 창틀 외부 상태를 확인하고 사진을 준비해 주시면 보다 정확한 견적 산출이 가능합니다."
+            },
+            {
+              title: "일반적인 작업 방식 및 유의점",
+              desc: "기존 삭은 실리콘을 완전히 칼로 긁어낸 뒤, 외부 전용 프라이머 도포 후 우레탄 실란트를 도포하는 정석 시공이 필수적입니다."
+            }
+          ],
+          faq: [
+            {
+              q: "창틀 실리콘 덧방 시공도 효과가 있나요?",
+              a: "덧방은 갈라진 기존 틈새로 빗물이 재유입되므로 하자가 재발하기 쉽습니다. 반드시 기존 노후 코킹을 완전히 긁어낸 후 새로 도포하는 전체 제거 시공을 권장합니다."
+            },
+            {
+              q: "창틀 코킹 시공 시 외벽 로프 작업이 안전한가요?",
+              a: "네, 숙련된 고소 로프 전문가가 작업 안전 장치를 확보하고 외벽 샷시 바깥 라인까지 꼼꼼히 실링 처리하므로 안전하고 하자 없는 시공을 약속합니다."
+            }
+          ]
+        }
+      }
     }
   },
   {
@@ -236,7 +294,36 @@ export const categories = [
           q: "전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?",
           a: "업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다."
         }
-      ]
+      ],
+      tasks: {
+        "elastic-coating-work": {
+          heroDescription: "{region}에서 베란다 결로 및 곰팡이 방지를 위한 {task}을 계획 중이시라면 상담 가능 업체를 확인해보세요.",
+          infoSections: [
+            {
+              title: "{region} {task}의 대표 증상 및 필요성",
+              desc: "결로로 인한 페인트 들뜸, 다용도실 벽면 곰팡이 방지를 위해 친환경 친수성 세라믹 도료 시공이 효과적입니다."
+            },
+            {
+              title: "상담 전 확인사항",
+              desc: "베란다 및 세탁실 내 곰팡이 오염 면적, 벽면의 기존 페인트 박리 상태 사진을 전송해주시면 정밀 상담이 가능합니다."
+            },
+            {
+              title: "일반적인 작업 방식 및 유의점",
+              desc: "곰팡이 항균 하도 처리, 균열 퍼티 보수, 보양 작업 후 전용 에어리스건 스프레이 도포 및 충분한 건조가 필수적입니다."
+            }
+          ],
+          faq: [
+            {
+              q: "탄성코트 시공 시 곰팡이가 완전히 방지되나요?",
+              a: "규조토 성분의 단열 페인트 및 바이오 세라믹 코팅은 습기를 흡수 배출하므로 곰팡이 억제력이 반영구적이나, 주기적인 환기와 내부 결로 원인 조치가 병행되어야 완벽하게 예방됩니다."
+            },
+            {
+              q: "시공 후 생활은 언제부터 가능한가요?",
+              a: "보통 스프레이 분사 도포 후 24시간에서 48시간의 고온 건조가 필요합니다. 건조 중에는 베란다 물청소를 금하며 충분한 송풍 환기를 권장합니다."
+            }
+          ]
+        }
+      }
     }
   }
 ];
@@ -247,15 +334,25 @@ export const OPERATED_CATEGORIES = categories.filter(c => c.landingEnabled && c.
 /**
  * SEO 설명문 및 FAQ 플레이스홀더 치환 헬퍼
  */
-export function resolveSeoTemplate(catId, region, task) {
+export function resolveSeoTemplate(catId, region, taskName, taskId) {
   const cat = categories.find(c => c.id === catId);
-  const tpl = cat ? cat.seoTemplate : null;
+  if (!cat) return null;
+
+  // 1. 특정 태스크 맞춤 템플릿이 있는 경우 우선 탐색
+  let tpl = null;
+  if (cat.seoTemplate) {
+    if (taskId && cat.seoTemplate.tasks && cat.seoTemplate.tasks[taskId]) {
+      tpl = cat.seoTemplate.tasks[taskId];
+    } else {
+      tpl = cat.seoTemplate;
+    }
+  }
   if (!tpl) return null;
 
   const replacePlaceholders = (str) => {
     return str
       .replace(/{region}/g, region)
-      .replace(/{task}/g, task)
+      .replace(/{task}/g, taskName)
       .replace(/{category}/g, catId);
   };
 
