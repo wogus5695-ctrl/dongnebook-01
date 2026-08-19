@@ -7,6 +7,7 @@ import { businesses } from '../src/data/businesses.js';
 import { adSlots } from '../src/data/adSlots.js';
 import { CompanyCard } from '../src/components/CompanyCard.js';
 import { resolveSeoTemplate } from '../src/data/seoTemplates.js';
+import { buildLandingUrl } from '../src/utils/urlHelper.js';
 
 const normalize = (str) => {
   if (!str) return "";
@@ -97,7 +98,7 @@ export default function handler(req, res) {
   let html = fs.readFileSync(templatePath, 'utf8');
 
   // 2. SEO 메타 및 OG 태그 인젝션
-  const pageUrl = `https://dongnebook-01.vercel.app/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+  const pageUrl = "https://dongnebook-01.vercel.app" + buildLandingUrl(regionName, catParam, taskParam);
   const ogImages = {
     "elastic-coating": "/assets/thumbs/neocoat.jpg",
     "window-caulking": "/assets/thumbs/rainguard.jpg",
@@ -302,7 +303,7 @@ export default function handler(req, res) {
   const nearbyHTML = nearbyList.map(regObj => {
     const regKeyword = regObj.keywordName || regObj.neighborhood || regObj.district || regObj.displayName.split(' ').pop();
     return `
-      <a href="/landing.html?reg=${encodeURIComponent(regObj.displayName)}&cat=${catParam}&task=${taskParam}" class="region-bubble">
+      <a href="${buildLandingUrl(regObj.displayName, catParam, taskParam)}" class="region-bubble">
         ${regKeyword} ${taskKeyword}
       </a>
     `;
@@ -313,7 +314,7 @@ export default function handler(req, res) {
   const relatedHTML = related.map(t => {
     const tKeyword = t.keyword || t.name;
     return `
-      <a href="/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${t.id}" class="region-bubble" style="border-color: var(--primary);">
+      <a href="${buildLandingUrl(regionName, catParam, t.id)}" class="region-bubble" style="border-color: var(--primary);">
         ${keywordRegionName} ${tKeyword}
       </a>
     `;

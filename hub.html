@@ -86,6 +86,7 @@
     import { businesses } from '/src/data/businesses.js';
     import { adSlots } from '/src/data/adSlots.js';
     import { updateSeoMeta } from '/src/components/SeoMeta.js';
+    import { buildLandingUrl } from '/src/utils/urlHelper.js';
 
     renderHeader();
     renderFooter();
@@ -187,7 +188,7 @@
       const tasksGrid = document.getElementById('hub-tasks-grid');
       if (tasksGrid) {
         tasksGrid.innerHTML = subTasks.map(t => {
-          const path = `/landing.html?reg=${encodeURIComponent('서울 은평구')}&cat=${activeCat.id}&task=${t.id}`;
+          const path = buildLandingUrl('서울 은평구', activeCat.id, t.id);
           return `
             <a href="${path}" class="task-click-card" style="text-decoration: none; display: block;">
               ${t.name}
@@ -237,7 +238,7 @@
 
             if (hasTaskAd) {
               const tKeyword = t.keyword || t.name;
-              const path = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${categoryId}&task=${t.id}`;
+              const path = buildLandingUrl(dist.displayName, categoryId, t.id);
               activeDistrictLinks.push({ path, text: `${dist.displayName.split(' ').pop()} ${tKeyword}` });
               totalLinksRendered++;
             }
@@ -258,7 +259,7 @@
 
               if (hasTaskAd) {
                 const tKeyword = t.keyword || t.name;
-                const path = `/landing.html?reg=${encodeURIComponent(dong.displayName)}&cat=${categoryId}&task=${t.id}`;
+                const path = buildLandingUrl(dong.displayName, categoryId, t.id);
                 const dongShort = dong.neighborhood || dong.displayName.split(' ').pop();
                 activeDongLinks.push({ path, text: `${dongShort} ${tKeyword}` });
                 totalLinksRendered++;

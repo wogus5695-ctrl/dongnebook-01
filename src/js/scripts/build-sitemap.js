@@ -5,6 +5,7 @@ import { tasks } from '../../data/tasks.js';
 import { regions } from '../../data/regions.js';
 import { businesses } from '../../data/businesses.js';
 import { adSlots } from '../../data/adSlots.js';
+import { buildLandingUrl } from '../../utils/urlHelper.js';
 
 // 배포 관리 도메인으로 갱신
 const DOMAIN = "https://dongnebook-01.vercel.app";
@@ -92,7 +93,7 @@ function generateSitemap() {
 
       if (hasActiveListing) {
         urls.push({
-          loc: `/landing.html?reg=${encodeURIComponent(region.displayName)}&cat=${category.id}&task=${task.id}`,
+          loc: buildLandingUrl(region.displayName, category.id, task.id),
           changefreq: "daily",
           priority: "0.7"
         });
