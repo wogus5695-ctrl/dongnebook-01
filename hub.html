@@ -3,62 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>지역별 업체 찾기 | 동네책자</title>
+  <title>지역별 키워드 허브 | 동네책자</title>
   <meta name="description" content="동네책자에서 각 지역별 시공·수리 전문 파트너 업체를 찾아보세요.">
   <meta name="robots" content="index, follow">
   <link rel="stylesheet" href="/src/css/main.css">
-  <style>
-    .task-card-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin: 16px 0;
-    }
-    @media(min-width: 480px) {
-      .task-card-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-    .task-click-card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 14px 10px;
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--text-dark);
-      cursor: pointer;
-      transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
-    }
-    .task-click-card:hover {
-      background-color: var(--primary-light);
-      border-color: var(--primary);
-    }
-    .guide-box {
-      background-color: var(--bg-card);
-      border: 1.5px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 24px;
-      margin-top: 24px;
-    }
-    .guide-box h3 {
-      font-size: 1.05rem;
-      color: var(--secondary);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .guide-list {
-      list-style: none;
-      font-size: 0.85rem;
-      color: var(--text-dark);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-  </style>
 </head>
 <body>
 
@@ -69,15 +17,15 @@
     
     <!-- Breadcrumb -->
     <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px; font-family: var(--font-family); margin-top: 16px;">
-      홈 &gt; <span id="bread-category" style="font-weight: bold; color: var(--primary);">시공·수리 허브</span>
+      홈 &gt; <span id="bread-category" style="font-weight: bold; color: var(--primary);">키워드 허브</span>
     </div>
 
     <!-- 1. Hero 섹션 -->
     <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 24px;">
       <h1 class="section-title" id="hub-h1" style="font-size: 1.6rem; color: var(--secondary);">
-        서울·경기 시공·수리 업체 찾기
+        시공·수리 지역별 키워드 허브
       </h1>
-      <p class="section-subtitle" id="hub-subtitle">분야별 세부 작업명을 선택하여 가까운 동네 입점 업체를 만나보세요.</p>
+      <p class="section-subtitle" id="hub-subtitle">서울·경기 주요 지역의 상담 가능 업체 페이지를 지역별 키워드로 확인해보세요.</p>
       
       <!-- 대 카테고리 스위치 탭 -->
       <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-top: 16px;" id="hub-tabs">
@@ -85,7 +33,7 @@
       </div>
     </section>
 
-    <!-- 2. 대표 작업명 섹션 -->
+    <!-- 2. 세부 작업 키워드 바로가기 (목차) -->
     <section class="section" style="padding: 24px 0 12px;">
       <h2 style="font-size: 1.15rem; margin-bottom: 6px;">세부 작업 키워드 바로가기</h2>
       <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">원하시는 구체적인 작업을 고르시면 상세 정보 페이지로 바로 안내합니다.</p>
@@ -95,7 +43,7 @@
       </div>
     </section>
 
-    <!-- 3. 지역별 바로가기 섹션 -->
+    <!-- 3. 지역별 빠른 디렉토리 링크 (핵심 섹션) -->
     <section class="section" style="padding: 12px 0;">
       <h2 style="font-size: 1.15rem; margin-bottom: 12px;">지역별 빠른 디렉토리 링크</h2>
       <div class="region-section" id="hub-regions-grid" style="margin-top: 0; padding: 20px;">
@@ -103,59 +51,7 @@
       </div>
     </section>
 
-    <!-- 4. 입점 업체 섹션 (소비자 참고용 기본 업체 소개) -->
-    <section class="section" style="padding: 24px 0;">
-      <h2 style="font-size: 1.2rem; margin-bottom: 4px;">지정 분야 입점 광고 업체</h2>
-      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">해당 시공 분야를 전문으로 제공하는 제휴 광고 등록 파트너입니다.</p>
-      
-      <div class="card-grid" id="hub-listings-grid">
-        <!-- JS 필터 렌더링 -->
-      </div>
-    </section>
-
-    <!-- 5 & 6. 작업 정보 & 예상 비용 안내 섹션 -->
-    <section class="section" style="padding: 12px 0;">
-      <div class="guide-box">
-        <h2 style="font-size: 1.25rem; color: var(--secondary); margin-bottom: 16px;" id="guide-section-title">시공 상식 & 가이드</h2>
-        
-        <div style="margin-bottom: 20px;">
-          <h3>📌 현명한 업체 선택 기준</h3>
-          <ul class="guide-list" id="select-standards-list">
-            <li>✔️ 단순히 최저가만 제시하는 업체보다 작업 진행 범위(창틀 틈새 제거, 폐기물 수거 등)를 상세히 서면 명시하는 곳을 선택하십시오.</li>
-            <li>✔️ 파손이나 시공 하자에 대비하여 공식 제휴 업체인지, 영업배상책임보험 가입 여부를 사전에 파악하면 안전합니다.</li>
-          </ul>
-        </div>
-
-        <div style="margin-bottom: 20px;">
-          <h3>🔍 작업 전 필수 확인사항</h3>
-          <ul class="guide-list" id="pre-check-list">
-            <li>✔️ 시공 당일 원활한 주변 정리를 위해 거주지 쓰레기 봉투(대형)를 사전에 마련해야 신속히 정돈됩니다.</li>
-            <li>✔️ 로프 작업이나 굴착이 수반되는 공종의 경우 아래층 거주자에게 누수 상태 확인 및 소음 협조를 미리 구하십시오.</li>
-          </ul>
-        </div>
-
-        <div>
-          <h3>💰 예상 비용 및 견적 결정 요인</h3>
-          <p style="font-size: 0.85rem; color: var(--text-dark); line-height: 1.6; background-color: var(--bg-main); padding: 14px; border-radius: 8px; margin-top: 6px;">
-            평균 가이드 비용: <strong id="price-guide-standard" style="color: var(--primary);">카테고리별 상이 (전화/채널 문의 시 무료 가견적)</strong><br>
-            <span id="price-guide-note" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 6px;">현장 층수, 시공 면적, 동원 전문 장비(고압 세척기, 스카이 로프차 등) 유무에 따라 개별 산출됩니다.</span>
-          </p>
-          <p style="font-size: 0.75rem; color: hsl(0, 70%, 45%); margin-top: 8px; font-weight: 700;">
-            ※ 위 안내된 비용은 시장 상황에 따른 단순 예시이며, 실제 최종 견적은 현장의 층고, 오염 상태, 도달 난이도에 따라 광고주 업체별로 다르게 산정될 수 있습니다. 단정적 계약 금액이 아니므로 사전 유선 상담을 권장합니다.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 8. FAQ 섹션 -->
-    <section class="section" style="border-top: 1px solid var(--border-color); margin-top: 24px;">
-      <h2 class="section-title" style="font-size: 1.25rem;" id="hub-faq-title">시공 자주 묻는 질문 (FAQ)</h2>
-      <div class="faq-list" id="hub-faq-container">
-        <!-- JS 동적 로드 -->
-      </div>
-    </section>
-
-    <!-- 9. 관련 업종 허브 링크 섹션 -->
+    <!-- 4. 관련 시공 분야 바로가기 -->
     <section class="section" style="border-top: 1px solid var(--border-color); padding-top: 24px; margin-top: 24px;">
       <h2 style="font-size: 1.15rem; margin-bottom: 12px;">관련 시공 분야 바로가기</h2>
       <div id="hub-related-categories" class="region-links-wrapper">
@@ -163,13 +59,12 @@
       </div>
     </section>
 
-    <!-- 7. 광고주 CTA 배너 -->
-    <section class="section text-center" style="background-color: var(--primary-light); border-radius: var(--border-radius); padding: 28px; border: 1.5px dashed var(--primary); margin-top: 32px;">
-      <h2 style="font-size: 1.2rem; color: var(--primary); margin-bottom: 8px;" id="hub-ad-title">이 카테고리에서 업체를 운영 중이신가요?</h2>
-      <p style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 16px;">
-        지역 키워드 페이지에 업체 정보를 등록할 수 있습니다.
+    <!-- 5. 하단 약한 CTA -->
+    <section class="section text-center" style="padding: 20px 0; border-top: 1px solid var(--border-color); margin-top: 32px;">
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">
+        이 업종에서 업체를 운영 중이신가요?
       </p>
-      <a href="/apply.html" id="hub-ad-cta-btn" class="btn btn-primary" style="max-width: 250px; margin: 0 auto; display: block;">광고 입점 문의</a>
+      <a href="/apply.html" id="hub-ad-cta-btn" style="font-size: 0.85rem; color: var(--primary); font-weight: bold; text-decoration: underline;">광고 입점 문의</a>
     </section>
 
   </main>
@@ -184,7 +79,7 @@
     import { tasks } from '/src/data/tasks.js';
     import { regions } from '/src/data/regions.js';
     import { businesses } from '/src/data/businesses.js';
-    import { CompanyCard } from '/src/components/CompanyCard.js';
+    import { adSlots } from '/src/data/adSlots.js';
     import { updateSeoMeta } from '/src/components/SeoMeta.js';
 
     renderHeader();
@@ -225,26 +120,26 @@
       // 카테고리별 H1 및 매핑 정보
       const hubSeoMap = {
         "waterproof-leak": {
-          h1: "방수·누수 지역별 업체 찾기",
-          title: "방수·누수 지역별 업체 찾기 | 동네책자",
-          description: "서울·경기 주요 지역의 방수·누수 상담 가능 업체 페이지를 지역별로 확인해보세요."
+          h1: "방수·누수 지역별 키워드 허브",
+          title: "방수·누수 지역별 키워드 허브 | 동네책자",
+          description: "서울·경기 주요 지역의 방수·누수 상담 가능 업체 페이지를 지역별 키워드로 확인해보세요."
         },
         "window-caulking": {
-          h1: "창틀코킹·창틀누수 지역별 업체 찾기",
-          title: "창틀코킹·창틀누수 지역별 업체 찾기 | 동네책자",
-          description: "서울·경기 주요 지역의 창틀코킹·창틀누수 상담 가능 업체 페이지를 지역별로 확인해보세요."
+          h1: "창틀코킹·창틀누수 지역별 키워드 허브",
+          title: "창틀코킹·창틀누수 지역별 키워드 허브 | 동네책자",
+          description: "서울·경기 주요 지역의 창틀코킹·창틀누수 상담 가능 업체 페이지를 지역별 키워드로 확인해보세요."
         },
         "elastic-coating": {
-          h1: "탄성코트 지역별 업체 찾기",
-          title: "탄성코트 지역별 업체 찾기 | 동네책자",
-          description: "서울·경기 주요 지역의 탄성코트 상담 가능 업체 페이지를 지역별로 확인해보세요."
+          h1: "탄성코트 지역별 키워드 허브",
+          title: "탄성코트 지역별 키워드 허브 | 동네책자",
+          description: "서울·경기 주요 지역의 탄성코트 상담 가능 업체 페이지를 지역별 키워드로 확인해보세요."
         }
       };
 
       const currentSeo = hubSeoMap[activeCat.id] || {
-        h1: "시공·수리 지역별 업체 찾기",
-        title: "시공·수리 지역별 업체 찾기 | 동네책자",
-        description: "서울·경기 주요 지역의 시공·수리 상담 가능 업체 페이지를 지역별로 확인해보세요."
+        h1: "시공·수리 지역별 키워드 허브",
+        title: "시공·수리 지역별 키워드 허브 | 동네책자",
+        description: "서울·경기 주요 지역의 시공·수리 상담 가능 업체 페이지를 지역별 키워드로 확인해보세요."
       };
 
       // 2. SEO 메타 설정 및 캐노니컬 삽입
@@ -263,94 +158,26 @@
       }
       canonicalLink.href = `https://dongnebook-01.vercel.app/hub.html?cat=${activeCat.id}`;
 
-      document.getElementById('bread-category').textContent = `${activeCat.name} 허브`;
+      document.getElementById('bread-category').textContent = `${activeCat.name} 키워드 허브`;
       document.getElementById('hub-subtitle').textContent = currentSeo.description;
-      document.getElementById('guide-section-title').textContent = `${activeCat.name} 시공 상식 & 가이드`;
-      document.getElementById('hub-faq-title').textContent = `${activeCat.name} 자주 묻는 질문 (FAQ)`;
-      document.getElementById('hub-ad-title').textContent = `이 카테고리에서 업체를 운영 중이신가요?`;
       document.getElementById('hub-ad-cta-btn').href = `/apply.html?cat=${activeCat.id}`;
 
-      // 카테고리 특화 5대 FAQ 데이터
-      const categoryFaqs = {
-        "waterproof-leak": [
-          { q: "옥상 우레탄 방수 시공 순서와 기간은 어떻게 되나요?", a: "1단계 바닥 연삭(그라인딩) -> 2단계 프라이머(하도) -> 3단계 우레탄 실란트 균열 메꿈 -> 4단계 우레탄 방수재(중도) -> 5단계 코팅(상도) 순서로 진행됩니다. 하자와 건조 시간을 지키기 위해 일반적으로 3~5일이 소요됩니다." },
-          { q: "누수 탐지 공사는 아파트 아래층 피해 보상과 연계되나요?", a: "네, 배관 파손 누수 확인 시 공사 내역 및 증빙 자료를 활용하여 아래층 도배 등의 피해 처리를 지원받을 수 있습니다. 손해사정 또는 일상생활배상책임 보험 적용 서류 발행이 필요한 경우 사전에 입점 업체 사장님과 조율하시기 바랍니다." },
-          { q: "지붕 방수와 옥상 방수의 시공법 차이는 무엇인가요?", a: "옥상은 주로 우레탄 도막 방수를 적용하는 반면, 경사가 있는 칼라강판 지붕이나 싱글 지붕의 경우 방수 시트 부착 또는 강판 개량 공사로 지붕 누수를 원천 차단하는 공법을 활용합니다." },
-          { q: "배관 누수와 빗물 누수를 구별하는 자가진단법이 있나요?", a: "비가 올 때만 천장이나 창틀 벽면이 젖는다면 빗물 누수(창틀 실리콘 크랙 또는 외벽 크랙)일 확률이 매우 높고, 계절/기후와 무관하게 수도계량기 별침이 돌거나 지속적으로 아래층에 물이 떨어진다면 수도/난방 배관 누수일 가능성이 큽니다." },
-          { q: "누수 부위를 찾아내기 위한 첨단 장비는 어떤 것들이 있나요?", a: "미세 소리를 청취하는 청음식 탐지기, 배관에 가스를 주입해 추적하는 가스 탐지기, 벽면 수분분포를 체크하는 열화상 카메라 등이 동원되어 굴착 면적을 최소화합니다." }
-        ],
-        "window-caulking": [
-          { q: "창틀 실리콘 코킹 공사의 수명은 보통 몇 년인가요?", a: "기후 조건과 시공 품질에 따라 다르지만 보통 고급 창호 전용 실리콘을 사용할 경우 5년에서 최대 10년까지 지속됩니다. 삭아서 빗물이 흐르는 상태라면 노후 실리콘을 완전 걷어내고 재시공해야 수명이 유지됩니다." },
-          { q: "기존의 노후 실리콘을 제거하지 않고 덧방을 쳐도 되나요?", a: "매우 부적합한 시공법입니다. 들뜬 실리콘 위에 덧바를 경우 내부 틈새로 들어온 물 때문에 다시 박리되므로 귀찮더라도 기존 코킹을 칼로 완전히 오려낸 후 프라이머 도포 및 재코킹을 수행해야 합니다." },
-          { q: "아파트 고층 아파트인데 로프 탑승 시 민원이 발생하나요?", a: "아파트 관리사무소에 외부 로프 시공 일정을 사전에 공지하고 주민 안전선을 설정해야 합니다. 입점 업체 사장님이 통상적으로 일정 공지 가이드라인을 잘 안내해 주십니다." },
-          { q: "샷시 내부 실리콘과 외부 실리콘은 성분이 다른가요?", a: "내부는 냄새가 적고 건조가 빠른 실내용 수성/바이오 실리콘이 쓰이지만, 외부 창틀 코킹에는 자외선과 온도차 균열에 매우 강한 외벽 전용 비초산성 우레탄계/실리콘 실란트를 사용해야 빗물 누수를 버틸 수 있습니다." },
-          { q: "비가 새는 부위가 안방 창틀 1개뿐인데 단독 부분 시공이 가능한가요?", a: "네 가능합니다. 다만 전체 동시 시공에 비해 개별 방문 로프 세팅비가 고정적으로 들어가므로, 가급적 이웃 세대와 공동 구매 방식으로 묶어서 상담하시면 비용을 아낄 수 있습니다." }
-        ],
-        "elastic-coating": [
-          { q: "탄성코트 시공 범위는 보통 어디까지인가요?", a: "주로 베란다, 세탁실, 다용도실, 대피공간 등 결로와 곰팡이가 자주 발생하는 발코니 구역을 대상으로 시공이 진행됩니다." },
-          { q: "탄성코트 상담 전 어떤 사진을 준비하면 좋나요?", a: "시공 위치 사진, 벽면 상태, 곰팡이 흔적, 기존 페인트 들뜸 여부를 확인할 수 있는 사진을 준비하면 업체가 상황을 파악하는 데 큰 도움이 됩니다." },
-          { q: "베란다와 세탁실 탄성코트 상담 기준이 다른가요?", a: "네, 베란다와 세탁실은 시공 면적, 환기 조건, 곰팡이 오염도 및 추가 보양 필요성에 따라 공정 및 자재 소요량이 달라지므로 공간별 세부 조건에 따라 상담 기준이 세분화될 수 있습니다." },
-          { q: "기존 벽면에 곰팡이가 있으면 바로 상담 가능한가요?", a: "네, 바로 상담 가능합니다. 곰팡이가 있는 벽면은 향균 하도 공정 및 살균 제거 작업이 필수로 선행되므로, 벽면 상태 사진을 전송해 주시면 보다 원활한 점검을 도와드릴 수 있습니다." },
-          { q: "전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?", a: "업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다." }
-        ]
-      };
-
-      // 가이드 가사 교정
-      const selectStandards = document.getElementById('select-standards-list');
-      const preCheck = document.getElementById('pre-check-list');
-
-      if (activeCat.id === 'waterproof-leak') {
-        selectStandards.innerHTML = `
-          <li>✔️ 첨단 가스/청음식 탐지 기기 없이 무작정 벽을 깨자고 유도하는 곳은 지양해야 합니다.</li>
-          <li>✔️ 공사 부위에 대해 1년 이상의 확실한 하자보수(A/S) 확약 증빙을 발행해 줄 수 있는 공식 브랜드를 찾으세요.</li>
-        `;
-        preCheck.innerHTML = `
-          <li>✔️ 누수 탐지 전에 수도 계량기 유입 밸브를 잠그고 물 사용을 잠시 멈춰야 정밀 측정이 시작됩니다.</li>
-          <li>✔️ 공동주택 아래층 거주자에게 누수 피해 상태 및 작업 방문 양해를 사전에 구하셔야 시공이 지체되지 않습니다.</li>
-        `;
-      } else if (activeCat.id === 'window-caulking') {
-        selectStandards.innerHTML = `
-          <li>✔️ 외벽 샷시 노후 실리콘을 완전 커팅 제거하고 진행하는 정석 시공 업체인지 포트폴리오를 대조해 보세요.</li>
-          <li>✔️ 외부 로프 작업 시 흔들림을 견딜 수 있는 검증된 숙련 작업 전문가가 투입되는지 확인이 필요합니다.</li>
-        `;
-        preCheck.innerHTML = `
-          <li>✔️ 실리콘 시공 당일 외벽 콘크리트 및 창틀 면에 습기가 없어야 하므로 맑은 날을 사전에 잡으셔야 합니다.</li>
-          <li>✔️ 작업 중 베란다 안쪽 적재물이 로프 작업자 시야 방해가 되지 않도록 베란다 정리를 추천합니다.</li>
-        `;
-      } else if (activeCat.id === 'elastic-coating') {
-        selectStandards.innerHTML = `
-          <li>✔️ 벽면 곰팡이와 기존 페인트 들뜸을 꼼꼼히 긁어내고 하도/밑작업을 철저히 하는 업체를 선택해야 시공 하자가 없습니다.</li>
-          <li>✔️ 친환경 인증 자재 여부와 시공 후 충분한 환기 수칙을 명확하게 안내해 주는 전문가를 권장합니다.</li>
-        `;
-        preCheck.innerHTML = `
-          <li>✔️ 시공 당일 베란다 창틀 주변 적재물이나 세탁기 주변 장애물을 사전에 이동시켜야 보양 작업이 신속해집니다.</li>
-          <li>✔️ 겨울철이나 우천 시에는 건조에 필요한 온/습도 유지를 위한 사전 안내를 따르시기 바랍니다.</li>
-        `;
+      // 3. 탭 렌더링
+      const tabsBox = document.getElementById('hub-tabs');
+      if (tabsBox) {
+        tabsBox.innerHTML = activeCategories.filter(c => OPERATED_CATEGORIES.includes(c.id)).map(cat => {
+          const isActive = cat.id === activeCatId;
+          return `
+            <button class="btn ${isActive ? 'btn-primary' : 'btn-outline'}" 
+                    style="width: auto; white-space: nowrap; font-size: 0.85rem; padding: 8px 16px;" 
+                    onclick="window.location.href='/hub.html?cat=${cat.id}'">
+              ${cat.name}
+            </button>
+          `;
+        }).join('');
       }
 
-      document.getElementById('price-guide-standard').textContent = activeCat.priceGuide.standard;
-      document.getElementById('price-guide-note').textContent = activeCat.priceGuide.note;
-
-      // 5대 FAQ 렌더링
-      const faqContainer = document.getElementById('hub-faq-container');
-      if (faqContainer) {
-        const faqs = categoryFaqs[activeCat.id] || [];
-        faqContainer.innerHTML = faqs.map(item => `
-          <div class="faq-item">
-            <div class="faq-q">${item.q}</div>
-            <div class="faq-a">${item.a}</div>
-          </div>
-        `).join('');
-      }
-
-      document.querySelectorAll('#hub-faq-container .faq-q').forEach(question => {
-        question.addEventListener('click', () => {
-          const item = question.parentNode;
-          item.classList.toggle('active');
-        });
-      });
-
-      // 3. 세부 작업 바로가기 목록 렌더링 (HTML 크롤러 최적화 a 태그)
+      // 4. 세부 작업 바로가기 목록 렌더링 (HTML 크롤러 최적화 a 태그)
       const subTasks = tasks.filter(t => t.categoryIds.includes(activeCat.id) && t.visible);
       const tasksGrid = document.getElementById('hub-tasks-grid');
       if (tasksGrid) {
@@ -364,7 +191,7 @@
         }).join('');
       }
 
-      // 4. 지역 및 세부 작업 롱테일 내부링크 로드 (HTML 크롤러 최적화 및 details/summary 구조)
+      // 5. 지역 및 세부 작업 롱테일 내부링크 로드 (details/summary 구조)
       const regGrid = document.getElementById('hub-regions-grid');
       if (regGrid) {
         const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
@@ -460,46 +287,6 @@
         });
 
         regGrid.innerHTML = regionLinksHtml || `<div style="text-align: center; color: var(--text-muted); padding: 20px;">이 업종에 활성화된 매칭 지역 링크가 없습니다.</div>`;
-      }
-
-      // 5. 입점 업체 필터링 후 렌더링
-      const filteredBiz = businesses.filter(b => b.categoryIds.includes(activeCat.id) && b.status === 'active' && b.visible);
-      const listingsGrid = document.getElementById('hub-listings-grid');
-      if (listingsGrid) {
-        if (filteredBiz.length > 0) {
-          listingsGrid.innerHTML = filteredBiz.map(biz => {
-            const formatted = {
-              id: biz.id,
-              name: biz.brandName,
-              category: biz.categoryIds[0],
-              regions: biz.serviceRegionIds.map(regId => {
-                const found = regions.find(r => r.id === regId);
-                return found ? found.displayName : regId;
-              }),
-              tags: biz.taskIds.map(tId => {
-                const foundTask = tasks.find(t => t.id === tId);
-                return foundTask ? foundTask.name : tId;
-              }).slice(0, 3),
-              phone: biz.phone,
-              kakaoLink: biz.kakaoUrl,
-              siteLink: biz.websiteUrl,
-              description: biz.description,
-              isAd: true,
-              badgeText: biz.badge,
-              thumbnail: biz.image
-            };
-            return CompanyCard(formatted);
-          }).join('');
-        } else {
-          listingsGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted); background-color: var(--bg-card); border-radius: var(--border-radius); border: 1px solid var(--border-color);">
-              <p>현재 이 카테고리에 입점 광고중인 파트너 업체가 없습니다.</p>
-              <p style="font-size: 0.85rem; margin-top: 8px; color: var(--primary); font-weight: 700;">
-                <a href="/apply.html?cat=${activeCat.id}">첫 번째 입점 광고주 등록하기 →</a>
-              </p>
-            </div>
-          `;
-        }
       }
 
       // 6. 관련 업종 허브 링크 렌더링
