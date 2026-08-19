@@ -7,6 +7,11 @@
   <meta name="description" content="동네책자에서 각 지역별 시공·수리 전문 파트너 업체를 찾아보세요.">
   <meta name="robots" content="index, follow">
   <link rel="stylesheet" href="/src/css/main.css">
+  <style>
+    main.container {
+      max-width: 1000px !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -262,14 +267,15 @@
           });
 
           // Render details / summary block
-          const distShort = dist.displayName.split(' ').pop();
+          const distCount = activeDistrictLinks.length + activeDongLinks.length;
           regionLinksHtml += `
-            <details open style="margin-bottom: 20px; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; background-color: var(--bg-card); display: block; width: 100%; box-sizing: border-box;">
-              <summary style="font-size: 1.05rem; color: var(--secondary); font-weight: 800; cursor: pointer; padding: 4px; outline: none; list-style: none;">
-                📍 ${distShort} 지역 바로가기 (클릭 시 접기/펼치기)
+            <details open style="margin-bottom: 24px; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; background-color: var(--bg-card); display: block; width: 100%; box-sizing: border-box; box-shadow: var(--shadow-sm);">
+              <summary style="font-size: 1.1rem; color: var(--secondary); font-weight: 800; cursor: pointer; padding: 4px; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px;">
+                <span>📍 ${dist.displayName} ${activeCat.name} 키워드</span>
+                <span style="font-size: 0.85rem; color: var(--primary); background-color: var(--primary-light); padding: 4px 10px; border-radius: 20px; font-weight: 700;">총 ${distCount}개 링크</span>
               </summary>
               
-              <div style="margin-top: 14px;">
+              <div>
                 <!-- 구 단위 세부 링크 -->
                 ${activeDistrictLinks.length > 0 ? `
                   <div style="margin-bottom: 16px;">
