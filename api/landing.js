@@ -111,12 +111,12 @@ export default function handler(req, res) {
   // `<head>` 영역 치환
   html = html.replace(/<title>.*?<\/title>/, `<title>${seoTitle}</title>`);
   html = html.replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${seoDesc}">`);
+  html = html.replace(/<meta property="og:title" content=".*?">/, `<meta property="og:title" content="${seoTitle}">`);
+  html = html.replace(/<meta property="og:description" content=".*?">/, `<meta property="og:description" content="${seoDesc}">`);
   
   const ogMetaTags = `
     <link rel="canonical" href="${pageUrl}">
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="${seoTitle}">
-    <meta property="og:description" content="${seoDesc}">
     <meta property="og:url" content="${pageUrl}">
     <meta property="og:image" content="${catOgImage}">
     <script type="application/ld+json">
