@@ -135,8 +135,11 @@ export default function handler(req, res) {
   const indexQuality = checkIndexQuality(currentRegion, currentCat, currentTask, hasActiveListing);
   const robotsPolicy = indexQuality.indexable ? "index, follow" : "noindex, follow";
 
-  // HTML 템플릿 로드
-  const templatePath = path.join(process.cwd(), 'landing.html');
+  // HTML 템플릿 로드 (빌드된 프로덕션 쉘 우선 로드)
+  let templatePath = path.join(process.cwd(), 'dist', 'landing-shell.html');
+  if (!fs.existsSync(templatePath)) {
+    templatePath = path.join(process.cwd(), 'landing-shell.html');
+  }
   let html = fs.readFileSync(templatePath, 'utf8');
 
   // 2. SEO 메타 및 OG 태그 인젝션

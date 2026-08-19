@@ -9,7 +9,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         hub: resolve(__dirname, 'hub.html'),
-        landing: resolve(__dirname, 'landing.html'),
+        landingShell: resolve(__dirname, 'landing-shell.html'),
         guide: resolve(__dirname, 'guide.html'),
         apply: resolve(__dirname, 'apply.html'),
         policy: resolve(__dirname, 'policy.html'),

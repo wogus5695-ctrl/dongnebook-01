@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>지역 시공/수리 업체 매칭 | 동네책자</title>
+  <meta name="description" content="우리 동네 전문 시공 수리 업체의 상세 광고 카드 프로필을 확인하고 직접 연락을 진행해 보세요.">
+  <link rel="stylesheet" href="/src/css/main.css">
+  
+  <!-- Open Graph (SNS 및 포털 공유 최적화) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="지역 시공/수리 업체 찾기 | 동네책자">
+  <meta property="og:description" content="우리 동네 전문 시공 수리 업체의 상세 광고 카드 프로필을 확인하고 직접 연락을 진행해 보세요.">
+  <meta property="og:site_name" content="동네책자">
+  
+  <style>
+    .fallback-box {
+      border: 1.5px dashed var(--border-color);
+      background-color: var(--bg-card);
+      border-radius: var(--border-radius);
+      padding: 32px 20px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .related-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    /* 소형 B2B 띠 배너 양식 */
+    .mini-ad-banner {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      text-align: center;
+    }
+    @media(min-width: 600px) {
+      .mini-ad-banner {
+        flex-direction: row;
+        text-align: left;
+        padding: 14px 20px;
+      }
+    }
+  </style>
+</head>
+<body class="has-sticky-bottom">
+
+  <!-- 1. Header -->
+  <div id="header-container"></div>
+
+  <main class="container">
+    
+    <!-- 2. Hero 섹션 (소비자 중심 정보형) -->
+    <section class="section" style="border-bottom: 1px solid var(--border-color); padding-bottom: 24px; font-family: var(--font-family);">
+      <nav style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">
+        홈 > <span id="bread-region">서울</span> > <span id="bread-category">종합청소</span> > <span id="bread-task" style="color: var(--text-dark); font-weight: bold;">유리창청소</span>
+      </nav>
+      <h1 class="section-title" id="landing-h1" style="font-size: 1.6rem; color: var(--secondary); margin-bottom: 8px; line-height: 1.35; letter-spacing: -0.02em;">
+        서울 강남구 유리창청소 업체 찾기
+      </h1>
+      <p class="section-subtitle" id="landing-subtitle" style="margin-bottom: 18px; line-height: 1.5; color: var(--text-dark); font-size: 0.95rem;">
+        서울 강남구 인근에서 유리창청소 상담 가능한 업체 정보를 확인해보세요.
+      </p>
+      
+      <div style="display: flex; gap: 8px; max-width: 200px;">
+        <a href="#listings-section" class="btn btn-primary" style="font-size: 0.85rem; padding: 10px 14px; flex: 1; text-align: center;">상담 가능 업체 보기</a>
+      </div>
+    </section>
+
+    <!-- 3. 등록 업체 카드 섹션 -->
+    <section class="section" id="listings-section" style="padding: 24px 0; border-bottom: 1px solid var(--border-color);">
+      <h2 style="font-size: 1.15rem; margin-bottom: 4px; font-weight: 800; color: var(--text-dark);" id="listings-main-title">서울 강남구 인근 상담 가능 업체</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">광고/제휴 등록 업체가 포함되어 있습니다.</p>
+      
+      <!-- 업체 카드 그리드 -->
+      <div class="card-grid" id="landing-listings-grid">
+        <!-- JS 렌더링 -->
+      </div>
+
+      <!-- 광고 구좌 노출 안내 문구 -->
+      <p id="ad-coverage-notice" style="display: none; font-size: 0.75rem; color: var(--text-muted); margin-top: 16px; text-align: center; width: 100%;">
+        이 업체 정보는 선택 지역과 연관된 구 단위 광고 구좌 기준으로 표시될 수 있습니다.
+      </p>
+
+      <!-- 업체가 없는 경우의 대체 UI (소비자 친화적 개편) -->
+      <div class="fallback-box" id="landing-fallback" style="display: none;">
+        <h3 style="font-size: 1.15rem; color: var(--text-dark); margin: 12px 0 6px;">현재 이 지역에 바로 표시 가능한 업체 정보가 준비 중입니다.</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
+          인근 지역 상담 가능 업체 또는 관련 작업 페이지를 확인해보세요.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 8px; max-width: 280px; margin: 0 auto;">
+          <button class="btn btn-primary" id="fallback-nearby-btn" style="font-size: 0.85rem; padding: 10px;">인근 지역 보기</button>
+          <a href="#related-tasks-wrapper" class="btn btn-outline" style="font-size: 0.85rem; padding: 10px; background-color: white; text-align: center; display: inline-block; width: 100%;">관련 작업 보기</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 관련 지역/관련 작업 추천 섹션 -->
+    <section class="section" style="padding: 24px 0; border-bottom: 1px solid var(--border-color);">
+      <div class="related-box" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 20px; margin: 0;">
+        <h3 style="font-size: 0.95rem; color: var(--secondary); margin-bottom: 12px; font-weight: 800;">근처 지역 바로가기</h3>
+        <div class="region-links-wrapper" id="nearby-links-wrapper" style="margin-bottom: 20px;">
+          <!-- JS 동적 생성 -->
+        </div>
+
+        <h3 style="font-size: 0.95rem; color: var(--secondary); margin-bottom: 12px; font-weight: 800;">관련 작업 바로가기</h3>
+        <div class="region-links-wrapper" id="related-tasks-wrapper">
+          <!-- JS 동적 생성 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 광고 입점 문의 CTA 섹션 -->
+    <section class="section" style="padding: 24px 0; border-bottom: 1px solid var(--border-color);">
+      <div class="mini-ad-banner" id="listings-mini-ad-banner" style="background-color: #fcfcfc; border: 1.5px dashed var(--primary); border-radius: var(--border-radius); padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; margin: 0;">
+        <div>
+          <h3 style="font-size: 1.15rem; color: var(--text-dark); font-weight: 800; margin-bottom: 6px;" id="mini-ad-title">이 지역에서 유리창청소 업체를 운영 중이신가요?</h3>
+          <p id="mini-ad-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+            지역명+작업명 페이지에 업체 정보를 등록하고 상담 유입을 테스트할 수 있습니다.
+          </p>
+        </div>
+        <a href="/apply.html" id="mini-ad-apply-link" class="btn btn-primary" style="font-size: 0.85rem; padding: 10px 20px; background-color: var(--primary); color: white; border: none; font-weight: bold; border-radius: var(--border-radius); text-decoration: none;">광고 입점 문의</a>
+      </div>
+    </section>
+
+    <!-- 6. SEO 보조 정보 아코디언 섹션 -->
+    <section class="section" id="guide-info-section" style="padding: 24px 0; border-bottom: 1px solid var(--border-color); max-width: 800px;">
+      <h2 style="font-size: 1.2rem; margin-bottom: 4px; font-weight: 800; color: var(--text-dark);" id="guide-info-main-title">서울 강남구 유리창청소 상담 전 참고 정보</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 18px;">상담 전 참고하면 도움이 되는 로컬 가이드 정보를 안내합니다.</p>
+      
+      <div class="guide-accordion-container" style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <!-- 아코디언 1: {지역명} {작업명}이 필요한 경우 -->
+        <details class="guide-accordion" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 12px;">
+          <summary id="info-section1-title" style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.9rem;">서울 강남구 유리창청소이 필요한 경우</summary>
+          <div class="guide-content" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+            <p id="info-section1-desc">
+              상가, 사무실, 건물 외부, 주거 공간 등에서 시공 작업이 필요한 상황은 현장 구조와 시공 위치, 작업 범위에 따라 달라질 수 있습니다. 가까운 상담 가능 업체를 통해 현재 상황에 맞는 조언을 받아보는 것이 좋습니다.
+            </p>
+          </div>
+        </details>
+
+        <!-- 아코디언 2: 상담 전 확인하면 좋은 내용 -->
+        <details class="guide-accordion" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 12px;">
+          <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.9rem;">상담 전 확인하면 좋은 내용</summary>
+          <div class="guide-content" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+            <p>
+              상담 전에는 현장 사진, 건물 층수, 작업 위치, 오염 정도, 누수 또는 막힘 증상, 접근 가능 여부를 미리 정리해두면 업체 상담이 더 빠르게 진행될 수 있습니다.
+            </p>
+          </div>
+        </details>
+
+        <!-- 아코디언 3: 비용 변동 및 견적 유의사항 -->
+        <details class="guide-accordion" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 12px;">
+          <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.9rem;">비용 변동 및 견적 유의사항</summary>
+          <div class="guide-content" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+            <p id="info-section3-desc">
+              유리창청소 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.
+            </p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- 7. FAQ 섹션 -->
+    <section class="section" style="padding: 24px 0;">
+      <h2 class="section-title" style="font-size: 1.2rem; font-weight: 800; color: var(--text-dark);" id="landing-faq-title">서울 강남구 유리창청소 자주 묻는 질문</h2>
+      <div class="faq-list" id="landing-faq-list">
+        <!-- JS 렌더링 -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 8. Footer -->
+  <div id="footer-container"></div>
+
+  <!-- 9. 모바일 하단 고정 CTA (소비자 문의 우선 배치) -->
+  <div class="sticky-cta-bar" id="landing-sticky-bar">
+    <div class="sticky-cta-container" style="display: flex; gap: 8px; width: 100%; max-width: 600px; margin: 0 auto;">
+      <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-primary sticky-cta-btn" style="flex: 2.2; font-size: 0.85rem; padding: 12px; text-align: center; text-decoration: none; font-weight: 800;">
+        📞 유리창청소 문의
+      </a>
+      <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn" style="flex: 1; font-size: 0.85rem; padding: 12px; background-color: #f8f9fa; border-color: var(--border-color); text-align: center; text-decoration: none; color: var(--text-muted);">
+        광고 입점
+      </a>
+    </div>
+  </div>  <script type="module">
+    import { renderHeader } from '/src/components/Header.js';
+    import { renderFooter } from '/src/components/Footer.js';
+    import { categories } from '/src/data/categories.js';
+    import { tasks } from '/src/data/tasks.js';
+    import { regions } from '/src/data/regions.js';
+    import { businesses } from '/src/data/businesses.js';
+    import { adSlots } from '/src/data/adSlots.js';
+    import { CompanyCard } from '/src/components/CompanyCard.js';
+    import { updateSeoMeta } from '/src/components/SeoMeta.js';
+    import { resolveSeoTemplate } from '/src/data/seoTemplates.js';
+
+    renderHeader();
+    renderFooter();
+
+    // 1. URL 쿼리 파라미터 획득
+    const activeCategories = categories.filter(c => c.visible !== false);
+    const urlParams = new URLSearchParams(window.location.search);
+    const regParam = urlParams.get('reg');
+    const catParam = urlParams.get('cat');
+    const taskParam = urlParams.get('task');
+
+    let isValid = true;
+    let fallbackMsg = "";
+
+    const normalize = (str) => {
+      if (!str) return "";
+      return decodeURIComponent(str).replace(/\s+/g, " ").trim();
+    };
+
+    const normalizedReg = normalize(regParam);
+    const regionParts = normalizedReg.split(" ");
+    const lastRegionName = regionParts[regionParts.length - 1];
+
+    const exactRegion = regions.find(r =>
+      normalize(r.displayName) === normalizedReg ||
+      (r.fullName && normalize(r.fullName) === normalizedReg)
+    );
+
+    const neighborhoodRegion = !exactRegion && lastRegionName
+      ? regions.find(r =>
+          r.level === "neighborhood" &&
+          (
+            normalize(r.displayName) === lastRegionName ||
+            normalize(r.neighborhood) === lastRegionName ||
+            (r.keywordName && normalize(r.keywordName) === lastRegionName) ||
+            normalizedReg.endsWith(normalize(r.neighborhood))
+          ) &&
+          normalizedReg.includes(normalize(r.district || ""))
+        )
+      : null;
+
+    const districtRegion = !exactRegion && !neighborhoodRegion
+      ? regions.find(r =>
+          r.level === "district" &&
+          normalizedReg.includes(normalize(r.displayName))
+        )
+      : null;
+
+    const currentRegion = exactRegion || neighborhoodRegion || districtRegion;
+    const currentCat = activeCategories.find(c => c.id === catParam);
+    const currentTask = tasks.find(t => t.id === taskParam);
+
+    const OPERATED_CATEGORIES = ["waterproof-leak", "window-caulking", "elastic-coating"];
+
+    if (!regParam || !catParam || !taskParam) {
+      isValid = false;
+      fallbackMsg = "동네책자 업체 찾기";
+    } else if (!currentRegion) {
+      isValid = false;
+      fallbackMsg = "유효하지 않은 지역입니다.";
+    } else if (!currentCat) {
+      isValid = false;
+      fallbackMsg = "유효하지 않은 업종입니다.";
+    } else if (!OPERATED_CATEGORIES.includes(catParam)) {
+      isValid = false;
+      fallbackMsg = "운영 제외 업종입니다.";
+    } else if (!currentTask) {
+      isValid = false;
+      fallbackMsg = "유효하지 않은 작업명입니다.";
+    }
+
+    // 2. 동적 콘텐츠 치환 및 SEO 주입
+    function initLandingPage() {
+      if (!isValid) {
+        // noindex 처리 및 에러 안내 화면 노출
+        updateSeoMeta({
+          title: fallbackMsg,
+          description: "요청하신 페이지 정보를 찾을 수 없습니다. 올바른 조건으로 다시 선택하여 접근해주시기 바랍니다.",
+          h1Text: fallbackMsg,
+          noindex: true
+        });
+        
+        document.getElementById('landing-h1').textContent = fallbackMsg;
+        document.getElementById('landing-subtitle').textContent = "올바른 URL 파라미터로 다시 접근해주시기 바랍니다.";
+        document.getElementById('landing-listings-grid').innerHTML = "";
+        document.getElementById('landing-fallback').style.display = 'block';
+        document.getElementById('landing-fallback').innerHTML = `
+          <div class="fallback-box" style="border: 2px dashed #c0392b; background-color: #fdf2f2; padding: 40px 20px; font-family: var(--font-family);">
+            <h3 style="color: #c0392b; font-size: 1.2rem; margin-bottom: 10px;">⚠️ ${fallbackMsg}</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">요청하신 카테고리, 지역 혹은 작업명이 존재하지 않거나 비활성화 상태입니다.</p>
+            <a href="/" class="btn btn-primary" style="margin-top: 16px; display: inline-block; text-decoration: none; font-size: 0.85rem; padding: 10px 20px;">메인페이지로 이동</a>
+          </div>
+        `;
+        const guideSection = document.getElementById('guide-info-section');
+        if (guideSection) guideSection.style.display = 'none';
+        const faqSection = document.getElementById('landing-faq-list');
+        if (faqSection) faqSection.parentNode.style.display = 'none';
+        const stickyBar = document.getElementById('landing-sticky-bar');
+        if (stickyBar) stickyBar.style.display = 'none';
+        return;
+      }
+
+      const regionName = currentRegion.displayName;
+      const displayKeywordRegion = currentRegion.level === "neighborhood"
+        ? (currentRegion.neighborhood || currentRegion.keywordName || regionName.split(' ').pop())
+        : (currentRegion.district || currentRegion.keywordName || regionName.split(' ').pop());
+      const keywordRegionName = displayKeywordRegion;
+      const taskKeyword = currentTask.keyword || currentTask.name;
+      const taskDisplayName = currentTask.displayName || currentTask.name;
+      const taskName = taskDisplayName;
+      const catName = currentCat.name;
+
+      // 업종별 SEO 템플릿 로드 및 매칭 치환
+      const seoData = resolveSeoTemplate(catParam, keywordRegionName, taskDisplayName);
+
+      // H1 구조 및 동적 키워드 동기화
+      document.getElementById('landing-h1').textContent = `${keywordRegionName} ${taskKeyword} 업체 찾기`;
+      document.getElementById('landing-faq-title').textContent = `${keywordRegionName} ${taskKeyword} 자주 묻는 질문 (FAQ)`;
+
+      // 섹션명 변경
+      document.getElementById('listings-main-title').textContent = `${keywordRegionName} 인근 상담 가능 업체`;
+
+      // 가이드 메인 타이틀 변경
+      document.getElementById('guide-info-main-title').textContent = `${keywordRegionName} ${taskDisplayName} 상담 전 참고 정보`;
+
+      // B2C 중립 정보 아코디언 헤더 및 텍스트 갱신 (details/summary 대응)
+      const accordionContainer = document.querySelector('.guide-accordion-container');
+      if (accordionContainer && seoData) {
+        accordionContainer.innerHTML = seoData.infoSections.map(sec => `
+          <details class="guide-accordion" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 12px;">
+            <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.9rem;">${sec.title}</summary>
+            <div class="guide-content" style="margin-top: 10px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+              <p>${sec.desc}</p>
+            </div>
+          </details>
+        `).join('');
+      } else {
+        document.getElementById('info-section1-title').textContent = `${keywordRegionName} ${taskDisplayName}이 필요한 경우`;
+        document.getElementById('info-section3-desc').textContent = `${taskDisplayName} 비용은 현장 규모, 작업 범위, 장비 필요 여부, 접근성, 긴급 출동 여부에 따라 달라질 수 있습니다. 정확한 비용은 업체 상담을 통해 확인하는 것이 가장 안전합니다.`;
+
+        // 작업명별 문맥 동적 적용
+        let flowText = "";
+        if (catParam === 'general-cleaning') {
+          flowText = `상가 전면 유리, 사무실 창문, 건물 외부 유리는 먼지, 빗물 자국, 배기가스 오염이 쌓이면 내부 청결감과 매장 인상에 영향을 줄 수 있습니다. ${keywordRegionName}처럼 상가와 업무시설이 많은 지역에서는 정기적인 유리창청소 문의가 발생할 수 있습니다.`;
+        } else {
+          flowText = `상가, 사무실, 건물 외부, 주거 공간 등에서 ${taskDisplayName}이 필요한 상황은 현장 구조와 시공 위치, 작업 범위에 따라 달라질 수 있습니다. ${keywordRegionName} 인근 상담 가능 업체를 통해 현재 상황에 맞는 상담을 받아보는 것이 좋습니다.`;
+        }
+        document.getElementById('info-section1-desc').textContent = flowText;
+      }
+
+      // 소형 B2B 띠 배너 제목 동적 치환
+      document.getElementById('mini-ad-title').textContent = `이 지역에서 ${taskKeyword} 업체를 운영 중이신가요?`;
+      document.getElementById('mini-ad-desc').textContent = `${keywordRegionName}+${taskKeyword} 페이지에 업체 정보를 등록하고 상담 유입을 테스트해보세요.`;
+      document.getElementById('mini-ad-apply-link').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+
+      // H1 바로 아래 소비자 중심 맞춤형 보조 문구
+      document.getElementById('landing-subtitle').textContent = seoData ? seoData.heroDescription : `${keywordRegionName}에서 ${taskDisplayName} 상담 가능한 업체 정보를 확인해보세요.`;
+
+      // 브레드크럼
+      document.getElementById('bread-region').textContent = keywordRegionName;
+      document.getElementById('bread-category').textContent = catName;
+      document.getElementById('bread-task').textContent = taskDisplayName;
+
+      // Canonical 및 Open Graph 설정
+      const pageUrl = `https://dongnebook-01.vercel.app/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      
+      const ogImages = {
+        "elastic-coating": "/assets/thumbs/neocoat.jpg",
+        "window-caulking": "/assets/thumbs/rainguard.jpg",
+        "waterproof-leak": "/assets/thumbs/rainguard.jpg"
+      };
+      const catOgImage = ogImages[catParam] || "/assets/thumbs/elastic-coating-bareumspace.jpg";
+
+      // SEO 및 OG 메타 동적 갱신 주입
+      updateSeoMeta({
+        title: `${keywordRegionName} ${taskKeyword} 업체 찾기 | 동네책자`,
+        description: `${keywordRegionName}에서 ${taskKeyword} 상담 가능한 업체를 확인하고 전화·카카오톡으로 문의하세요.`,
+        h1Text: `${keywordRegionName} ${taskKeyword} 업체 찾기`,
+        canonical: pageUrl,
+        ogTitle: `${keywordRegionName} ${taskKeyword} 업체 찾기 | 동네책자`,
+        ogDescription: `${keywordRegionName}에서 ${taskKeyword} 상담 가능한 업체를 확인하고 전화·카카오톡으로 문의하세요.`,
+        ogUrl: pageUrl,
+        ogImage: catOgImage,
+        noindex: false
+      });
+
+      // CTA 링크 정보 수정
+      const convertBtn = document.getElementById('convert-apply-btn');
+      if (convertBtn) convertBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      
+      const fallbackBtn = document.getElementById('fallback-apply-btn');
+      if (fallbackBtn) fallbackBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      
+      document.getElementById('sticky-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+
+      // 4. 업체 매칭 필터링 (adSlots 구좌 기반)
+      const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+      const salesDistrict = currentRegion.level === "district"
+        ? currentRegion
+        : regions.find(r => r.id === currentRegion.parentId);
+
+      const activeSlots = adSlots.filter(slot => {
+        if (slot.status !== "active") return false;
+        if (slot.categoryId !== catParam) return false;
+
+        const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === taskParam;
+        if (!taskMatches) return false;
+
+        if (slot.startDate !== null) {
+          const start = new Date(slot.startDate);
+          if (CURRENT_DATE < start) return false;
+        }
+        if (slot.endDate !== null) {
+          const end = new Date(slot.endDate);
+          if (CURRENT_DATE > end) return false;
+        }
+
+        // 지역 매칭 분기 (salesDistrict 구 단위 매칭)
+        if (salesDistrict) {
+          return slot.purchaseRegionId === salesDistrict.id;
+        }
+
+        return false;
+      });
+
+      const matched = [];
+      const seenBizIds = new Set();
+      activeSlots.forEach(slot => {
+        if (seenBizIds.has(slot.businessId)) return;
+        const biz = businesses.find(b => b.id === slot.businessId);
+        if (biz && biz.visible && biz.status === "active") {
+          seenBizIds.add(slot.businessId);
+          matched.push({
+            ...biz,
+            slotPriority: slot.priority,
+            slotStartDate: slot.startDate ? new Date(slot.startDate) : new Date(0)
+          });
+        }
+      });
+      // 정렬 기준: 1. adSlots.priority 오름차순 -> 2. businesses.priority 오름차순 -> 3. adSlots.startDate 내림차순
+      matched.sort((a, b) => {
+        if (a.slotPriority !== b.slotPriority) {
+          return a.slotPriority - b.slotPriority;
+        }
+        if (a.priority !== b.priority) {
+          return a.priority - b.priority;
+        }
+        return b.slotStartDate - a.slotStartDate;
+      });
+
+      const grid = document.getElementById('landing-listings-grid');
+      const fallback = document.getElementById('landing-fallback');
+      const stickyCallBtn = document.getElementById('sticky-call-btn');
+      const miniAdBanner = document.getElementById('listings-mini-ad-banner');
+      const stickyApplyBtn = document.getElementById('sticky-apply-btn');
+      const coverageNotice = document.getElementById('ad-coverage-notice');
+
+      if (matched.length > 0) {
+        grid.style.display = 'grid';
+        fallback.style.display = 'none';
+        miniAdBanner.style.display = 'flex';
+        stickyApplyBtn.style.display = 'inline-flex';
+        if (coverageNotice) coverageNotice.style.display = 'block';
+
+        grid.innerHTML = matched.map(biz => {
+          const tagDisplayNames = biz.taskIds.map(tId => {
+            const foundT = tasks.find(t => t.id === tId);
+            return foundT ? foundT.name : tId;
+          }).slice(0, 3);
+
+          const listObj = {
+            id: biz.id,
+            name: biz.brandName,
+            category: biz.categoryIds[0],
+            regions: biz.serviceRegionIds.map(regId => {
+              const found = regions.find(r => r.id === regId);
+              return found ? found.displayName : regId;
+            }),
+            tags: tagDisplayNames,
+            phone: biz.phone,
+            kakaoLink: biz.kakaoUrl,
+            siteLink: biz.websiteUrl,
+            description: biz.description,
+            isAd: true,
+            badgeText: biz.badge,
+            thumbnail: biz.image
+          };
+          return CompanyCard(listObj, { regionName: keywordRegionName, taskName: taskKeyword });
+        }).join('');
+
+        const primaryPhone = matched[0].phone;
+        if (primaryPhone && primaryPhone !== "추후 입력") {
+          stickyCallBtn.href = `tel:${primaryPhone}`;
+          stickyCallBtn.textContent = `📞 ${taskKeyword} 문의 전화 연결`;
+        } else {
+          stickyCallBtn.href = `tel:010-0000-0000`;
+          stickyCallBtn.textContent = `📞 ${taskKeyword} 문의 전화 연결`;
+        }
+      } else {
+        grid.style.display = 'none';
+        miniAdBanner.style.display = 'none';
+        fallback.style.display = 'block';
+        if (coverageNotice) coverageNotice.style.display = 'none';
+
+        stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+        stickyCallBtn.textContent = `📢 이 지역 첫 광고 입점 신청`;
+        stickyApplyBtn.style.display = 'none';
+
+        document.getElementById('fallback-nearby-btn').onclick = () => {
+          const nearbyId = (currentRegion.nearbyRegionIds && currentRegion.nearbyRegionIds[0]) || (salesDistrict && salesDistrict.nearbyRegionIds && salesDistrict.nearbyRegionIds[0]) || regions[0].id;
+          const targetReg = regions.find(r => r.id === nearbyId) || regions[0];
+          window.location.href = `/landing.html?reg=${encodeURIComponent(targetReg.displayName)}&cat=${catParam}&task=${taskParam}`;
+        };
+      }
+
+      // 5. 관련 지역 및 관련 작업 내부 링크 동적 빌딩
+      const nearbyWrapper = document.getElementById('nearby-links-wrapper');
+      if (nearbyWrapper) {
+        let nearbyList = [];
+
+        // 구 단위 또는 동 단위에 따른 하위 동/형제 동 추출
+        if (currentRegion.level === "district") {
+          // 1) 해당 구의 하위 동 5~8개 수집
+          const childNeighborhoods = regions.filter(r => r.parentId === currentRegion.id && r.level === "neighborhood" && r.visible !== false);
+          nearbyList.push(...childNeighborhoods.slice(0, 8));
+
+          // 2) 인접 구 또는 같은 시/도의 다른 구 2~4개 수집
+          const nearbyDistricts = regions.filter(r => 
+            r.level === "district" && 
+            r.id !== currentRegion.id && 
+            r.visible !== false &&
+            (currentRegion.nearbyRegionIds ? currentRegion.nearbyRegionIds.includes(r.id) : r.province === currentRegion.province)
+          );
+          nearbyList.push(...nearbyDistricts.slice(0, 4));
+        } else if (currentRegion.level === "neighborhood") {
+          // 1) 형제 동(같은 구 내 다른 동) 5~8개 수집
+          const siblingNeighborhoods = regions.filter(r => r.parentId === currentRegion.parentId && r.id !== currentRegion.id && r.level === "neighborhood" && r.visible !== false);
+          nearbyList.push(...siblingNeighborhoods.slice(0, 8));
+
+          // 2) 다른 인접 구 2~4개 수집
+          const parentDistrict = regions.find(r => r.id === currentRegion.parentId);
+          const nearbyDistricts = regions.filter(r => 
+            r.level === "district" && 
+            r.visible !== false &&
+            (parentDistrict && parentDistrict.nearbyRegionIds ? parentDistrict.nearbyRegionIds.includes(r.id) : r.province === currentRegion.province)
+          );
+          nearbyList.push(...nearbyDistricts.slice(0, 4));
+        }
+
+        // 자기 자신 및 중복 제거
+        nearbyList = nearbyList.filter((regObj, index, self) => 
+          regObj.displayName !== regionName &&
+          self.findIndex(r => r.id === regObj.id) === index
+        );
+
+        // 빈 상태 방지: 만약 수집된 지역이 3개 미만이면 상위 지역의 다른 구/동 추가
+        if (nearbyList.length < 3) {
+          const fallbackRegions = regions.filter(r => r.id !== currentRegion.id && r.visible !== false && r.province === currentRegion.province);
+          nearbyList.push(...fallbackRegions.slice(0, 8));
+        }
+
+        // 최종 렌더링
+        nearbyWrapper.innerHTML = nearbyList.map(regObj => {
+          const regKeyword = regObj.keywordName || regObj.neighborhood || regObj.district || regObj.displayName.split(' ').pop();
+          return `
+            <a href="/landing.html?reg=${encodeURIComponent(regObj.displayName)}&cat=${catParam}&task=${taskParam}" class="region-bubble">
+              ${regKeyword} ${taskKeyword}
+            </a>
+          `;
+        }).join('');
+      }
+
+      const tasksWrapper = document.getElementById('related-tasks-wrapper');
+      if (tasksWrapper) {
+        const related = tasks.filter(t => t.categoryIds.includes(catParam) && t.id !== taskParam && t.visible !== false).slice(0, 8);
+        const relatedHeader = tasksWrapper.previousElementSibling;
+
+        if (related.length === 0) {
+          tasksWrapper.style.display = 'none';
+          if (relatedHeader) relatedHeader.style.display = 'none';
+        } else {
+          tasksWrapper.style.display = 'flex';
+          if (relatedHeader) relatedHeader.style.display = 'block';
+
+          tasksWrapper.innerHTML = related.map(t => {
+            const tKeyword = t.keyword || t.name;
+            return `
+              <a href="/landing.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${t.id}" class="region-bubble" style="border-color: var(--primary);">
+                ${keywordRegionName} ${tKeyword}
+              </a>
+            `;
+          }).join('');
+        }
+      }
+
+      // 6. FAQ 생성
+      const faqList = document.getElementById('landing-faq-list');
+      if (faqList) {
+        if (seoData) {
+          faqList.innerHTML = seoData.faq.map(f => `
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${f.q}</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. ${f.a}</p>
+              </div>
+            </details>
+          `).join('');
+        } else {
+          faqList.innerHTML = `
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${regionName}에서 ${taskName} 상담은 어떻게 진행되나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 페이지에 등록된 업체 정보를 확인한 뒤 전화 또는 카카오톡으로 상담을 요청할 수 있습니다. 현장 위치와 작업 내용을 함께 전달하면 상담이 더 빠르게 진행될 수 있습니다.</p>
+              </div>
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${taskName} 상담 전 어떤 사진을 준비하면 좋나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 작업이 필요한 위치, 문제 부위, 주변 환경을 확인할 수 있는 사진을 준비하면 업체가 상황을 파악하는 데 도움이 됩니다.</p>
+              </div>
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. ${regionName} 내 동 단위 지역도 상담 가능한가요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 등록 업체의 광고 구좌와 상담 가능 지역에 따라 ${regionName} 내 하위 지역도 함께 상담 범위에 포함될 수 있습니다.</p>
+              </div>
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. 등록된 업체 정보는 어떻게 확인할 수 있나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 업체 카드에서 주요 작업, 상담 가능 지역, 전화 문의, 카카오 문의, 공식 홈페이지 정보를 확인할 수 있습니다.</p>
+              </div>
+            </details>
+            <details class="faq-item" style="background-color: var(--bg-card); border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 16px; margin-bottom: 12px; font-family: var(--font-family);">
+              <summary style="font-weight: 700; color: var(--text-dark); cursor: pointer; outline: none; font-size: 0.95rem;">Q. 전화와 카카오톡 중 어떤 방식으로 문의할 수 있나요?</summary>
+              <div style="margin-top: 12px; font-size: 0.88rem; color: var(--text-muted); line-height: 1.65; border-top: 1px dashed var(--border-color); padding-top: 12px;">
+                <p>A. 업체별로 제공된 전화 문의 또는 카카오 문의 버튼을 통해 원하는 방식으로 상담을 요청할 수 있습니다.</p>
+              </div>
+            </details>
+          `;
+        }
+      }
+    }
+
+    initLandingPage();
+  </script>
+</body>
+</html>
