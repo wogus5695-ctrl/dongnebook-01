@@ -8,6 +8,7 @@ import { adSlots } from '../src/data/adSlots.js';
 import { CompanyCard } from '../src/components/CompanyCard.js';
 import { resolveSeoTemplate } from '../src/data/seoTemplates.js';
 import { buildLandingUrl } from '../src/utils/urlHelper.js';
+import { checkIndexQuality } from '../src/utils/seoGate.js';
 
 const normalize = (str) => {
   if (!str) return "";
@@ -92,6 +93,48 @@ export default function handler(req, res) {
   // SEO 템플릿 처리
   const seoData = resolveSeoTemplate(catParam, keywordRegionName, taskDisplayName);
 
+  // 4. 업체 리스트업 섹션 매칭 및 렌더링
+  const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+  const salesDistrict = currentRegion.level === "district"
+    ? currentRegion
+    : regions.find(r => r.id === currentRegion.parentId);
+
+  const activeSlots = adSlots.filter(slot => {
+    if (slot.status !== "active") return false;
+    if (slot.categoryId !== catParam) return false;
+    const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === taskParam;
+    if (!taskMatches) return false;
+    if (slot.startDate !== null && CURRENT_DATE < new Date(slot.startDate)) return false;
+    if (slot.endDate !== null && CURRENT_DATE > new Date(slot.endDate)) return false;
+    return salesDistrict && slot.purchaseRegionId === salesDistrict.id;
+  });
+
+  const matched = [];
+  const seenBizIds = new Set();
+  activeSlots.forEach(slot => {
+    if (seenBizIds.has(slot.businessId)) return;
+    const biz = businesses.find(b => b.id === slot.businessId);
+    if (biz && biz.visible && biz.status === "active") {
+      seenBizIds.add(slot.businessId);
+      matched.push({
+        ...biz,
+        slotPriority: slot.priority,
+        slotStartDate: slot.startDate ? new Date(slot.startDate) : new Date(0)
+      });
+    }
+  });
+
+  matched.sort((a, b) => {
+    if (a.slotPriority !== b.slotPriority) return a.slotPriority - b.slotPriority;
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return b.slotStartDate - a.slotStartDate;
+  });
+
+  // Index Quality Gate 검증 실행
+  const hasActiveListing = matched.length > 0;
+  const indexQuality = checkIndexQuality(currentRegion, currentCat, currentTask, hasActiveListing);
+  const robotsPolicy = indexQuality.indexable ? "index, follow" : "noindex, follow";
+
   // HTML 템플릿 로드
   const templatePath = path.join(process.cwd(), 'landing.html');
   let html = fs.readFileSync(templatePath, 'utf8');
@@ -116,7 +159,7 @@ export default function handler(req, res) {
   
   const ogMetaTags = `
     <link rel="canonical" href="${pageUrl}">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="${robotsPolicy}">
     <meta property="og:url" content="${pageUrl}">
     <meta property="og:image" content="${catOgImage}">
     <script type="application/ld+json">
@@ -168,43 +211,6 @@ export default function handler(req, res) {
     /id="landing-subtitle" style="[^"]*">\s*서울 강남구 인근에서 유리창청소 상담 가능한 업체 정보를 확인해보세요\.\s*<\/p>/,
     `id="landing-subtitle" style="margin-bottom: 18px; line-height: 1.5; color: var(--text-dark); font-size: 0.95rem;">\n        ${seoData ? seoData.heroDescription : `${keywordRegionName}에서 ${taskDisplayName} 상담 가능한 업체 정보를 확인해보세요.`}\n      </p>`
   );
-
-  // 4. 업체 리스트업 섹션 매칭 및 렌더링
-  const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
-  const salesDistrict = currentRegion.level === "district"
-    ? currentRegion
-    : regions.find(r => r.id === currentRegion.parentId);
-
-  const activeSlots = adSlots.filter(slot => {
-    if (slot.status !== "active") return false;
-    if (slot.categoryId !== catParam) return false;
-    const taskMatches = slot.coverageTaskMode === "all-category-tasks" || slot.taskId === taskParam;
-    if (!taskMatches) return false;
-    if (slot.startDate !== null && CURRENT_DATE < new Date(slot.startDate)) return false;
-    if (slot.endDate !== null && CURRENT_DATE > new Date(slot.endDate)) return false;
-    return salesDistrict && slot.purchaseRegionId === salesDistrict.id;
-  });
-
-  const matched = [];
-  const seenBizIds = new Set();
-  activeSlots.forEach(slot => {
-    if (seenBizIds.has(slot.businessId)) return;
-    const biz = businesses.find(b => b.id === slot.businessId);
-    if (biz && biz.visible && biz.status === "active") {
-      seenBizIds.add(slot.businessId);
-      matched.push({
-        ...biz,
-        slotPriority: slot.priority,
-        slotStartDate: slot.startDate ? new Date(slot.startDate) : new Date(0)
-      });
-    }
-  });
-
-  matched.sort((a, b) => {
-    if (a.slotPriority !== b.slotPriority) return a.slotPriority - b.slotPriority;
-    if (a.priority !== b.priority) return a.priority - b.priority;
-    return b.slotStartDate - a.slotStartDate;
-  });
 
   // 제목 치환
   html = html.replace('id="listings-main-title">서울 강남구 인근 상담 가능 업체', `id="listings-main-title">${keywordRegionName} 인근 상담 가능 업체`);

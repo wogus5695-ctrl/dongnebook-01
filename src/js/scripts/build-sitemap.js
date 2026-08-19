@@ -6,6 +6,7 @@ import { regions } from '../../data/regions.js';
 import { businesses } from '../../data/businesses.js';
 import { adSlots } from '../../data/adSlots.js';
 import { buildLandingUrl } from '../../utils/urlHelper.js';
+import { checkIndexQuality } from '../../utils/seoGate.js';
 
 // 배포 관리 도메인으로 갱신
 const DOMAIN = "https://dongnebook-01.vercel.app";
@@ -45,14 +46,16 @@ function generateSitemap() {
 
   // 4. 활성 광고 매칭 롱테일 랜딩 페이지들 (adSlots 기준 매칭)
   const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
+  let totalCandidates = 0;
+  let excludedCount = 0;
+  const excludeReasons = {};
+
   regions.forEach(region => {
-    if (region.visible === false) return;
-
     tasks.forEach(task => {
-      if (task.visible === false || task.sitemapInclude === false) return;
-
       const category = activeCategories.find(c => task.categoryIds.includes(c.id));
-      if (!category || !OPERATED_CATEGORIES.includes(category.id) || category.sitemapInclude === false) return;
+      if (!category) return;
+
+      totalCandidates++;
 
       // 해당 지역, 카테고리, 작업에 할당된 active 광고 구좌(adSlot)가 있는지 확인
       const hasActiveListing = adSlots.some(slot => {
@@ -90,12 +93,18 @@ function generateSitemap() {
         return false;
       });
 
-      if (hasActiveListing) {
+      // Index Quality Gate 검사 수행
+      const gateResult = checkIndexQuality(region, category, task, hasActiveListing);
+
+      if (gateResult.indexable) {
         urls.push({
           loc: buildLandingUrl(region.displayName, category.id, task.id),
           changefreq: "daily",
           priority: "0.7"
         });
+      } else {
+        excludedCount++;
+        excludeReasons[gateResult.reason] = (excludeReasons[gateResult.reason] || 0) + 1;
       }
     });
   });
@@ -134,7 +143,14 @@ function generateSitemap() {
     fs.writeFileSync(path.join(distDir, 'robots.txt'), fs.readFileSync(robotsSrc, 'utf-8'), 'utf-8');
   }
 
-  console.log(`[성공] Vercel 전용 sitemap.xml 빌드 완료. 포함된 총 URL 수: ${urls.length}개`);
+  console.log(`[성공] Vercel 전용 sitemap.xml 빌드 완료.`);
+  console.log(`- 전체 랜딩 페이지 후보 수: ${totalCandidates}개`);
+  console.log(`- sitemap.xml 등록 URL 수: ${urls.length}개 (정적/탭 포함)`);
+  console.log(`- Quality Gate 제외 URL 수: ${excludedCount}개`);
+  console.log(`- 제외 상세 사유:`);
+  Object.keys(excludeReasons).forEach(reason => {
+    console.log(`  * [${reason}]: ${excludeReasons[reason]}개`);
+  });
 }
 
 generateSitemap();
