@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/landing.html",
+      "destination": "/api/landing"
+    },
+    {
       "source": "/general-cleaning",
       "destination": "/hub.html?cat=general-cleaning"
     },
