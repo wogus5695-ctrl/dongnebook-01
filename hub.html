@@ -191,18 +191,22 @@
         }).join('');
       }
 
-      // 5. 지역 및 세부 작업 롱테일 내부링크 로드 (details/summary 구조)
-      const regGrid = document.getElementById('hub-regions-grid');
-      if (regGrid) {
+      // 5. 지역 및 세부 작업 롱테일 내부링크 로드 (details/summary 구조 & generatePublicHubInventory 통합)
+      function generatePublicHubInventory(categoryId) {
+        const regGrid = document.getElementById('hub-regions-grid');
+        if (!regGrid) return;
+
+        const subTasks = tasks.filter(t => t.categoryIds.includes(categoryId) && t.visible);
         const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
         const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
         let regionLinksHtml = '';
+        let totalLinksRendered = 0;
 
         districts.forEach(dist => {
           // Check which slots match this district
           const distSlots = adSlots.filter(slot => {
             if (slot.status !== "active") return false;
-            if (slot.categoryId !== activeCat.id) return false;
+            if (slot.categoryId !== categoryId) return false;
             if (slot.startDate !== null && CURRENT_DATE < new Date(slot.startDate)) return false;
             if (slot.endDate !== null && CURRENT_DATE > new Date(slot.endDate)) return false;
             return slot.purchaseRegionId === dist.id;
@@ -228,8 +232,9 @@
 
             if (hasTaskAd) {
               const tKeyword = t.keyword || t.name;
-              const path = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${activeCat.id}&task=${t.id}`;
+              const path = `/landing.html?reg=${encodeURIComponent(dist.displayName)}&cat=${categoryId}&task=${t.id}`;
               activeDistrictLinks.push({ path, text: `${dist.displayName.split(' ').pop()} ${tKeyword}` });
+              totalLinksRendered++;
             }
           });
 
@@ -248,9 +253,10 @@
 
               if (hasTaskAd) {
                 const tKeyword = t.keyword || t.name;
-                const path = `/landing.html?reg=${encodeURIComponent(dong.displayName)}&cat=${activeCat.id}&task=${t.id}`;
+                const path = `/landing.html?reg=${encodeURIComponent(dong.displayName)}&cat=${categoryId}&task=${t.id}`;
                 const dongShort = dong.neighborhood || dong.displayName.split(' ').pop();
                 activeDongLinks.push({ path, text: `${dongShort} ${tKeyword}` });
+                totalLinksRendered++;
               }
             });
           });
@@ -263,31 +269,37 @@
                 📍 ${distShort} 지역 바로가기 (클릭 시 접기/펼치기)
               </summary>
               
-              <!-- 구 단위 세부 링크 -->
-              ${activeDistrictLinks.length > 0 ? `
-                <div style="margin-top: 14px; margin-bottom: 12px;">
-                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">구 단위 바로가기:</div>
-                  <div class="region-links-wrapper">
-                    ${activeDistrictLinks.map(link => `<a href="${link.path}" class="region-bubble" style="border-color: var(--primary);">${link.text}</a>`).join('')}
+              <div style="margin-top: 14px;">
+                <!-- 구 단위 세부 링크 -->
+                ${activeDistrictLinks.length > 0 ? `
+                  <div style="margin-bottom: 16px;">
+                    <h3 style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 8px; font-weight: bold;">🏢 구 단위 키워드</h3>
+                    <div class="region-links-wrapper">
+                      ${activeDistrictLinks.map(link => `<a href="${link.path}" class="region-bubble" style="border-color: var(--primary);">${link.text}</a>`).join('')}
+                    </div>
                   </div>
-                </div>
-              ` : ''}
+                ` : ''}
 
-              <!-- 동 단위 세부 링크 -->
-              ${activeDongLinks.length > 0 ? `
-                <div style="margin-top: 12px;">
-                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: bold;">하위 동/동네별 바로가기:</div>
-                  <div class="region-links-wrapper">
-                    ${activeDongLinks.map(link => `<a href="${link.path}" class="region-bubble">${link.text}</a>`).join('')}
+                <!-- 동 단위 세부 링크 -->
+                ${activeDongLinks.length > 0 ? `
+                  <div>
+                    <h3 style="font-size: 0.85rem; color: var(--text-dark); margin-bottom: 8px; font-weight: bold;">📍 동 단위 키워드</h3>
+                    <div class="region-links-wrapper">
+                      ${activeDongLinks.map(link => `<a href="${link.path}" class="region-bubble">${link.text}</a>`).join('')}
+                    </div>
                   </div>
-                </div>
-              ` : ''}
+                ` : ''}
+              </div>
             </details>
           `;
         });
 
         regGrid.innerHTML = regionLinksHtml || `<div style="text-align: center; color: var(--text-muted); padding: 20px;">이 업종에 활성화된 매칭 지역 링크가 없습니다.</div>`;
+        console.log(`[완료] 총 생성된 공개 허브 링크 수: ${totalLinksRendered}개`);
       }
+
+      // 인벤토리 생성 호출
+      generatePublicHubInventory(activeCat.id);
 
       // 6. 관련 업종 허브 링크 렌더링
       const relatedCatsBox = document.getElementById('hub-related-categories');
