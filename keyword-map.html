@@ -578,6 +578,30 @@
       renderKeywordMap();
     };
 
+    // 공통 광고 구좌 점유 리졸버
+    function getOccupiedSlots(categoryId, districtId) {
+      const distSlots = adSlots.filter(s => s.status === 'active' && s.categoryId === categoryId && s.purchaseRegionId === districtId);
+      
+      const activeSlots = distSlots.filter(slot => {
+        const biz = businesses.find(b => b.id === slot.businessId);
+        return biz && biz.visible && biz.status === 'active';
+      });
+
+      activeSlots.sort((a, b) => {
+        const aPriority = a.priority !== undefined ? a.priority : 999;
+        const bPriority = b.priority !== undefined ? b.priority : 999;
+        if (aPriority !== bPriority) return aPriority - bPriority;
+
+        const aSlotNum = a.slotNumber !== undefined ? a.slotNumber : 999;
+        const bSlotNum = b.slotNumber !== undefined ? b.slotNumber : 999;
+        if (aSlotNum !== bSlotNum) return aSlotNum - bSlotNum;
+
+        return a.businessId.localeCompare(b.businessId);
+      });
+
+      return activeSlots;
+    }
+
     // 3. 필터링 및 렌더링 주 연산
     function renderKeywordMap() {
       const catFilter = categorySelect.value;
@@ -686,7 +710,7 @@
 
       districts.forEach(dist => {
         const subNeighborhoods = regions.filter(r => r.parentId === dist.id && r.visible !== false);
-        const distSlots = adSlots.filter(s => s.status === 'active' && s.categoryId === cat.id && s.purchaseRegionId === dist.id);
+        const distSlots = getOccupiedSlots(cat.id, dist.id);
         
         registeredSlotsCount += distSlots.length;
         distSlots.forEach(s => uniqueBusinesses.add(s.businessId));
@@ -776,12 +800,12 @@
 
       districts.forEach(dist => {
         const subNeighborhoods = regions.filter(r => r.parentId === dist.id && r.visible !== false);
-        const distSlots = adSlots.filter(s => s.status === 'active' && s.categoryId === cat.id && s.purchaseRegionId === dist.id);
+        const distSlots = getOccupiedSlots(cat.id, dist.id);
 
-        const slot1 = distSlots.find(s => s.slotNumber === 1 || s.priority === 1);
-        const slot2 = distSlots.find(s => s.slotNumber === 2);
-        const slot3 = distSlots.find(s => s.slotNumber === 3);
-        const slot4 = distSlots.find(s => s.slotNumber === 4);
+        const slot1 = distSlots[0];
+        const slot2 = distSlots[1];
+        const slot3 = distSlots[2];
+        const slot4 = distSlots[3];
 
         const getBizNameAndAction = (slot) => {
           if (!slot) return '';
