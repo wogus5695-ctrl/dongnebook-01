@@ -41,6 +41,7 @@ export const categories = [
     landingEnabled: true,
     sitemapInclude: true,
     noindex: false,
+    targetDistrictIds: ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
     mainTitle: "우리동네 외벽방수",
     mainPriority: 20,
     priceGuide: {
@@ -134,6 +135,7 @@ export const categories = [
     landingEnabled: true,
     sitemapInclude: true,
     noindex: false,
+    targetDistrictIds: ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
     mainTitle: "우리동네 창틀누수",
     mainPriority: 30,
     priceGuide: {
@@ -251,6 +253,7 @@ export const categories = [
     landingEnabled: true,
     sitemapInclude: true,
     noindex: false,
+    targetDistrictIds: ["seoul-eunpyeong", "seoul-seodaemun", "seoul-mapo", "seoul-gangnam", "seoul-songpa", "seoul-seocho"],
     mainTitle: "우리동네 탄성코트",
     mainPriority: 40,
     priceGuide: {
