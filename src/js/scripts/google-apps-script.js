@@ -45,13 +45,17 @@ function doPost(e) {
         
         // R ~ AA: 운영 관리용 추가 컬럼 (10개 컬럼)
         "처리 상태", "상담일", "결제 안내 여부", "결제 완료 여부", 
-        "등록 완료 여부", "등록된 대표 URL", "광고 시작일", "광고 종료일", "월 광고비", "운영자 메모"
+        "등록 완료 여부", "등록된 대표 URL", "광고 시작일", "광고 종료일", "월 광고비", "운영자 메모",
+
+        // AB ~ AJ: 신규 확장 요청 및 썸네일 이미지 컬럼 (9개 컬럼)
+        "요청 유형", "기타 입력 업종명", "기타 입력 지역명", "신청 고유 ID", "썸네일 URL",
+        "썸네일 스토리지 키", "썸네일 원본파일명", "썸네일 MIME타입", "썸네일 용량"
       ];
       receiptSheet.appendRow(headers);
       receiptSheet.getRange("1:1").setFontWeight("bold").setBackground("#f3f3f3");
     }
 
-    // 3. 기록용 로우(Row) 생성 (17개 제출 데이터 + 10개 운영 컬럼 초기치 지정)
+    // 3. 기록용 로우(Row) 생성 (17개 제출 데이터 + 10개 운영 컬럼 초기치 + 9개 확장 필드)
     const newRow = [
       data.submittedAt || new Date().toISOString(),
       data.companyName || "",
@@ -61,7 +65,7 @@ function doPost(e) {
       data.targetRegion || "",
       data.targetWork || "",
       data.adSlotName || "",
-      data.coverageList ? data.coverageList.join(", ") : "",
+      data.coverageList ? (Array.isArray(data.coverageList) ? data.coverageList.join(", ") : data.coverageList) : "",
       data.adProductName || data.adProduct || "",
       data.kakaoLink || "",
       data.homepageUrl || "",
@@ -81,7 +85,18 @@ function doPost(e) {
       "",           // 광고 시작일
       "",           // 광고 종료일
       "",           // 월 광고비
-      ""            // 운영자 메모
+      "",           // 운영자 메모
+
+      // AB ~ AJ: 신규 확장 컬럼 매핑
+      data.requestType || "standard-slot",
+      data.customCategoryName || "",
+      data.customRegionName || "",
+      data.submissionId || "",
+      data.thumbnailUrl || "",
+      data.thumbnailStorageKey || "",
+      data.thumbnailOriginalName || "",
+      data.thumbnailMimeType || "",
+      data.thumbnailSize || ""
     ];
     
     // 시트에 새 라인 누적 기록

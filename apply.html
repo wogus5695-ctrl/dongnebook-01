@@ -72,6 +72,12 @@
             <option value="elastic-coating">탄성코트</option>
           </select>
         </div>
+
+        <!-- 1-2단계. 신규 업종명 직접 입력란 (기타 선택 시 표시) -->
+        <div class="form-group" id="customCategoryGroup" style="display: none;">
+          <label class="form-label" for="customCategoryName">신규 업종명 <span style="color: red;">*</span></label>
+          <input type="text" id="customCategoryName" class="form-input" placeholder="예: 외벽청소, 간판시공, 에어컨청소">
+        </div>
  
         <!-- 2단계. 작업명 선택 (비노출 처리 및 기본값 자동 전송용 참고 필드) -->
         <div class="form-group" style="display: none;">
@@ -87,6 +93,12 @@
           <select id="targetRegion" class="form-select" required>
             <option value="">지역을 선택해 주세요</option>
           </select>
+        </div>
+
+        <!-- 3-2단계. 희망 지역명 직접 입력란 (기타 선택 시 표시) -->
+        <div class="form-group" id="customRegionGroup" style="display: none;">
+          <label class="form-label" for="customRegionName">희망 지역명 <span style="color: red;">*</span></label>
+          <input type="text" id="customRegionName" class="form-input" placeholder="예: 경기도 수원시 영통구">
         </div>
  
         <!-- 4단계. 선택한 구좌 미리보기 -->
@@ -115,7 +127,7 @@
             <option value="product-triple">구좌 3개 패키지: 선택 업종 및 구 단위 지역 3개 / 월 12만원</option>
             <option value="product-five">구좌 5개 패키지: 선택 업종 및 구 단위 지역 5개 / 월 20만원</option>
             <option value="product-banner">카테고리 상단 배너 / 별도 문의</option>
-            <option value="decision-after-consult">상담 후 결정</option>
+            <option value="decision-after-consult">5개 구좌 초과 · 개별 상담문의</option>
           </select>
         </div>
  
@@ -153,6 +165,37 @@
         <div class="form-group">
           <label class="form-label" for="additionalMessage">추가 요청사항 및 문의 내용</label>
           <textarea id="additionalMessage" class="form-textarea" rows="4" placeholder="출장 범위나 포트폴리오 자료 등 전달할 내용을 입력해 주세요."></textarea>
+        </div>
+
+        <!-- 광고용 썸네일 이미지 첨부 (선택사항) -->
+        <div class="form-group" style="margin-top: 24px;">
+          <label class="form-label" style="font-weight: bold; display: flex; align-items: center; gap: 6px;">
+            🖼️ 광고용 썸네일 이미지 <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">(선택사항)</span>
+          </label>
+          <div style="font-size: 0.78rem; line-height: 1.55; color: var(--text-muted); margin-bottom: 12px; background-color: #f8f9fa; border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 12px;">
+            • 업체 광고 카드에 사용할 대표 이미지를 첨부해 주세요. 정사각형 또는 가로형 이미지를 권장합니다.<br>
+            • 세로형 이미지는 노출 과정에서 일부 영역이 잘릴 수 있습니다.<br>
+            • 지원 형식: <strong>JPG, JPEG, PNG, WEBP</strong> (권장 3MB 이하, 최대 5MB)<br>
+            <span style="color: #e74c3c; font-weight: bold;">• ⚠️ 주의: 사업자등록증, 신분증 등 개인정보가 포함된 이미지는 절대 첨부하지 마세요.</span>
+          </div>
+
+          <div id="image-upload-wrapper" style="position: relative; border: 1.5px dashed var(--border-color); border-radius: var(--border-radius); padding: 20px; text-align: center; background-color: white; transition: border-color 0.2s;">
+            <input type="file" id="thumbnailFile" accept="image/jpeg,image/png,image/webp" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 5;">
+            <div id="upload-placeholder" style="color: var(--text-muted); font-size: 0.85rem;">
+              <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">📁</span>
+              이곳을 클릭하거나 이미지 파일을 드래그하여 첨부해 주세요.
+            </div>
+            
+            <!-- 첨부된 파일 Preview 영역 -->
+            <div id="upload-preview-container" style="display: none; align-items: center; gap: 16px; text-align: left; z-index: 10; position: relative;">
+              <img id="upload-preview-img" src="" alt="Thumbnail preview" style="width: 70px; height: 70px; border-radius: 4px; object-fit: cover; border: 1px solid var(--border-color); background-color: #f1f1f1;">
+              <div style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <div id="preview-file-name" style="font-size: 0.85rem; font-weight: bold; color: var(--text-dark); margin-bottom: 3px;">-</div>
+                <div id="preview-file-meta" style="font-size: 0.75rem; color: var(--text-muted);">-</div>
+              </div>
+              <button type="button" id="btn-remove-thumb" class="btn btn-outline" style="font-size: 0.75rem; padding: 4px 8px; border-color: #e74c3c; color: #e74c3c; background-color: white; cursor: pointer;">제거</button>
+            </div>
+          </div>
         </div>
  
         <!-- 파트 C. 약관 동의 -->
@@ -218,7 +261,8 @@
     // 업종 카테고리 동적 초기화 (managed: true인 항목만 노출)
     const managedCats = categories.filter(c => c.managed !== false && c.visible !== false);
     categorySelect.innerHTML = '<option value="">업종을 선택해 주세요</option>' +
-      managedCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      managedCats.map(c => `<option value="${c.id}">${c.name}</option>`).join('') +
+      '<option value="other">기타 : 직접 입력</option>';
 
     const previewBox = document.getElementById('ad-slot-preview-box');
     const previewName = document.getElementById('preview-slot-name');
@@ -227,7 +271,8 @@
     // 구 단위 지역 선택 리스트 초기 로드
     const districts = regions.filter(r => r.level === 'district' && r.visible !== false);
     regionSelect.innerHTML = '<option value="">지역을 선택해 주세요</option>' + 
-      districts.map(d => `<option value="${d.id}">${d.displayName}</option>`).join('');
+      districts.map(d => `<option value="${d.id}">${d.displayName}</option>`).join('') +
+      '<option value="other">기타 : 직접 입력</option>';
 
     // 실시간 광고 구좌 미리보기 동적 렌더링 함수
     function updateSlotPreview() {
@@ -240,6 +285,20 @@
       }
 
       previewBox.style.display = 'block';
+
+      const isCustomCategory = catVal === 'other';
+      const isCustomRegion = regVal === 'other';
+
+      // 기타 업종 또는 기타 지역이 하나라도 포함되어 있으면 신규 구좌 확장상담 미리보기 노출
+      if (isCustomCategory || isCustomRegion) {
+        previewName.textContent = "신규 업종·지역 확장 구좌 개별 심사";
+        previewList.innerHTML = `
+          <li style="color: var(--secondary); font-weight: bold; list-style: none;">🛠️ 신규 업종·지역 확장 상담 신청</li>
+          <li>기존 등록 구좌 마스터 DB에 없는 맞춤형 지역/작업 카테고리 매핑을 진행합니다.</li>
+          <li>운영팀 승인 시 신규 지면이 개설되며, 세부 키워드 노출 영역은 상담 후 확정됩니다.</li>
+        `;
+        return;
+      }
 
       // 1. 구좌 명칭 조립
       const selectedRegObj = regions.find(r => r.id === regVal);
@@ -285,13 +344,260 @@
 
     // 업종 변경 이벤트
     categorySelect.addEventListener('change', () => {
+      const isCustom = categorySelect.value === 'other';
+      const customGroup = document.getElementById('customCategoryGroup');
+      const customInput = document.getElementById('customCategoryName');
+      
+      if (isCustom) {
+        customGroup.style.display = 'block';
+        customInput.setAttribute('required', 'required');
+      } else {
+        customGroup.style.display = 'none';
+        customInput.removeAttribute('required');
+        customInput.value = '';
+      }
       updateSlotPreview();
     });
 
     // 지역 변경 이벤트
     regionSelect.addEventListener('change', () => {
+      const isCustom = regionSelect.value === 'other';
+      const customGroup = document.getElementById('customRegionGroup');
+      const customInput = document.getElementById('customRegionName');
+      
+      if (isCustom) {
+        customGroup.style.display = 'block';
+        customInput.setAttribute('required', 'required');
+      } else {
+        customGroup.style.display = 'none';
+        customInput.removeAttribute('required');
+        customInput.value = '';
+      }
       updateSlotPreview();
     });
+
+    function generateSubmissionId() {
+      const now = new Date();
+      const dateStr = now.getFullYear() +
+                      String(now.getMonth() + 1).padStart(2, '0') +
+                      String(now.getDate()).padStart(2, '0');
+      let uuid = "";
+      try {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+          uuid = crypto.randomUUID().replace(/-/g, '').slice(0, 8);
+        } else {
+          uuid = Math.random().toString(36).substring(2, 10);
+        }
+      } catch (e) {
+        uuid = Math.random().toString(36).substring(2, 10);
+      }
+      return `DBA-${dateStr}-${uuid.toUpperCase()}`;
+    }
+
+    // 제출 세션별 submissionId 전역 유지 (완료 전까지 동일 값 재사용)
+    let currentSubmissionId = generateSubmissionId();
+
+    // 썸네일 이미지 첨부 파일 입출력 및 드래그 앤 드롭 제어
+    const thumbnailFileInput = document.getElementById('thumbnailFile');
+    const imageUploadWrapper = document.getElementById('image-upload-wrapper');
+    const uploadPlaceholder = document.getElementById('upload-placeholder');
+    const uploadPreviewContainer = document.getElementById('upload-preview-container');
+    const uploadPreviewImg = document.getElementById('upload-preview-img');
+    const previewFileName = document.getElementById('preview-file-name');
+    const previewFileMeta = document.getElementById('preview-file-meta');
+    const btnRemoveThumb = document.getElementById('btn-remove-thumb');
+
+    // 업로드될 원본 File 객체 참조 전역 보존
+    let selectedImageFile = null;
+
+    if (thumbnailFileInput) {
+      // 파일 드래그 효과 바인딩
+      ['dragenter', 'dragover'].forEach(eventName => {
+        imageUploadWrapper.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          imageUploadWrapper.style.borderColor = 'var(--primary)';
+          imageUploadWrapper.style.backgroundColor = '#fcfcfc';
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        imageUploadWrapper.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          imageUploadWrapper.style.borderColor = 'var(--border-color)';
+          imageUploadWrapper.style.backgroundColor = 'white';
+        }, false);
+      });
+
+      // 파일 드롭 수신
+      imageUploadWrapper.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          thumbnailFileInput.files = files;
+          handleFileSelection(files[0]);
+        }
+      });
+
+      // 일반 탐색기 선택 수신
+      thumbnailFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          handleFileSelection(e.target.files[0]);
+        }
+      });
+    }
+
+    // 파일 유효성 검증 및 프리뷰 마운트
+    function handleFileSelection(file) {
+      if (!file) return;
+
+      // 1. 형식 (MIME Type) 검증
+      const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowedMimes.includes(file.type)) {
+        alert("허용되지 않는 파일 형식입니다. JPG, PNG, WEBP 포맷의 이미지 파일만 첨부 가능합니다.");
+        clearSelectedFile();
+        return;
+      }
+
+      // 2. 용량 (5MB) 검증
+      const maxBytes = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxBytes) {
+        alert("첨부 가능한 최대 용량(5MB)을 초과했습니다. 더 작은 용량으로 조절한 뒤 다시 시도해 주세요.");
+        clearSelectedFile();
+        return;
+      }
+
+      // 3. 빈 파일 검증
+      if (file.size === 0) {
+        alert("비어 있는(0 Byte) 파일은 첨부할 수 없습니다.");
+        clearSelectedFile();
+        return;
+      }
+
+      // 4. 검증 통과 후 전역 참조 보존 및 프리뷰 처리 (원본 데이터 불변 보존)
+      selectedImageFile = file;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        uploadPreviewImg.src = e.target.result;
+        previewFileName.textContent = file.name;
+        
+        // 용량 단위 가독성 변환
+        const kbSize = (file.size / 1024).toFixed(1);
+        const mbSize = (file.size / (1024 * 1024)).toFixed(2);
+        const displaySize = file.size >= 1024 * 1024 ? `${mbSize} MB` : `${kbSize} KB`;
+        
+        previewFileMeta.textContent = `${displaySize} / ${file.type.split('/')[1].toUpperCase()}`;
+        
+        uploadPlaceholder.style.display = 'none';
+        uploadPreviewContainer.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // 파일 제거 및 리셋
+    function clearSelectedFile() {
+      selectedImageFile = null;
+      thumbnailFileInput.value = '';
+      uploadPreviewImg.src = '';
+      previewFileName.textContent = '-';
+      previewFileMeta.textContent = '-';
+      uploadPreviewContainer.style.display = 'none';
+      uploadPlaceholder.style.display = 'block';
+    }
+
+    if (btnRemoveThumb) {
+      btnRemoveThumb.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        clearSelectedFile();
+      });
+    }
+
+    // 업로드 성공 후 보관할 캐싱용 이미지 정보 상태 변수
+    let uploadedImageCache = null;
+
+    // Vercel Blob 클라이언트 직접 업로드 (Direct upload PoC 실행 함수)
+    async function uploadImageToVercelBlob(file, submissionId) {
+      // 이미 업로드 완료된 캐시 정보가 있고, 파일 객체가 변경되지 않은 경우 업로드 스킵 재사용
+      if (uploadedImageCache && uploadedImageCache.originalName === file.name && uploadedImageCache.size === file.size) {
+        console.log("[Storage Cache Hit] 동일 이미지가 이미 스토리지에 업로드되어 캐시 재사용:", uploadedImageCache.url);
+        return uploadedImageCache;
+      }
+
+      const now = new Date();
+      const yearMonth = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
+      const randomId = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const fileExt = file.name.split('.').pop() || 'jpg';
+      
+      // 기획 pathname 설계 준수
+      const targetPathname = `dongnebook/apply/${yearMonth}/${submissionId}/thumbnail-${randomId}.${fileExt}`;
+
+      // 1. Vercel Serverless Function으로부터 일회성 업로드 token 발급 수령
+      const tokenResponse = await fetch('/api/upload-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pathname: targetPathname,
+          contentType: file.type
+        })
+      });
+
+      if (!tokenResponse.ok) {
+        throw new Error(`Failed to acquire upload authorization token: ${tokenResponse.statusText}`);
+      }
+
+      const tokenResult = await tokenResponse.json();
+      const clientToken = tokenResult.clientToken;
+
+      // 로컬 개발 환경 등 mock 모드 판별
+      if (tokenResult.mockMode) {
+        console.log("[Mock Vercel Storage Mode] 로컬 Mock 데이터로 업로드 프로세스를 진행합니다.");
+        const mockResult = {
+          url: "https://dongnebook-01.vercel.app/public/mock-thumbnail.jpg",
+          storageKey: targetPathname,
+          originalName: file.name,
+          mimeType: file.type,
+          size: file.size
+        };
+        uploadedImageCache = mockResult;
+        return mockResult;
+      }
+
+      // 2. Browser -> Storage Direct upload (Vercel Storage API 직접 통신)
+      // 파일 binary 그대로 body에 바인딩하여 람다 통과 차단
+      const uploadResponse = await fetch(`https://blob.vercel-storage.com/${targetPathname}`, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'authorization': `Bearer ${clientToken}`,
+          'x-api-version': '2023-08-11' // Vercel Storage API 규격 준수
+        }
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error(`Storage direct upload failure: ${uploadResponse.statusText}`);
+      }
+
+      const uploadResult = await uploadResponse.json();
+
+      const successResult = {
+        url: uploadResult.url,
+        storageKey: uploadResult.pathname || targetPathname,
+        originalName: file.name,
+        mimeType: file.type,
+        size: file.size
+      };
+
+      uploadedImageCache = successResult;
+      return successResult;
+    }
+
+    // 파일 제거 및 리셋 재정의 (업로드 캐시도 함께 날림)
+    const originalClearSelectedFile = clearSelectedFile;
+    clearSelectedFile = function() {
+      originalClearSelectedFile();
+      uploadedImageCache = null;
+    };
 
     // URL 쿼리 파라미터 및 Context 연계 파싱 및 초기 설정
     let activeContext = getApplyContext();
@@ -388,25 +694,67 @@
                             String(now.getMinutes()).padStart(2, '0') + ":" + 
                             String(now.getSeconds()).padStart(2, '0');
 
-        let finalizedWorkName = "해당 업종 전체 키워드 자동 포함";
+        const isCustomCategory = categorySelect.value === 'other';
+        const isCustomRegion = regionSelect.value === 'other';
 
+        // 프론트 내부 requestType 계산 상태 준비
+        const requestType = (isCustomCategory || isCustomRegion) ? 'expansion-consult' : 'standard-slot';
+
+        let finalizedWorkName = "해당 업종 전체 키워드 자동 포함";
+        if (isCustomCategory || isCustomRegion) {
+          finalizedWorkName = "광고 노출 범위 상담 후 확정";
+        }
+ 
         const selectedRegObj = regions.find(r => r.id === regionSelect.value);
-        const finalizedRegionName = selectedRegObj ? selectedRegObj.displayName : regionSelect.value;
-        const finalSlotName = `${finalizedRegionName} + [${categorySelect.options[categorySelect.selectedIndex].text}] 업종`;
+        let finalizedRegionName = "";
+        if (isCustomRegion) {
+          finalizedRegionName = document.getElementById('customRegionName').value.trim();
+        } else {
+          finalizedRegionName = selectedRegObj ? selectedRegObj.displayName : regionSelect.value;
+        }
+
+        let catDisplayName = "";
+        if (isCustomCategory) {
+          catDisplayName = document.getElementById('customCategoryName').value.trim();
+        } else {
+          catDisplayName = categorySelect.options[categorySelect.selectedIndex].text;
+        }
+
+        const finalSlotName = `${finalizedRegionName} + [${catDisplayName}] 업종`;
         
         // 하위 동 목록 정리
         let coverageNames = [];
-        if (selectedRegObj && selectedRegObj.childRegionIds) {
+        if (!isCustomRegion && selectedRegObj && selectedRegObj.childRegionIds) {
           coverageNames = selectedRegObj.childRegionIds.map(cId => {
             const foundChild = regions.find(r => r.id === cId);
             return foundChild ? foundChild.displayName : cId;
           });
+        } else if (isCustomRegion) {
+          coverageNames = ["확장요청지역 하위동 전체 범위 개별조율"];
         }
 
+        // 4. 선행 이미지 업로드 트랜잭션 실행
+        let uploadResult = null;
+        if (selectedImageFile) {
+          submitBtn.textContent = "이미지 업로드 중...";
+          try {
+            uploadResult = await uploadImageToVercelBlob(selectedImageFile, currentSubmissionId);
+            if (!uploadResult) throw new Error("Image upload response was empty");
+          } catch (uploadErr) {
+            console.error("[Image Upload Failure]:", uploadErr);
+            alert("광고용 이미지 업로드에 실패했습니다. 파일이 정상이거나 네트워크 상태가 좋은지 확인한 후 다시 시도해 주세요. 또는 이미지를 제거하고 신청하실 수 있습니다.");
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText;
+            return;
+          }
+        }
+
+        submitBtn.textContent = "신청서 전송 중...";
+ 
         const formData = {
           submittedAt: formattedDate,
           category: categorySelect.value,
-          categoryName: categorySelect.options[categorySelect.selectedIndex].text,
+          categoryName: catDisplayName,
           targetWork: finalizedWorkName,
           targetRegion: finalizedRegionName,
           adSlotName: finalSlotName,
@@ -422,23 +770,36 @@
           instaUrl: document.getElementById('instaUrl').value.trim(),
           hasBizLicense: document.getElementById('hasBizLicense').value,
           additionalMessage: document.getElementById('additionalMessage').value.trim(),
-          privacyConsent: document.getElementById('privacyConsent').checked
-        };
+          privacyConsent: document.getElementById('privacyConsent').checked,
 
-        // 4. 연동 릴레이 전송 핸들러 실행
+          // 신규 확장 필드 AB~AJ 매핑 (성공 수신된 이미지 정보 병합 연계)
+          requestType: requestType,
+          customCategoryName: isCustomCategory ? document.getElementById('customCategoryName').value.trim() : "",
+          customRegionName: isCustomRegion ? document.getElementById('customRegionName').value.trim() : "",
+          submissionId: currentSubmissionId,
+          thumbnailUrl: uploadResult ? uploadResult.url : "",
+          thumbnailStorageKey: uploadResult ? uploadResult.storageKey : "",
+          thumbnailOriginalName: uploadResult ? uploadResult.originalName : "",
+          thumbnailMimeType: uploadResult ? uploadResult.mimeType : "",
+          thumbnailSize: uploadResult ? uploadResult.size : ""
+        };
+ 
+        // 5. 연동 릴레이 전송 핸들러 실행
         try {
           const success = await triggerExternalRelay(formData);
           if (success) {
             alert("광고 신청이 접수되었습니다. 운영자가 신청 구좌와 노출 범위를 확인한 뒤 연락드리겠습니다.");
             clearApplyContext(); // 제출 성공 후 컨텍스트 파기
             form.reset();
+            clearSelectedFile(); // 파일 첨부 상태 및 프리뷰 동시 제거 리셋
+            currentSubmissionId = generateSubmissionId(); // 다음 신청 세션을 위해 새로이 발급
             window.location.href = "/";
           } else {
             throw new Error("Relay response state failed");
           }
         } catch (error) {
           console.error("[연동 에러]:", error);
-          alert("신청 접수 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+          alert("신청 접수 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.");
         } finally {
           // 전송 성공/실패 여부 관계없이 최종 복원
           submitBtn.disabled = false;
@@ -450,36 +811,28 @@
     async function triggerExternalRelay(data) {
       console.log("[디버그 페이로드 전송 확인]:", data);
 
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.indexOf("YOUR_REAL_GOOGLE") !== -1) {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            console.log("[Mock 전송 완료] 실제 Web App URL 배포 후 대입 시 GAS 통신이 개시됩니다.");
-            resolve(true);
-          }, 1000);
+      try {
+        // Vercel Serverless Function Proxy 통신 실행 (same-origin JSON request)
+        const response = await fetch('/api/apply-submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
         });
-      }
 
-      // 폼 파라미터 형식으로 데이터 인코딩 전환 (CORS 우회 신뢰성 강화)
-      const formBody = [];
-      for (const property in data) {
-        const encodedKey = encodeURIComponent(property);
-        const val = Array.isArray(data[property]) ? data[property].join(", ") : data[property];
-        const encodedValue = encodeURIComponent(val);
-        formBody.push(encodedKey + "=" + encodedValue);
-      }
-      const serializedData = formBody.join("&");
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          console.error("[API Response Error]:", errData);
+          return false;
+        }
 
-      // 실제 GAS 통신 (no-cors 모드 + URL 인코딩 적용)
-      await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        body: serializedData
-      });
-      
-      return true;
+        const resData = await response.json();
+        return resData && resData.success === true;
+      } catch (e) {
+        console.error("[triggerExternalRelay exception]:", e);
+        return false;
+      }
     }
   </script>
 </body>
