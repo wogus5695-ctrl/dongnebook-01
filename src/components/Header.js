@@ -20,14 +20,14 @@ export function renderHeader() {
   } else if (isMainPage) {
     ctaButtonsHTML = `
       <a href="/guide.html" class="btn btn-outline" style="font-size: 0.75rem; padding: 6px 12px; border-color: var(--border-color); background-color: white; color: var(--text-dark);">광고 입점 안내</a>
-      <a href="/apply.html" class="btn btn-accent" style="font-size: 0.75rem; padding: 6px 12px; background-color: var(--primary); color: white; border: none;">광고 신청</a>
+      <a href="/apply.html" class="btn btn-accent ad-general-apply-btn" style="font-size: 0.75rem; padding: 6px 12px; background-color: var(--primary); color: white; border: none;">광고 신청</a>
     `;
   } else if (isLandingPage) {
     // 동적 랜딩 지면은 상단 광고 노출을 최소화하기 위해 비워둠
     ctaButtonsHTML = '';
   } else if (isGuidePage) {
     ctaButtonsHTML = `
-      <a href="/apply.html" class="btn btn-accent" style="font-size: 0.75rem; padding: 6px 12px; background-color: var(--primary); color: white; border: none;">광고 신청</a>
+      <a href="/apply.html" class="btn btn-accent ad-general-apply-btn" style="font-size: 0.75rem; padding: 6px 12px; background-color: var(--primary); color: white; border: none;">광고 신청</a>
     `;
   } else if (isApplyPage) {
     ctaButtonsHTML = `
@@ -92,4 +92,16 @@ export function renderHeader() {
       </div>
     </header>
   `;
+
+  // 일반 신청 버튼 클릭 시 스토리지 유입 컨텍스트 초기화 처리 (교차 오염 차단)
+  const generalBtns = container.querySelectorAll('.ad-general-apply-btn');
+  generalBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      try {
+        sessionStorage.removeItem('dongnebook_apply_context');
+      } catch (e) {
+        console.warn('[clearApplyContext failed in header]:', e);
+      }
+    });
+  });
 }

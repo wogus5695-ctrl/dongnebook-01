@@ -280,7 +280,7 @@ export default function handler(req, res) {
   // 5. CTA 및 띠배너 동적 치환
   html = html.replace('이 지역에서 유리창청소 업체를 운영 중이신가요?', `이 지역에서 ${taskKeyword} 업체를 운영 중이신가요?`);
   html = html.replace('지역명+작업명 페이지에 업체 정보를 등록하고 상담 유입을 테스트할 수 있습니다.', `${keywordRegionName}+${taskKeyword} 페이지에 업체 정보를 등록하고 상담 유입을 테스트해보세요.`);
-  html = html.replace('href="/apply.html" id="mini-ad-apply-link"', `href="/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}" id="mini-ad-apply-link"`);
+  html = html.replace('href="/apply.html" id="mini-ad-apply-link"', 'href="/apply.html" id="mini-ad-apply-link" class="ad-apply-cta-btn"');
 
   // 6. 가이드 및 FAQ 아코디언 서버 사이드 렌더링
   html = html.replace('id="guide-info-main-title">서울 강남구 유리창청소 상담 전 참고 정보', `id="guide-info-main-title">${keywordRegionName} ${taskDisplayName} 상담 전 참고 정보`);
@@ -359,10 +359,10 @@ export default function handler(req, res) {
     html = html.replace('href="tel:010-1234-5678" id="sticky-call-btn"', `href="tel:${primaryPhone}" id="sticky-call-btn"`);
     html = html.replace('📞 유리창청소 문의', `📞 ${taskKeyword} 문의 전화 연결`);
   } else {
-    html = html.replace('href="tel:010-1234-5678" id="sticky-call-btn"', `href="/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}" id="sticky-call-btn"`);
+    html = html.replace('href="tel:010-1234-5678" id="sticky-call-btn"', 'href="/apply.html" id="sticky-call-btn" class="ad-apply-cta-btn"');
     html = html.replace('📞 유리창청소 문의', `📢 이 지역 첫 광고 입점 신청`);
   }
-  html = html.replace('href="/apply.html" id="sticky-apply-btn"', `href="/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}" id="sticky-apply-btn"`);
+  html = html.replace('href="/apply.html" id="sticky-apply-btn"', 'href="/apply.html" id="sticky-apply-btn" class="ad-apply-cta-btn"');
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(html);

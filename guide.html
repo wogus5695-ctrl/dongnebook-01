@@ -66,9 +66,9 @@
             <li>해당 업종의 모든 세부 작업명 키워드 포함</li>
             <li>사장님 전화번호/카톡 직접 링크</li>
           </ul>
-          <a href="/apply.html?prod=product-single" class="btn btn-outline" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; border-color: var(--border-color); color: var(--text-dark); background-color: white;">신청하기</a>
+          <a href="/apply.html" class="btn btn-outline ad-apply-cta-btn" data-prod="product-single" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; border-color: var(--border-color); color: var(--text-dark); background-color: white;">신청하기</a>
         </div>
-
+ 
         <!-- 요금 2. 구좌 3개 패키지 -->
         <div class="pricing-card" style="background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 24px; display: flex; flex-direction: column; text-align: center; font-family: var(--font-family);">
           <div class="pricing-header" style="margin-bottom: 18px;">
@@ -81,9 +81,9 @@
             <li>구 3개 권역 하위 동 및 키워드 자동 확장</li>
             <li>다중 키워드 마케팅 테스트 최적</li>
           </ul>
-          <a href="/apply.html?prod=product-triple" class="btn btn-primary" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; font-weight: bold;">신청하기</a>
+          <a href="/apply.html" class="btn btn-primary ad-apply-cta-btn" data-prod="product-triple" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; font-weight: bold;">신청하기</a>
         </div>
-
+ 
         <!-- 요금 3. 구좌 5개 패키지 -->
         <div class="pricing-card" style="background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 24px; display: flex; flex-direction: column; text-align: center; font-family: var(--font-family);">
           <div class="pricing-header" style="margin-bottom: 18px;">
@@ -96,9 +96,9 @@
             <li>인접 시·구 전역 노출 커버리지</li>
             <li>대표 브랜드 입점 노출 극대화</li>
           </ul>
-          <a href="/apply.html?prod=product-five" class="btn btn-outline" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; border-color: var(--border-color); color: var(--text-dark); background-color: white;">신청하기</a>
+          <a href="/apply.html" class="btn btn-outline ad-apply-cta-btn" data-prod="product-five" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; border-color: var(--border-color); color: var(--text-dark); background-color: white;">신청하기</a>
         </div>
-
+ 
         <!-- 요금 4. 카테고리 배너 -->
         <div class="pricing-card" style="background-color: white; border: 1.5px solid var(--border-color); border-radius: var(--border-radius); padding: 24px; display: flex; flex-direction: column; text-align: center; font-family: var(--font-family);">
           <div class="pricing-header" style="margin-bottom: 18px;">
@@ -111,7 +111,7 @@
             <li>광고주 맞춤 스페셜 와이드 이미지</li>
             <li>운영 매니저 상담 후 기간 조율</li>
           </ul>
-          <a href="/apply.html?prod=product-banner" class="btn btn-outline" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; border-color: var(--border-color); color: var(--text-dark); background-color: white;">신청하기</a>
+          <a href="/apply.html" class="btn btn-outline ad-apply-cta-btn" data-prod="product-banner" style="font-size: 0.8rem; padding: 10px; margin-top: auto; text-decoration: none; border-color: var(--border-color); color: var(--text-dark); background-color: white;">신청하기</a>
         </div>
       </div>
     </section>
@@ -334,6 +334,7 @@
     import { renderHeader } from '/src/components/Header.js';
     import { renderFooter } from '/src/components/Footer.js';
     import { adProducts } from '/src/data/adProducts.js';
+    import { saveApplyContext } from '/src/utils/applyContext.js';
 
     renderHeader();
     renderFooter();
@@ -357,13 +358,31 @@
               ${featuresHTML}
             </ul>
 
-            <a href="/apply.html?prod=${prod.id}" class="btn ${isRecommend ? 'btn-primary' : 'btn-outline'}" style="font-size: 0.85rem; padding: 10px; margin-top: auto;">
+            <a href="/apply.html" class="btn ${isRecommend ? 'btn-primary' : 'btn-outline'} ad-apply-cta-btn" data-prod="${prod.id}" style="font-size: 0.85rem; padding: 10px; margin-top: auto;">
               ${prod.actionText}
             </a>
           </div>
         `;
       }).join('');
     }
+
+    // B2B 입점 CTA 클릭 이벤트 통합 처리 (공통 Event Delegation)
+    document.addEventListener('click', (event) => {
+      const ctaBtn = event.target.closest('.ad-apply-cta-btn');
+      if (ctaBtn) {
+        const prodCode = ctaBtn.getAttribute('data-prod');
+        if (prodCode) {
+          try {
+            saveApplyContext({
+              sourceType: 'guide',
+              prod: prodCode
+            });
+          } catch (e) {
+            console.warn('[saveApplyContext failed on guide click]:', e);
+          }
+        }
+      }
+    });
 
     // FAQ 아코디언 스크립트 바인딩
     document.querySelectorAll('#guide-faq-list .faq-q').forEach(question => {

@@ -87,6 +87,7 @@
     import { adSlots } from '/src/data/adSlots.js';
     import { updateSeoMeta } from '/src/components/SeoMeta.js';
     import { buildLandingUrl } from '/src/utils/urlHelper.js';
+    import { saveApplyContext } from '/src/utils/applyContext.js';
 
     renderHeader();
     renderFooter();
@@ -165,7 +166,22 @@
 
       document.getElementById('bread-category').textContent = `${activeCat.name} 키워드 허브`;
       document.getElementById('hub-subtitle').textContent = currentSeo.description;
-      document.getElementById('hub-ad-cta-btn').href = `/apply.html?cat=${activeCat.id}`;
+      
+      const hubCtaBtn = document.getElementById('hub-ad-cta-btn');
+      if (hubCtaBtn) {
+        hubCtaBtn.href = '/apply.html';
+        hubCtaBtn.classList.add('ad-apply-cta-btn');
+        hubCtaBtn.addEventListener('click', () => {
+          try {
+            saveApplyContext({
+              sourceType: 'hub',
+              cat: activeCat.id
+            });
+          } catch (e) {
+            console.warn('[saveApplyContext failed on hub click]:', e);
+          }
+        });
+      }
 
       // 3. 탭 렌더링
       const tabsBox = document.getElementById('hub-tabs');

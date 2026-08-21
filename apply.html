@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>광고 상담 및 입점 신청서 접수 | 동네책자</title>
   <meta name="description" content="동네책자의 시공·수리 광고 구좌 신청서입니다. 원하시는 지역과 작업 키워드를 작성하여 신청하시면 빠른 상담을 도와드립니다.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://dongnebook-01.vercel.app/apply.html">
   <link rel="stylesheet" href="/src/css/main.css">
   <style>
     .form-section-card {
@@ -207,6 +209,8 @@
     // ----------------------------------------------------
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJJjSzTncyhiQFL06mvtYHoEtSCZJqWIPe3QQspFg1EKyjS93Fg7YMVX4wyJQZgG0W/exec";
 
+    import { getApplyContext, saveApplyContext, clearApplyContext } from '/src/utils/applyContext.js';
+
     const categorySelect = document.getElementById('category');
     const workSelect = document.getElementById('targetWork');
     const regionSelect = document.getElementById('targetRegion');
@@ -289,33 +293,68 @@
       updateSlotPreview();
     });
 
-    // URL 쿼리 파라미터 연계 주입
+    // URL 쿼리 파라미터 및 Context 연계 파싱 및 초기 설정
+    let activeContext = getApplyContext();
     const urlParams = new URLSearchParams(window.location.search);
-    const regParam = urlParams.get('reg');
-    const catParam = urlParams.get('cat');
-    const taskParam = urlParams.get('task');
-    const prodParam = urlParams.get('prod');
 
-    if (catParam) {
-      if (categorySelect.querySelector(`option[value="${catParam}"]`)) {
-        categorySelect.value = catParam;
+    const regQuery = urlParams.get('reg');
+    const catQuery = urlParams.get('cat');
+    const taskQuery = urlParams.get('task');
+    const prodQuery = urlParams.get('prod');
+
+    const hasQueryParams = regQuery || catQuery || taskQuery || prodQuery;
+
+    // 만약 URL 쿼리가 있으면 Context로 변환 저장하고 우선 적용 (2순위 -> 1순위 승격 및 저장)
+    if (hasQueryParams) {
+      activeContext = {
+        sourceType: 'legacy-query',
+        reg: regQuery || undefined,
+        cat: catQuery || undefined,
+        task: taskQuery || undefined,
+        prod: prodQuery || undefined
+      };
+      saveApplyContext(activeContext);
+      
+      // 브라우저 주소창에서 쿼리 파라미터만 안전하게 청소
+      try {
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+      } catch (e) {
+        console.warn('[history.replaceState failed]:', e);
       }
     }
-    if (regParam) {
-      // 파라미터가 displayName 또는 id 일치 여부 판별
-      const matchedReg = regions.find(r => r.displayName === regParam || r.id === regParam);
-      if (matchedReg && matchedReg.level === 'district') {
-        regionSelect.value = matchedReg.id;
-      } else if (matchedReg && matchedReg.level === 'neighborhood') {
-        // 동 단위로 들어왔을 시 상위 구 단위를 선택 처리
-        regionSelect.value = matchedReg.parentId;
+
+    // 파라미터가 유효하면 값 바인딩 (Context 또는 Query에서 정제된 결과 사용)
+    if (activeContext) {
+      const { cat, reg, prod } = activeContext;
+
+      // 1. 업종(cat) 검증 및 바인딩
+      if (cat) {
+        const isValidCat = managedCats.some(c => c.id === cat);
+        if (isValidCat && categorySelect.querySelector(`option[value="${cat}"]`)) {
+          categorySelect.value = cat;
+        }
       }
-      updateSlotPreview();
-    }
-    if (prodParam) {
-      const prodSelect = document.getElementById('adProduct');
-      if (prodSelect.querySelector(`option[value="${prodParam}"]`)) {
-        prodSelect.value = prodParam;
+
+      // 2. 지역(reg) 검증 및 바인딩
+      if (reg) {
+        const matchedReg = regions.find(r => (r.displayName === reg || r.id === reg) && r.visible !== false);
+        if (matchedReg) {
+          if (matchedReg.level === 'district') {
+            regionSelect.value = matchedReg.id;
+          } else if (matchedReg.level === 'neighborhood') {
+            regionSelect.value = matchedReg.parentId;
+          }
+          updateSlotPreview();
+        }
+      }
+
+      // 3. 상품(prod) 검증 및 바인딩
+      if (prod) {
+        const prodSelect = document.getElementById('adProduct');
+        if (prodSelect && prodSelect.querySelector(`option[value="${prod}"]`)) {
+          prodSelect.value = prod;
+        }
       }
     }
 
@@ -391,6 +430,7 @@
           const success = await triggerExternalRelay(formData);
           if (success) {
             alert("광고 신청이 접수되었습니다. 운영자가 신청 구좌와 노출 범위를 확인한 뒤 연락드리겠습니다.");
+            clearApplyContext(); // 제출 성공 후 컨텍스트 파기
             form.reset();
             window.location.href = "/";
           } else {

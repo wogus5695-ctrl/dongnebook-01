@@ -128,7 +128,7 @@
             지역명+작업명 페이지에 업체 정보를 등록하고 상담 유입을 테스트할 수 있습니다.
           </p>
         </div>
-        <a href="/apply.html" id="mini-ad-apply-link" class="btn btn-primary" style="font-size: 0.85rem; padding: 10px 20px; background-color: var(--primary); color: white; border: none; font-weight: bold; border-radius: var(--border-radius); text-decoration: none;">광고 입점 문의</a>
+        <a href="/apply.html" id="mini-ad-apply-link" class="btn btn-primary ad-apply-cta-btn" style="font-size: 0.85rem; padding: 10px 20px; background-color: var(--primary); color: white; border: none; font-weight: bold; border-radius: var(--border-radius); text-decoration: none;">광고 입점 문의</a>
       </div>
     </section>
 
@@ -191,7 +191,7 @@
       <a href="tel:010-1234-5678" id="sticky-call-btn" class="btn btn-primary sticky-cta-btn" style="flex: 2.2; font-size: 0.85rem; padding: 12px; text-align: center; text-decoration: none; font-weight: 800;">
         📞 유리창청소 문의
       </a>
-      <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn" style="flex: 1; font-size: 0.85rem; padding: 12px; background-color: #f8f9fa; border-color: var(--border-color); text-align: center; text-decoration: none; color: var(--text-muted);">
+      <a href="/apply.html" id="sticky-apply-btn" class="btn btn-outline sticky-cta-btn ad-apply-cta-btn" style="flex: 1; font-size: 0.85rem; padding: 12px; background-color: #f8f9fa; border-color: var(--border-color); text-align: center; text-decoration: none; color: var(--text-muted);">
         광고 입점
       </a>
     </div>
@@ -206,6 +206,7 @@
     import { CompanyCard } from '/src/components/CompanyCard.js';
     import { updateSeoMeta } from '/src/components/SeoMeta.js';
     import { resolveSeoTemplate } from '/src/data/seoTemplates.js';
+    import { saveApplyContext } from '/src/utils/applyContext.js';
 
     renderHeader();
     renderFooter();
@@ -359,7 +360,8 @@
       // 소형 B2B 띠 배너 제목 동적 치환
       document.getElementById('mini-ad-title').textContent = `이 지역에서 ${taskKeyword} 업체를 운영 중이신가요?`;
       document.getElementById('mini-ad-desc').textContent = `${keywordRegionName}+${taskKeyword} 페이지에 업체 정보를 등록하고 상담 유입을 테스트해보세요.`;
-      document.getElementById('mini-ad-apply-link').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      document.getElementById('mini-ad-apply-link').href = '/apply.html';
+      document.getElementById('mini-ad-apply-link').classList.add('ad-apply-cta-btn');
 
       // H1 바로 아래 소비자 중심 맞춤형 보조 문구
       document.getElementById('landing-subtitle').textContent = seoData ? seoData.heroDescription : `${keywordRegionName}에서 ${taskDisplayName} 상담 가능한 업체 정보를 확인해보세요.`;
@@ -392,14 +394,24 @@
         noindex: false
       });
 
-      // CTA 링크 정보 수정
+      // CTA 링크 정보 수정 (동적 쿼리 제거 및 공통 class 적용)
       const convertBtn = document.getElementById('convert-apply-btn');
-      if (convertBtn) convertBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      if (convertBtn) {
+        convertBtn.href = '/apply.html';
+        convertBtn.classList.add('ad-apply-cta-btn');
+      }
       
       const fallbackBtn = document.getElementById('fallback-apply-btn');
-      if (fallbackBtn) fallbackBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      if (fallbackBtn) {
+        fallbackBtn.href = '/apply.html';
+        fallbackBtn.classList.add('ad-apply-cta-btn');
+      }
       
-      document.getElementById('sticky-apply-btn').href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+      const stickyApplyBtnElement = document.getElementById('sticky-apply-btn');
+      if (stickyApplyBtnElement) {
+        stickyApplyBtnElement.href = '/apply.html';
+        stickyApplyBtnElement.classList.add('ad-apply-cta-btn');
+      }
 
       // 4. 업체 매칭 필터링 (adSlots 구좌 기반)
       const CURRENT_DATE = new Date("2026-06-30T10:30:00+09:00");
@@ -510,7 +522,8 @@
         fallback.style.display = 'block';
         if (coverageNotice) coverageNotice.style.display = 'none';
 
-        stickyCallBtn.href = `/apply.html?reg=${encodeURIComponent(regionName)}&cat=${catParam}&task=${taskParam}`;
+        stickyCallBtn.href = '/apply.html';
+        stickyCallBtn.classList.add('ad-apply-cta-btn');
         stickyCallBtn.textContent = `📢 이 지역 첫 광고 입점 신청`;
         stickyApplyBtn.style.display = 'none';
 
@@ -651,6 +664,23 @@
     }
 
     initLandingPage();
+
+    // 6. 공통 CTA Click 핸들러 이벤트 바인딩
+    document.addEventListener('click', (event) => {
+      const ctaBtn = event.target.closest('.ad-apply-cta-btn');
+      if (ctaBtn) {
+        try {
+          saveApplyContext({
+            sourceType: 'landing',
+            reg: regParam || undefined,
+            cat: catParam || undefined,
+            task: taskParam || undefined
+          });
+        } catch (err) {
+          console.warn('[saveApplyContext failed on click]:', err);
+        }
+      }
+    });
   </script>
 </body>
 </html>
